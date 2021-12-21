@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "pymagento"
+version = "1.0.0"
+description = "Python client for the Magento 2 API"
+authors = ["Bixoto <info@bixoto.com>"]
+license = "MIT"
+include = ["magento/py.typed"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+api-session = "^0.1.0"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.920"
+coverage = "^6.2"
+types-requests = "^2.26.2"
+pytest = "^6.2.5"
+pytest-mock = "^3.6.1"
+pytest-cov = "^3.0.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

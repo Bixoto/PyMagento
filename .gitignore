@@ -1,0 +1,8 @@
+*__pycache__*
+*.pyc
+.venv
+.hypothesis
+.coverage
+.mypy_cache
+.pytest_cache
+/htmlcov
