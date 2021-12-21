@@ -16,6 +16,7 @@ def test_product_batch_saver():
 def test_batch_getter():
     def dummy_getter(query: Query, limit: int):
         assert limit == 2
+        assert isinstance(query, dict)
         assert query['searchCriteria[filter_groups][0][filters][0][condition_type]'] == 'in'
         assert query['searchCriteria[filter_groups][0][filters][0][field]'] == 'myfield'
         values = [int(n) for n in query['searchCriteria[filter_groups][0][filters][0][value]'].split(",")]
