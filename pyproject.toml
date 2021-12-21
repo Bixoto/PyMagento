@@ -6,6 +6,7 @@ authors = ["Bixoto <info@bixoto.com>"]
 license = "MIT"
 homepage = "https://github.com/Bixoto/PyMagento"
 include = ["magento/py.typed"]
+readme = "README.md"
 packages = [
     {include = "magento"},
 ]
