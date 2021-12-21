@@ -31,3 +31,6 @@ jobs:
       - name: Run Tests
         run: |
           poetry run pytest --cov=magento
+      - name: Test build
+        run: |
+          poetry build

@@ -6,6 +6,9 @@ authors = ["Bixoto <info@bixoto.com>"]
 license = "MIT"
 homepage = "https://github.com/Bixoto/PyMagento"
 include = ["magento/py.typed"]
+packages = [
+    {include = "magento"},
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
