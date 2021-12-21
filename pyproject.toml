@@ -4,6 +4,7 @@ version = "1.0.0"
 description = "Python client for the Magento 2 API"
 authors = ["Bixoto <info@bixoto.com>"]
 license = "MIT"
+homepage = "https://github.com/Bixoto/PyMagento"
 include = ["magento/py.typed"]
 
 [tool.poetry.dependencies]
