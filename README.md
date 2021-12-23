@@ -1,6 +1,8 @@
 # PyMagento
 
-**PyMagento** is a Python client for the Magento 2 API.
+**PyMagento** is a Python client for the Magento 2 API. Its goal is to provide an easy-to-use
+Pythonic interface to the Magento 2 API, while being lightweight and extendable.
+
 
 Note: PyMagento is not affiliated to nor endorsed by Adobe or the Magento team.
 
