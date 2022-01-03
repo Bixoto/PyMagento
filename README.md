@@ -8,9 +8,15 @@ Note: PyMagento is not affiliated to nor endorsed by Adobe or the Magento team.
 
 ## Install
 
-    pip install pymagento
+We support only Python 3.8+.
 
-This supports only Python 3.8+.
+### Pip
+
+    python -m pip install pymagento
+
+### Poetry
+
+    poetry add pymagento
 
 ## Usage
 
