@@ -25,4 +25,4 @@ print(magento.get_custom_attribute(product, "description"))
 
 ## License
 
-Copyright 2020-2021 [Bixoto](https://bixoto.com/).
+Copyright 2020-2022 [Bixoto](https://bixoto.com/).
