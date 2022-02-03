@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.1.0 (2022/02/03)
 
 * Add `save_product_media`, `delete_product_media`, `save_configurable_product_option`, `save_base_prices`,
   `get_special_prices`, `save_special_prices`, `delete_special_prices`, `delete_special_prices_by_sku`,
