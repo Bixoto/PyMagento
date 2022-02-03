@@ -492,14 +492,15 @@ class Magento(APISession):
     # Special Prices
     # ==============
 
-    def get_special_prices(self, skus: Sequence[Sku]) -> Sequence[MagentoEntity]:
+    def get_special_prices(self, skus: Sequence[Sku]) -> List[MagentoEntity]:
         """
         Get special prices for a sequence of SKUs.
 
         :param skus:
         :return:
         """
-        return self.post_api('/V1/products/special-price-information', json={"skus": skus}, throw=True).json()
+        return self.post_api('/V1/products/special-price-information',
+                             json={"skus": skus}, throw=True, bypass_read_only=True).json()
 
     def save_special_prices(self, special_prices: Sequence[MagentoEntity]):
         """
