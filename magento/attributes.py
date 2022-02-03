@@ -7,18 +7,18 @@ from typing import Callable, Optional, cast, Dict, Any, Union, Sequence, List
 def get_custom_attribute(item: dict, attribute_code: str, coerce_as: Optional[Callable] = None):
     """
     Get a custom attribute from an item given its code.
+
+    For example:
+        >>> get_custom_attribute(..., "my_custom_attribute")
+        "0"
+
+        >>> get_custom_attribute(..., "my_custom_attribute", bool)
+        False
+
     :param item:
     :param attribute_code:
     :param coerce_as: optional callable that is called on the attribute value if it's set.
       This is useful to circumvent Magento's limitation where all attribute values are strings.
-
-      For example:
-          >>> get_custom_attribute(..., "my_custom_attribute")
-          "0"
-
-          >>> get_custom_attribute(..., "my_custom_attribute", bool)
-          False
-
     :return: attribute value or None.
     """
     for attribute in item.get("custom_attributes", []):

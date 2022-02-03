@@ -22,6 +22,7 @@ types-requests = "^2.26.2"
 pytest = "^6.2.5"
 pytest-mock = "^3.6.1"
 pytest-cov = "^3.0.0"
+Sphinx = "^4.4.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
