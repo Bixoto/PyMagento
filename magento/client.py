@@ -311,6 +311,12 @@ class Magento(APISession):
         """
         return self.get_json_api(f'/V1/products/{sku}/media/{entry_id}')
 
+    def save_product_media(self, sku: Sku, media_entry: MediaEntry):
+        return self.post_api(f'/V1/products/{sku}/media', json={"entry": media_entry}, throw=True).json()
+
+    def delete_product_media(self, sku: Sku, media_id: PathId, throw=False):
+        return self.delete_api(f'/V1/products/{sku}/media/{media_id}', throw=throw)
+
     def save_product(self, product, log_response=False) -> Product:
         """
         Save a product.
@@ -418,6 +424,9 @@ class Magento(APISession):
         """
         return self.delete_api(f"/V1/configurable-products/{parent_sku}/children/{child_sku}", **kwargs)
 
+    def save_configurable_product_option(self, sku: Sku, option: MagentoEntity, throw=False):
+        return self.post_api(f'/V1/configurable-products/{sku}/options', json={"option": option}, throw=throw)
+
     def get_products_attribute_options(self, attribute_code: str) -> Sequence[Dict[str, str]]:
         """
         Get all options for an products attribute.
@@ -456,6 +465,69 @@ class Magento(APISession):
         """
         r = self.delete_api(f'/V1/products/attributes/{attribute_code}/options/{option_id}', throw=True)
         return cast(bool, r.json())
+
+    # Base Prices
+    # ===========
+
+    def save_base_prices(self, prices: Sequence[MagentoEntity]):
+        """
+        Save base prices.
+
+        Example:
+
+            >>> self.save_base_prices([{"price": 3.14, "sku": "W1033", "store_id": 0}])
+
+        :param prices: base prices to save.
+        :return:
+        """
+        return self.post_api("/V1/products/base-prices", json={"prices": prices})
+
+    # Special Prices
+    # ==============
+
+    def get_special_prices(self, skus: Sequence[Sku]) -> Sequence[MagentoEntity]:
+        """
+        Get special prices for a sequence of SKUs.
+
+        :param skus:
+        :return:
+        """
+        return self.post_api('/V1/products/special-price-information', json={"skus": skus}, throw=True).json()
+
+    def save_special_prices(self, special_prices: Sequence[MagentoEntity]):
+        """
+        Save a sequence of special prices.
+
+        Example:
+            >>> price_from = "2022-01-01 00:00:00"
+            >>> price_to = "2022-01-31 23:59:59"
+            >>> special_price = {"store_id": 0, "sku": "W1033", "price": 2.99, \
+                                 "price_from": price_from, "price_to": price_to}
+            >>> self.save_special_prices([special_price])
+
+        :param special_prices: Special prices to save.
+        :return:
+        """
+        return self.post_api('/V1/products/special-price', json={"prices": special_prices})
+
+    def delete_special_prices(self, special_prices: Sequence[MagentoEntity]):
+        """
+        Delete a sequence of special prices.
+
+        :param special_prices:
+        :return:
+        """
+        return self.post_api('/V1/products/special-price-delete', json={"prices": special_prices})
+
+    def delete_special_prices_by_sku(self, skus: Sequence[Sku]):
+        """
+        Equivalent of `delete_special_prices(get_special_prices(skus))`.
+
+        :param skus:
+        :return:
+        """
+        special_prices = self.get_special_prices(skus)
+        return self.delete_special_prices(special_prices)
 
     # Source Items
     # ============
@@ -565,12 +637,24 @@ class Magento(APISession):
         return cast(Category, self.put_api(f'/V1/categories/{category_id}',
                                            json={"category": category_data}, throw=True).json())
 
+    def create_category(self, category: Category, throw=False):
+        """
+        Create a new category.
+        """
+        return self.post_api('/V1/categories', json={"category": category}, throw=throw)
+
     # Shipments
     # =========
 
     def get_shipments(self, **kwargs) -> Iterable[MagentoEntity]:
         """Return shipments."""
         return self.get_paginated("/V1/shipments", **kwargs)
+
+    def ship_order(self, order_id: PathId, payload: MagentoEntity):
+        """
+        Ship an order.
+        """
+        return self.post_api(f'/V1/order/{order_id}/ship', json=payload)
 
     def get_order_shipments(self, order_id: Union[int, str]):
         """Get shipments for the given order id."""
