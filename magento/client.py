@@ -180,7 +180,7 @@ class Magento(APISession):
                    status_condition_type: Optional[str] = None,
                    limit=-1,
                    query: Query = None,
-                   retry=0):
+                   retry=0) -> Iterator[Order]:
         """
         Return a generator of all orders with this status up to the limit.
 
@@ -197,7 +197,7 @@ class Magento(APISession):
 
         return self.get_paginated("/V1/orders", limit=limit, query=query, retry=retry)
 
-    def get_last_orders(self, limit=10) -> List[dict]:
+    def get_last_orders(self, limit=10) -> List[Order]:
         """Return a list of the last orders (default: 10)."""
         query = make_search_query([], sort_orders=[("increment_id", "DESC")])
         return list(self.get_orders(query=query, limit=limit))
@@ -215,13 +215,13 @@ class Magento(APISession):
 
         return self.get_paginated("/V1/orders/items", query=query, **kwargs)
 
-    def get_order(self, order_id: str, throw=True):
+    def get_order(self, order_id: str, throw=True) -> Optional[Order]:
         """
         Get an order given its (entity) id.
         """
         return self.get_api(f'/V1/orders/{order_id}', throw=throw).json()
 
-    def get_order_by_increment_id(self, increment_id: str):
+    def get_order_by_increment_id(self, increment_id: str) -> Optional[Order]:
         """
         Get an order given its increment id. Return ``None`` if the order doesn’t exist.
 
@@ -231,6 +231,7 @@ class Magento(APISession):
         query = make_field_value_query("increment_id", increment_id)
         for order in self.get_orders(query=query, limit=1):
             return order
+        return None
 
     def hold_order(self, order_id: str, **kwargs):
         return self.post_api(f'/V1/orders/{order_id}/hold', **kwargs)
@@ -279,7 +280,7 @@ class Magento(APISession):
         """
         return self.get_json_api(f'/V1/products/{sku}')
 
-    def get_product_by_id(self, product_id: int):
+    def get_product_by_id(self, product_id: int) -> Optional[Product]:
         """
         Get a product given its id. Return ``None`` if the product doesn’t exist.
 
@@ -289,6 +290,7 @@ class Magento(APISession):
         query = make_field_value_query("entity_id", product_id)
         for product in self.get_products(query=query, limit=1):
             return product
+        return None
 
     def get_product_medias(self, sku: Sku) -> Sequence[MediaEntry]:
         """
@@ -459,7 +461,7 @@ class Magento(APISession):
     # ============
 
     def get_source_items(self, source_code: Optional[str] = None, sku: Optional[str] = None,
-                         *, query: Query = None, limit=-1) -> Iterable[dict]:
+                         *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
         """
         Return a generator of all source items.
 
@@ -566,7 +568,7 @@ class Magento(APISession):
     # Shipments
     # =========
 
-    def get_shipments(self, **kwargs) -> Iterable[dict]:
+    def get_shipments(self, **kwargs) -> Iterable[MagentoEntity]:
         """Return shipments."""
         return self.get_paginated("/V1/shipments", **kwargs)
 
@@ -597,16 +599,16 @@ class Magento(APISession):
 
         return self.post_api(f"/V1/order/{order_id}/invoice", json=payload, throw=True).json()
 
-    def get_invoice(self, invoice_id: int) -> dict:
+    def get_invoice(self, invoice_id: int) -> MagentoEntity:
         return self.get_api(f"/V1/invoices/{invoice_id}", throw=True).json()
 
-    def get_invoice_by_increment_id(self, increment_id: str) -> Optional[dict]:
+    def get_invoice_by_increment_id(self, increment_id: str) -> Optional[MagentoEntity]:
         query = make_field_value_query("increment_id", increment_id)
         for invoice in self.get_invoices(query=query, limit=1):
             return invoice
         return None
 
-    def get_invoices(self, query: Query = None, limit=-1) -> Iterable[dict]:
+    def get_invoices(self, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
         """Get all invoices (generator)."""
         return self.get_paginated("/V1/invoices", query=query, limit=limit)
 
@@ -617,18 +619,18 @@ class Magento(APISession):
     # Taxes
     # =====
 
-    def get_tax_rates(self, *, query: Query = None, limit=-1) -> Iterable[dict]:
+    def get_tax_rates(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
         """Get all tax rates (generator)."""
         return self.get_paginated("/V1/taxRates/search", query=query, limit=limit)
 
-    def get_tax_classes(self, *, query: Query = None, limit=-1) -> Iterable[dict]:
+    def get_tax_classes(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
         """Get all tax classes (generator)."""
         return self.get_paginated("/V1/taxClasses/search", query=query, limit=limit)
 
     # Attribute Sets
     # ==============
 
-    def get_attribute_sets(self, limit=-1, **kwargs) -> Iterable[dict]:
+    def get_attribute_sets(self, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all attribute sets (generator)."""
         return self.get_paginated("/V1/eav/attribute-sets/list", limit=limit, **kwargs)
 
@@ -677,16 +679,16 @@ class Magento(APISession):
     # Bulk Operations
     # ===============
 
-    def get_bulk_status(self, bulk_uuid: str) -> dict:
+    def get_bulk_status(self, bulk_uuid: str) -> MagentoEntity:
         """
         Get the status of an async/bulk operation.
         """
-        return cast(dict, self.get_api(f'/V1/bulk/{bulk_uuid}/status', throw=True).json())
+        return self.get_api(f'/V1/bulk/{bulk_uuid}/status', throw=True).json()
 
     # Customers
     # =========
 
-    def get_customers(self, *, query: Query = None, limit=-1) -> Iterable[dict]:
+    def get_customers(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
         """Get all customers (generator)."""
         return self.get_paginated("/V1/customers/search", query=query, limit=limit)
 
@@ -773,10 +775,10 @@ class Magento(APISession):
 
             total_count = res["total_count"]
 
-            for product in items:
+            for item in items:
                 if self.log_progress and self.logger and count and count % 1000 == 0:
                     self.logger.info(f'loaded {count} items')
-                yield product
+                yield item
                 count += 1
                 if count >= total_count:
                     return
