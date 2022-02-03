@@ -469,6 +469,13 @@ class Magento(APISession):
     # Base Prices
     # ===========
 
+    def get_base_prices(self, skus: Sequence[Sku]) -> List[MagentoEntity]:
+        """
+        Get base prices for a sequence of SKUs.
+        """
+        return self.post_api("/V1/products/base-prices-information",
+                             json={"skus": skus}, throw=True, bypass_read_only=True).json()
+
     def save_base_prices(self, prices: Sequence[MagentoEntity]):
         """
         Save base prices.
