@@ -1,12 +1,26 @@
 import json
+from collections import ChainMap
 from unittest import mock
 
+import pytest
 import requests
 from pytest_mock import MockerFixture
 
 import magento
+from magento import client
 # noinspection PyProtectedMember
-from magento.client import make_search_query, make_field_value_query, raise_for_response
+from magento.client import make_search_query, make_field_value_query, raise_for_response, Magento
+
+
+class TemporaryEnv:
+    def __enter__(self):
+        temporary_env = {}
+        self._environ = client.environ
+        client.environ = ChainMap(temporary_env, client.environ)
+        return temporary_env
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        client.environ = self._environ
 
 
 # inspired by https://stackoverflow.com/a/64991421/735926
@@ -50,11 +64,11 @@ class DummyMagento(magento.Magento):
 
 def test_url(mocker: MockerFixture):
     mocker.patch('magento.Magento', DummyMagento)
-    client = magento.Magento(base_url="http://test", token="secret", scope="toto")
-    url = client.get_api('/V1/test/url').json()["url"]
+    m = magento.Magento(base_url="http://test", token="secret", scope="toto")
+    url = m.get_api('/V1/test/url').json()["url"]
     assert url == "http://test/rest/toto/V1/test/url"
 
-    url = client.request_api('get', '/V1/test/url', async_bulk=True).json()["url"]
+    url = m.request_api('get', '/V1/test/url', async_bulk=True).json()["url"]
     assert url == "http://test/rest/toto/async/bulk/V1/test/url", url
 
 
@@ -118,3 +132,35 @@ def test_raise_for_response():
     response.status_code = 200
     # Should not raise
     raise_for_response(response)
+
+
+def test_client_env():
+    with pytest.raises(RuntimeError):
+        Magento()
+
+    token = "xx-token"
+    base_url = "https://xxxx"
+
+    with TemporaryEnv() as environ:
+        environ["PYMAGENTO_TOKEN"] = token
+        with pytest.raises(RuntimeError):
+            Magento()
+
+    with TemporaryEnv() as environ:
+        environ["PYMAGENTO_BASE_URL"] = base_url
+        with pytest.raises(RuntimeError):
+            Magento()
+
+        environ["PYMAGENTO_TOKEN"] = token
+        m = Magento()
+        assert m.base_url == base_url
+        assert token in m.headers.get("authorization")
+        assert m.scope == client.DEFAULT_SCOPE
+
+        scope = "abc"
+        environ["PYMAGENTO_SCOPE"] = scope
+        assert Magento().scope == scope
+
+        user_agent = "hello I'm a test"
+        environ["PYMAGENTO_USER_AGENT"] = user_agent
+        assert Magento().headers.get("user-agent") == user_agent

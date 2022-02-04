@@ -8,7 +8,7 @@ python-versions = "*"
 
 [[package]]
 name = "api-session"
-version = "1.1.0"
+version = "1.2.0"
 description = "requests.Session to work with (JSON) APIs"
 category = "main"
 optional = false
@@ -512,7 +512,7 @@ docs = ["Sphinx", "sphinx-rtd-theme"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "3a225c89b5c102aadccf8d6dd4e42e8abccfe5ca85b1019c6e93dd3a4612fb32"
+content-hash = "c748fd457099d2a35000c8b57397d1570f7148fc37d4f426a4fb7fa37fc0f966"
 
 [metadata.files]
 alabaster = [
@@ -520,8 +520,8 @@ alabaster = [
     {file = "alabaster-0.7.12.tar.gz", hash = "sha256:a661d72d58e6ea8a57f7a86e37d86716863ee5e92788398526d58b26a4e4dc02"},
 ]
 api-session = [
-    {file = "api-session-1.1.0.tar.gz", hash = "sha256:f7828137a6afa93bbda93e5cbc18403af37b4893ec3be114ab4ce5862acacea6"},
-    {file = "api_session-1.1.0-py3-none-any.whl", hash = "sha256:897bce78a6bc09d78031182363563e904991cef695fad81f157945319ade881c"},
+    {file = "api-session-1.2.0.tar.gz", hash = "sha256:cc2084f5406baadfddb42d52ed267867e3fedd5d8b2c1a9b82d529e9f164ffa7"},
+    {file = "api_session-1.2.0-py3-none-any.whl", hash = "sha256:95be80a9d592c4906587b1bc4b7d6e09ee0aff7bf75012aad04471b13dd9aebe"},
 ]
 atomicwrites = [
     {file = "atomicwrites-1.4.0-py2.py3-none-any.whl", hash = "sha256:6d1784dea7c0c8d4a5172b6c620f40b6e4cbfdf96d783691f2e1302a7b88e197"},
