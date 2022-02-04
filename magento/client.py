@@ -12,9 +12,7 @@ from magento.version import __version__
 from magento.exceptions import MagentoException
 
 __all__ = (
-    'USER_AGENT', 'DEFAULT_ATTRIBUTE_DICT',
-    'Query',
-    'make_search_query', 'make_field_value_query', 'Magento',
+    'Query', 'make_search_query', 'make_field_value_query', 'Magento',
 )
 
 USER_AGENT = f'Bixoto/PyMagento {__version__} +git.io/JDp0h'

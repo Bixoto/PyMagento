@@ -5,6 +5,7 @@ import requests
 from pytest_mock import MockerFixture
 
 import magento
+# noinspection PyProtectedMember
 from magento.client import make_search_query, make_field_value_query, raise_for_response
 
 
