@@ -1,6 +1,7 @@
 from json.decoder import JSONDecodeError
 from logging import Logger
 import time
+from os import environ
 from typing import Optional, Sequence, Dict, Any, Union, cast, Iterator, Iterable, Tuple, List
 from datetime import timedelta
 from api_session import APISession
@@ -49,6 +50,8 @@ DEFAULT_ATTRIBUTE_DICT = {
     "used_in_product_listing": False,
     "validation_rules": [],
 }
+
+DEFAULT_SCOPE = "all"
 
 Query = Optional[Dict[str, Any]]
 
@@ -155,15 +158,38 @@ class Magento(APISession):
     # default is 4 hours for admin tokens (the ones we use)
     TOKEN_LIFETIME = timedelta(hours=3)
 
-    def __init__(self, token: str, base_url: str, scope="all", logger: Logger = None, log_progress=False, **kwargs):
+    def __init__(self,
+                 token: Optional[str] = None,
+                 base_url: Optional[str] = None,
+                 scope: Optional[str] = None,
+                 logger: Logger = None,
+                 log_progress=False,
+                 read_only=False,
+                 user_agent=None):
         """
+        Create a Magento client instance. All arguments are optional and fall back on environment variables named
+        ``PYMAGENTO_ + argument.upper()`` (``PYMAGENTO_TOKEN``, ``PYMAGENTO_BASE_URL``, etc).
+        The ``token`` and ``base_url`` **must** be given either as arguments or environment variables.
+
         :param token: API integration token
         :param base_url: base URL of the Magento instance
         :param scope: API scope
         :param logger: optional logger.
         :param log_progress: if True, log the progress of get_paginated. This has no effect if logger is not set.
+        :param read_only: if True,
+        :param user_agent: User-Agent
         """
-        super().__init__(base_url=base_url, user_agent=USER_AGENT, **kwargs)
+        token = token or environ.get("PYMAGENTO_TOKEN")
+        base_url = base_url or environ.get("PYMAGENTO_BASE_URL")
+        scope = scope or environ.get("PYMAGENTO_SCOPE") or DEFAULT_SCOPE
+        user_agent = user_agent or environ.get("PYMAGENTO_USER_AGENT") or USER_AGENT
+
+        if token is None:
+            raise RuntimeError("Missing API token")
+        if base_url is None:
+            raise RuntimeError("Missing API base URL")
+
+        super().__init__(base_url=base_url, user_agent=user_agent, read_only=read_only)
 
         self.scope = scope
         self.logger = logger
