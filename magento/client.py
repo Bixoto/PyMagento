@@ -449,16 +449,25 @@ class Magento(APISession):
         return self.delete_api(f"/V1/configurable-products/{parent_sku}/children/{child_sku}", **kwargs)
 
     def save_configurable_product_option(self, sku: Sku, option: MagentoEntity, throw=False):
+        """
+        Save a configurable product option.
+
+        :param sku: SKU of the product
+        :param option: option to save
+        :param throw:
+        :return: `requests.Response` object
+        """
         return self.post_api(f'/V1/configurable-products/{sku}/options', json={"option": option}, throw=throw)
 
     def get_products_attribute_options(self, attribute_code: str) -> Sequence[Dict[str, str]]:
         """
-        Get all options for an products attribute.
+        Get all options for a products attribute.
 
         :param attribute_code:
         :return: sequence of option dicts.
         """
-        return cast(Sequence[Dict[str, str]], self.get_api(f'/V1/products/attributes/{attribute_code}/options').json())
+        response = self.get_api(f'/V1/products/attributes/{attribute_code}/options', throw=True)
+        return cast(Sequence[Dict[str, str]], response.json())
 
     def add_products_attribute_option(self, attribute_code: str, option: Dict[str, str]) -> str:
         """
