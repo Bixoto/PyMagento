@@ -369,18 +369,18 @@ class Magento(APISession):
         """
         return cast(Product, self.put_api(f'/V1/products/{sku}', json={"product": product_data}, throw=True).json())
 
-    def delete_product(self, sku: Sku, skip_missing=False, **kwargs) -> bool:
+    def delete_product(self, sku: Sku, skip_missing=False, throw=True, **kwargs) -> bool:
         """
         Delete a product given its SKU.
 
         :param sku:
         :param skip_missing: if true, don't raise if the product is missing, and return False.
+        :param throw: throw on error response
         :param kwargs: keyword arguments passed to all underlying methods.
         :return: a boolean indicating success.
         """
-        kwargs.setdefault("throw", True)
         try:
-            response = self.delete_api(f'/V1/products/{sku}', **kwargs)
+            response = self.delete_api(f'/V1/products/{sku}', throw=throw, **kwargs)
         except (HTTPError, MagentoException) as e:
             if skip_missing and e.response is not None and e.response.status_code == 404:
                 return False
@@ -418,8 +418,8 @@ class Magento(APISession):
         :return:
         """
         query = make_field_value_query("sku", sku)
-        resp = self.get_api("/V1/inventory/source-items", query, throw=True)
-        return resp.json()["items"]
+        response = self.get_api("/V1/inventory/source-items", query, throw=True)
+        return response.json()["items"]
 
     def set_product_stock_item(self, sku: Sku, quantity: int, is_in_stock=1):
         """
@@ -437,7 +437,7 @@ class Magento(APISession):
 
         :param parent_sku: SKU of the parent product
         :param child_sku: SKU of the child product
-        :return:
+        :return: `requests.Response` object
         """
         return self.post_api(f'/V1/configurable-products/{parent_sku}/child',
                              json={"childSku": child_sku}, **kwargs)
@@ -480,11 +480,11 @@ class Magento(APISession):
         :return: new id
         """
         payload = {"option": option}
-        r = self.post_api(f'/V1/products/attributes/{attribute_code}/options', json=payload, throw=True)
-        ret = cast(str, r.json())
+        response = self.post_api(f'/V1/products/attributes/{attribute_code}/options', json=payload, throw=True)
+        ret = cast(str, response.json())
 
         if ret.startswith("id_"):
-            ret = ret[len("id_"):]
+            ret = ret[3:]
 
         return ret
 
@@ -496,8 +496,8 @@ class Magento(APISession):
         :param option_id:
         :return: boolean
         """
-        r = self.delete_api(f'/V1/products/attributes/{attribute_code}/options/{option_id}', throw=True)
-        return cast(bool, r.json())
+        response = self.delete_api(f'/V1/products/attributes/{attribute_code}/options/{option_id}', throw=True)
+        return cast(bool, response.json())
 
     # Base Prices
     # ===========
@@ -518,7 +518,7 @@ class Magento(APISession):
             >>> self.save_base_prices([{"price": 3.14, "sku": "W1033", "store_id": 0}])
 
         :param prices: base prices to save.
-        :return:
+        :return: `requests.Response` object
         """
         return self.post_api("/V1/products/base-prices", json={"prices": prices})
 
@@ -606,20 +606,20 @@ class Magento(APISession):
             return
         return self.post_api('/V1/inventory/source-items', json={"sourceItems": source_items}, throw=True).json()
 
-    def delete_source_items(self, source_items: Iterable[SourceItem], **kwargs):
+    def delete_source_items(self, source_items: Iterable[SourceItem], throw=True, **kwargs):
         """
         Delete a sequence of source-items. Only the SKU and the source_code are used.
         Note: Magento returns an error if this is called with empty source_items.
 
         :param source_items:
+        :param throw:
         :param kwargs: keyword arguments passed to the underlying POST call.
         :return: requests.Response object
         """
         payload = {
             "sourceItems": [{"sku": s["sku"], "source_code": s["source_code"]} for s in source_items],
         }
-        kwargs.setdefault("throw", True)
-        return self.post_api('/V1/inventory/source-items-delete', json=payload, **kwargs)
+        return self.post_api('/V1/inventory/source-items-delete', json=payload, throw=throw, **kwargs)
 
     def delete_default_source_items(self):
         """
@@ -789,14 +789,13 @@ class Magento(APISession):
     # Attribute
     # =========
 
-    def save_attribute(self, attribute: MagentoEntity, *, with_defaults=True, **kwargs) -> MagentoEntity:
+    def save_attribute(self, attribute: MagentoEntity, *, with_defaults=True, throw=True, **kwargs) -> MagentoEntity:
         if with_defaults:
             base = DEFAULT_ATTRIBUTE_DICT.copy()
             base.update(attribute)
             attribute = base
 
-        kwargs.setdefault("throw", True)
-        return self.post_api('/V1/products/attributes', json={"attribute": attribute}, **kwargs).json()
+        return self.post_api('/V1/products/attributes', json={"attribute": attribute}, throw=throw, **kwargs).json()
 
     def delete_attribute(self, attribute_code: str, **kwargs):
         return self.delete_api(f"/V1/products/attributes/{attribute_code}", **kwargs)
