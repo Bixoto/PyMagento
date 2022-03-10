@@ -7,6 +7,10 @@ BATCH_SIZE = 500
 
 
 class BatchSaver:
+    """
+    Base class to create context managers for asynchronous batches.
+    """
+
     def __init__(self, client: Magento, api_path: str, batch_size=BATCH_SIZE):
         self.client = client
         self.path = api_path
@@ -17,11 +21,18 @@ class BatchSaver:
         self._sent_items = 0
 
     def add_item(self, item_data):
+        """
+        Add an item to the current batch. If it makes the batch large enough, it’s sent to the API and a new empty
+        batch is created.
+        """
         self._batch.append(item_data)
         if len(self._batch) >= BATCH_SIZE:
             self.send_batch()
 
     def send_batch(self):
+        """
+        Send the current pending batch (if any).
+        """
         if not self._batch:
             return
 
@@ -33,6 +44,12 @@ class BatchSaver:
         self._batch = []
 
     def finalize(self):
+        """
+        Send the last pending batch (if any). This doesn’t need to be called when the object is used as a context
+        manager.
+
+        :return: a dictionary with the total number of batches and items
+        """
         self.send_batch()
         return {
             "sent_batches": self._sent_batches,
@@ -47,10 +64,18 @@ class BatchSaver:
 
 
 class ProductBatchSaver(BatchSaver):
+    """
+    Context manager to add products to an asynchronous batch job.
+
+        >>> with ProductBatchSaver() as p:
+        ...     for product_data in ...:
+        ...         p.save_product(product_data)
+    """
+
     def __init__(self, client: Magento, batch_size=BATCH_SIZE):
         super().__init__(client, '/V1/products/bySku', batch_size=batch_size)
 
-    def save_product(self, product_data):
+    def save_product(self, product_data: dict):
         self.add_item({"product": product_data})
 
 
@@ -95,7 +120,7 @@ class ProductBatchGetter(BatchGetter[dict]):
     """
     Get a bunch of products from an iterable of SKUs:
 
-        >>> products = ProductBatchGetter(Magento(...), ["sku1", "sku2", ...])
+        >>> products = ProductBatchGetter(Magento(), ["sku1", "sku2", ...])
         >>> for product in products:
         ...     print(product)
     """

@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* Improve docstrings of `magento.batches`
+
 ## 1.3.1 (2022/03/10)
 
 * Fix `get_products_attribute_options` that wasn’t throwing if it received an error response from Magento.
