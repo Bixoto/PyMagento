@@ -1,5 +1,10 @@
 # PyMagento Changelog
 
+## 1.3.1 (2022/03/10)
+
+* Fix `get_products_attribute_options` that wasn’t throwing if it received an error response from Magento.
+* Improve some docstrings
+
 ## 1.3.0 (2022/02/04)
 
 * Add support for environment variables as a fallback for `Magento()` arguments: `PYMAGENTO_TOKEN`, `PYMAGENTO_BASE_URL`, `PYMAGENTO_SCOPE`, `PYMAGENTO_USER_AGENT`
