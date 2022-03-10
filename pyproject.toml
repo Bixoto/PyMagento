@@ -10,6 +10,11 @@ readme = "README.md"
 packages = [
     {include = "magento"},
 ]
+classifiers = [
+    'License :: OSI Approved :: MIT License',
+    "Development Status :: 5 - Production/Stable",
+    'Programming Language :: Python :: 3',
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
