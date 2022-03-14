@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.3.2 (2022/03/14)
 
 * Improve docstrings of `magento.batches`
 * Add missing search endpoints: `get_carts`, `get_cms_blocks`, `get_cms_pages`, `get_coupons`, `get_customer_groups`,
