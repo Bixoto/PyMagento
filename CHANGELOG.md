@@ -3,6 +3,8 @@
 ## Unreleased
 
 * Improve docstrings of `magento.batches`
+* Add missing search endpoints: `get_carts`, `get_cms_blocks`, `get_cms_pages`, `get_coupons`, `get_customer_groups`,
+  `get_sales_rules`, `get_tax_rates`, `get_tax_rules`
 
 ## 1.3.1 (2022/03/10)
 
@@ -11,7 +13,8 @@
 
 ## 1.3.0 (2022/02/04)
 
-* Add support for environment variables as a fallback for `Magento()` arguments: `PYMAGENTO_TOKEN`, `PYMAGENTO_BASE_URL`, `PYMAGENTO_SCOPE`, `PYMAGENTO_USER_AGENT`
+* Add support for environment variables as a fallback for `Magento()` arguments: `PYMAGENTO_TOKEN`, `PYMAGENTO_BASE_URL`
+  , `PYMAGENTO_SCOPE`, `PYMAGENTO_USER_AGENT`
 * Fix `user_agent` support ([`api-session` 1.1.1][as111])
 
 [as111]: https://github.com/Bixoto/api-session/blob/main/CHANGELOG.md#111-20220204

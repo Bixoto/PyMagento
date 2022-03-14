@@ -741,16 +741,27 @@ class Magento(APISession):
         """Get invoices for the given order id."""
         return self.get_invoices(query=make_field_value_query("order_id", order_id))
 
+    # Sales Rules
+    # ===========
+
+    def get_sales_rules(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all sales rules (generator)."""
+        return self.get_paginated("/V1/salesRules/search", query=query, limit=limit)
+
     # Taxes
     # =====
+
+    def get_tax_classes(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all tax classes (generator)."""
+        return self.get_paginated("/V1/taxClasses/search", query=query, limit=limit)
 
     def get_tax_rates(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
         """Get all tax rates (generator)."""
         return self.get_paginated("/V1/taxRates/search", query=query, limit=limit)
 
-    def get_tax_classes(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
-        """Get all tax classes (generator)."""
-        return self.get_paginated("/V1/taxClasses/search", query=query, limit=limit)
+    def get_tax_rules(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all tax rules (generator)."""
+        return self.get_paginated("/V1/taxRules/search", query=query, limit=limit)
 
     # Attribute Sets
     # ==============
@@ -786,8 +797,8 @@ class Magento(APISession):
     def remove_attribute_set_attribute(self, attribute_set_id: int, attribute_code: str, **kwargs):
         return self.delete_api(f"/V1/products/attribute-sets/{attribute_set_id}/attributes/{attribute_code}", **kwargs)
 
-    # Attribute
-    # =========
+    # Attributes
+    # ==========
 
     def save_attribute(self, attribute: MagentoEntity, *, with_defaults=True, throw=True, **kwargs) -> MagentoEntity:
         if with_defaults:
@@ -819,6 +830,35 @@ class Magento(APISession):
     def get_customer(self, customer_id: int) -> dict:
         """Return a single customer."""
         return self.get_api(f"/V1/customers/{customer_id}", throw=True).json()
+
+    def get_customer_groups(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all customer groups (generator)."""
+        return self.get_paginated("/V1/customerGroups/search", query=query, limit=limit)
+
+    # Carts
+    # =====
+
+    def get_carts(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all carts (generator)."""
+        return self.get_paginated("/V1/carts/search", query=query, limit=limit)
+
+    # Coupons
+    # =======
+
+    def get_coupons(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all coupons (generator)."""
+        return self.get_paginated("/V1/coupons/search", query=query, limit=limit)
+
+    # CMS
+    # ===
+
+    def get_cms_pages(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all CMS pages (generator)."""
+        return self.get_paginated("/V1/cmsPage/search", query=query, limit=limit)
+
+    def get_cms_blocks(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all CMS blocks (generator)."""
+        return self.get_paginated("/V1/cmsBlock/search", query=query, limit=limit)
 
     # Internals
     # =========
