@@ -151,8 +151,8 @@ class Magento(APISession):
     """
     # default batch size for paginated requests
     # Note increasing it doesn’t create a significant time improvement.
-    # For example, as of 2021/03/29, getting 2k products using a page size of 1k in production takes 28s. The same query
-    # with a page size of 2k still takes 26s.
+    # For example, in one test on Bixoto production in 2021, getting 2k products using a page size of 1k took 28s.
+    # The same query with a page size of 2k still took 26s.
     PAGE_SIZE = 1000
 
     # default is 4 hours for admin tokens (the ones we use)
@@ -195,6 +195,193 @@ class Magento(APISession):
         self.logger = logger
         self.log_progress = log_progress if logger else False
         self.headers['Authorization'] = f"Bearer {token}"
+
+    # Attributes
+    # ==========
+
+    def save_attribute(self, attribute: MagentoEntity, *, with_defaults=True, throw=True, **kwargs) -> MagentoEntity:
+        if with_defaults:
+            base = DEFAULT_ATTRIBUTE_DICT.copy()
+            base.update(attribute)
+            attribute = base
+
+        return self.post_api('/V1/products/attributes', json={"attribute": attribute}, throw=throw, **kwargs).json()
+
+    def delete_attribute(self, attribute_code: str, **kwargs):
+        return self.delete_api(f"/V1/products/attributes/{attribute_code}", **kwargs)
+
+    # Attribute Sets
+    # ==============
+
+    def get_attribute_sets(self, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
+        """Get all attribute sets (generator)."""
+        return self.get_paginated("/V1/eav/attribute-sets/list", limit=limit, **kwargs)
+
+    def get_attribute_set_attributes(self, attribute_set_id: int, **kwargs):
+        """Get all attributes for the given attribute set id."""
+        return self.get_json_api(f"/V1/products/attribute-sets/{attribute_set_id}/attributes", **kwargs)
+
+    def assign_attribute_set_attribute(self, attribute_set_id: int, attribute_group_id: int, attribute_code: str,
+                                       sort_order: int = 0, **kwargs):
+        """
+        Assign an attribute to an attribute set.
+
+        :param attribute_set_id: ID of the attribute set.
+        :param attribute_group_id: ID of the attribute group. It must be in the attribute set.
+        :param attribute_code: code of the attribute to add in that attribute group and so in that attribute set.
+        :param sort_order:
+        :param kwargs:
+        :return:
+        """
+        payload = {
+            "attributeCode": attribute_code,
+            "attributeGroupId": attribute_group_id,
+            "attributeSetId": attribute_set_id,
+            "sortOrder": sort_order,
+        }
+        return self.post_api("/V1/products/attribute-sets/attributes", json=payload, **kwargs)
+
+    def remove_attribute_set_attribute(self, attribute_set_id: int, attribute_code: str, **kwargs):
+        return self.delete_api(f"/V1/products/attribute-sets/{attribute_set_id}/attributes/{attribute_code}", **kwargs)
+
+    # Bulk Operations
+    # ===============
+
+    def get_bulk_status(self, bulk_uuid: str) -> MagentoEntity:
+        """
+        Get the status of an async/bulk operation.
+        """
+        return self.get_api(f'/V1/bulk/{bulk_uuid}/status', throw=True).json()
+
+    # Carts
+    # =====
+
+    def get_carts(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all carts (generator)."""
+        return self.get_paginated("/V1/carts/search", query=query, limit=limit)
+
+    # Categories
+    # ==========
+
+    def get_categories(self, query: Query = None) -> Iterable[Category]:
+        """
+        Yield all categories.
+
+        :param query:
+        :return:
+        """
+        return self.get_paginated('/V1/categories/list', query=query)
+
+    def get_category(self, category_id: PathId) -> Optional[Category]:
+        """
+        Return a category given its id.
+
+        :param category_id:
+        :return:
+        """
+        return self.get_json_api(f"/V1/categories/{category_id}")
+
+    def get_category_by_name(self, name: str) -> Optional[Category]:
+        """
+        Return the first category with the given name.
+
+        :param name: exact name of the category
+        :return:
+        """
+        for category in self.get_categories(make_field_value_query("name", name)):
+            return category
+
+        return None
+
+    def update_category(self, category_id: PathId, category_data: Category) -> Category:
+        """
+        Update a category.
+
+        :param category_id:
+        :param category_data: (partial) category data to update
+        :return: updated category
+        """
+        return cast(Category, self.put_api(f'/V1/categories/{category_id}',
+                                           json={"category": category_data}, throw=True).json())
+
+    def create_category(self, category: Category, throw=False):
+        """
+        Create a new category.
+        """
+        return self.post_api('/V1/categories', json={"category": category}, throw=throw)
+
+    # CMS
+    # ===
+
+    def get_cms_pages(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all CMS pages (generator)."""
+        return self.get_paginated("/V1/cmsPage/search", query=query, limit=limit)
+
+    def get_cms_blocks(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all CMS blocks (generator)."""
+        return self.get_paginated("/V1/cmsBlock/search", query=query, limit=limit)
+
+    # Coupons
+    # =======
+
+    def get_coupons(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all coupons (generator)."""
+        return self.get_paginated("/V1/coupons/search", query=query, limit=limit)
+
+    # Customers
+    # =========
+
+    def get_customers(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all customers (generator)."""
+        return self.get_paginated("/V1/customers/search", query=query, limit=limit)
+
+    def get_customer(self, customer_id: int) -> dict:
+        """Return a single customer."""
+        return self.get_api(f"/V1/customers/{customer_id}", throw=True).json()
+
+    def get_customer_groups(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all customer groups (generator)."""
+        return self.get_paginated("/V1/customerGroups/search", query=query, limit=limit)
+
+    # Invoices
+    # ========
+
+    def create_order_invoice(self, order_id: PathId, payload: Optional[dict] = None, notify=True):
+        """
+        Create an invoice for an order.
+
+        See:
+        * https://devdocs.magento.com/guides/v2.4/rest/tutorials/orders/order-create-invoice.html
+        * https://www.rakeshjesadiya.com/create-invoice-using-rest-api-magento-2/
+
+        :param order_id: Order id.
+        :param payload: payload to send to the API.
+        :param notify: if True (default), notify the client. This is overridden by ``payload``.
+        :return:
+        """
+        if payload is None:
+            payload = {}
+
+        payload.setdefault("notify", notify)
+
+        return self.post_api(f"/V1/order/{order_id}/invoice", json=payload, throw=True).json()
+
+    def get_invoice(self, invoice_id: int) -> MagentoEntity:
+        return self.get_api(f"/V1/invoices/{invoice_id}", throw=True).json()
+
+    def get_invoice_by_increment_id(self, increment_id: str) -> Optional[MagentoEntity]:
+        query = make_field_value_query("increment_id", increment_id)
+        for invoice in self.get_invoices(query=query, limit=1):
+            return invoice
+        return None
+
+    def get_invoices(self, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all invoices (generator)."""
+        return self.get_paginated("/V1/invoices", query=query, limit=limit)
+
+    def get_order_invoices(self, order_id: Union[int, str]):
+        """Get invoices for the given order id."""
+        return self.get_invoices(query=make_field_value_query("order_id", order_id))
 
     # Orders
     # ======
@@ -276,6 +463,80 @@ class Magento(APISession):
             payload["ext_order_id"] = external_order_id
 
         return self.save_order(payload)
+
+    # Prices
+    # ======
+
+    # Base Prices
+    # -----------
+
+    def get_base_prices(self, skus: Sequence[Sku]) -> List[MagentoEntity]:
+        """
+        Get base prices for a sequence of SKUs.
+        """
+        return self.post_api("/V1/products/base-prices-information",
+                             json={"skus": skus}, throw=True, bypass_read_only=True).json()
+
+    def save_base_prices(self, prices: Sequence[MagentoEntity]):
+        """
+        Save base prices.
+
+        Example:
+
+            >>> self.save_base_prices([{"price": 3.14, "sku": "W1033", "store_id": 0}])
+
+        :param prices: base prices to save.
+        :return: `requests.Response` object
+        """
+        return self.post_api("/V1/products/base-prices", json={"prices": prices})
+
+    # Special Prices
+    # --------------
+
+    def get_special_prices(self, skus: Sequence[Sku]) -> List[MagentoEntity]:
+        """
+        Get special prices for a sequence of SKUs.
+
+        :param skus:
+        :return:
+        """
+        return self.post_api('/V1/products/special-price-information',
+                             json={"skus": skus}, throw=True, bypass_read_only=True).json()
+
+    def save_special_prices(self, special_prices: Sequence[MagentoEntity]):
+        """
+        Save a sequence of special prices.
+
+        Example:
+            >>> price_from = "2022-01-01 00:00:00"
+            >>> price_to = "2022-01-31 23:59:59"
+            >>> special_price = {"store_id": 0, "sku": "W1033", "price": 2.99, \
+                                 "price_from": price_from, "price_to": price_to}
+            >>> self.save_special_prices([special_price])
+
+        :param special_prices: Special prices to save.
+        :return:
+        """
+        return self.post_api('/V1/products/special-price', json={"prices": special_prices})
+
+    def delete_special_prices(self, special_prices: Sequence[MagentoEntity]):
+        """
+        Delete a sequence of special prices.
+
+        :param special_prices:
+        :return:
+        """
+        return self.post_api('/V1/products/special-price-delete', json={"prices": special_prices})
+
+    def delete_special_prices_by_sku(self, skus: Sequence[Sku]):
+        """
+        Equivalent of `delete_special_prices(get_special_prices(skus))`.
+
+        :param skus:
+        :return:
+        """
+        special_prices = self.get_special_prices(skus)
+        return self.delete_special_prices(special_prices)
 
     # Products
     # ========
@@ -459,6 +720,9 @@ class Magento(APISession):
         """
         return self.post_api(f'/V1/configurable-products/{sku}/options', json={"option": option}, throw=throw)
 
+    # Products Attribute Options
+    # --------------------------
+
     def get_products_attribute_options(self, attribute_code: str) -> Sequence[Dict[str, str]]:
         """
         Get all options for a products attribute.
@@ -499,76 +763,29 @@ class Magento(APISession):
         response = self.delete_api(f'/V1/products/attributes/{attribute_code}/options/{option_id}', throw=True)
         return cast(bool, response.json())
 
-    # Base Prices
+    # Sales Rules
     # ===========
 
-    def get_base_prices(self, skus: Sequence[Sku]) -> List[MagentoEntity]:
+    def get_sales_rules(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all sales rules (generator)."""
+        return self.get_paginated("/V1/salesRules/search", query=query, limit=limit)
+
+    # Shipments
+    # =========
+
+    def get_shipments(self, **kwargs) -> Iterable[MagentoEntity]:
+        """Return shipments."""
+        return self.get_paginated("/V1/shipments", **kwargs)
+
+    def ship_order(self, order_id: PathId, payload: MagentoEntity):
         """
-        Get base prices for a sequence of SKUs.
+        Ship an order.
         """
-        return self.post_api("/V1/products/base-prices-information",
-                             json={"skus": skus}, throw=True, bypass_read_only=True).json()
+        return self.post_api(f'/V1/order/{order_id}/ship', json=payload)
 
-    def save_base_prices(self, prices: Sequence[MagentoEntity]):
-        """
-        Save base prices.
-
-        Example:
-
-            >>> self.save_base_prices([{"price": 3.14, "sku": "W1033", "store_id": 0}])
-
-        :param prices: base prices to save.
-        :return: `requests.Response` object
-        """
-        return self.post_api("/V1/products/base-prices", json={"prices": prices})
-
-    # Special Prices
-    # ==============
-
-    def get_special_prices(self, skus: Sequence[Sku]) -> List[MagentoEntity]:
-        """
-        Get special prices for a sequence of SKUs.
-
-        :param skus:
-        :return:
-        """
-        return self.post_api('/V1/products/special-price-information',
-                             json={"skus": skus}, throw=True, bypass_read_only=True).json()
-
-    def save_special_prices(self, special_prices: Sequence[MagentoEntity]):
-        """
-        Save a sequence of special prices.
-
-        Example:
-            >>> price_from = "2022-01-01 00:00:00"
-            >>> price_to = "2022-01-31 23:59:59"
-            >>> special_price = {"store_id": 0, "sku": "W1033", "price": 2.99, \
-                                 "price_from": price_from, "price_to": price_to}
-            >>> self.save_special_prices([special_price])
-
-        :param special_prices: Special prices to save.
-        :return:
-        """
-        return self.post_api('/V1/products/special-price', json={"prices": special_prices})
-
-    def delete_special_prices(self, special_prices: Sequence[MagentoEntity]):
-        """
-        Delete a sequence of special prices.
-
-        :param special_prices:
-        :return:
-        """
-        return self.post_api('/V1/products/special-price-delete', json={"prices": special_prices})
-
-    def delete_special_prices_by_sku(self, skus: Sequence[Sku]):
-        """
-        Equivalent of `delete_special_prices(get_special_prices(skus))`.
-
-        :param skus:
-        :return:
-        """
-        special_prices = self.get_special_prices(skus)
-        return self.delete_special_prices(special_prices)
+    def get_order_shipments(self, order_id: Union[int, str]):
+        """Get shipments for the given order id."""
+        return self.get_shipments(query=make_field_value_query("order_id", order_id))
 
     # Source Items
     # ============
@@ -634,120 +851,6 @@ class Magento(APISession):
         if source_items:
             return self.delete_source_items(source_items)
 
-    # Categories
-    # ==========
-
-    def get_categories(self, query: Query = None) -> Iterable[Category]:
-        """
-        Yield all categories.
-
-        :param query:
-        :return:
-        """
-        return self.get_paginated('/V1/categories/list', query=query)
-
-    def get_category(self, category_id: PathId) -> Optional[Category]:
-        """
-        Return a category given its id.
-
-        :param category_id:
-        :return:
-        """
-        return self.get_json_api(f"/V1/categories/{category_id}")
-
-    def get_category_by_name(self, name: str) -> Optional[Category]:
-        """
-        Return the first category with the given name.
-
-        :param name: exact name of the category
-        :return:
-        """
-        for category in self.get_categories(make_field_value_query("name", name)):
-            return category
-
-        return None
-
-    def update_category(self, category_id: PathId, category_data: Category) -> Category:
-        """
-        Update a category.
-
-        :param category_id:
-        :param category_data: (partial) category data to update
-        :return: updated category
-        """
-        return cast(Category, self.put_api(f'/V1/categories/{category_id}',
-                                           json={"category": category_data}, throw=True).json())
-
-    def create_category(self, category: Category, throw=False):
-        """
-        Create a new category.
-        """
-        return self.post_api('/V1/categories', json={"category": category}, throw=throw)
-
-    # Shipments
-    # =========
-
-    def get_shipments(self, **kwargs) -> Iterable[MagentoEntity]:
-        """Return shipments."""
-        return self.get_paginated("/V1/shipments", **kwargs)
-
-    def ship_order(self, order_id: PathId, payload: MagentoEntity):
-        """
-        Ship an order.
-        """
-        return self.post_api(f'/V1/order/{order_id}/ship', json=payload)
-
-    def get_order_shipments(self, order_id: Union[int, str]):
-        """Get shipments for the given order id."""
-        return self.get_shipments(query=make_field_value_query("order_id", order_id))
-
-    # Invoices
-    # ========
-
-    def create_order_invoice(self, order_id: PathId, payload: Optional[dict] = None, notify=True):
-        """
-        Create an invoice for an order.
-
-        See:
-        * https://devdocs.magento.com/guides/v2.4/rest/tutorials/orders/order-create-invoice.html
-        * https://www.rakeshjesadiya.com/create-invoice-using-rest-api-magento-2/
-
-        :param order_id: Order id.
-        :param payload: payload to send to the API.
-        :param notify: if True (default), notify the client. This is overridden by ``payload``.
-        :return:
-        """
-        if payload is None:
-            payload = {}
-
-        payload.setdefault("notify", notify)
-
-        return self.post_api(f"/V1/order/{order_id}/invoice", json=payload, throw=True).json()
-
-    def get_invoice(self, invoice_id: int) -> MagentoEntity:
-        return self.get_api(f"/V1/invoices/{invoice_id}", throw=True).json()
-
-    def get_invoice_by_increment_id(self, increment_id: str) -> Optional[MagentoEntity]:
-        query = make_field_value_query("increment_id", increment_id)
-        for invoice in self.get_invoices(query=query, limit=1):
-            return invoice
-        return None
-
-    def get_invoices(self, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
-        """Get all invoices (generator)."""
-        return self.get_paginated("/V1/invoices", query=query, limit=limit)
-
-    def get_order_invoices(self, order_id: Union[int, str]):
-        """Get invoices for the given order id."""
-        return self.get_invoices(query=make_field_value_query("order_id", order_id))
-
-    # Sales Rules
-    # ===========
-
-    def get_sales_rules(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
-        """Get all sales rules (generator)."""
-        return self.get_paginated("/V1/salesRules/search", query=query, limit=limit)
-
     # Taxes
     # =====
 
@@ -762,103 +865,6 @@ class Magento(APISession):
     def get_tax_rules(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
         """Get all tax rules (generator)."""
         return self.get_paginated("/V1/taxRules/search", query=query, limit=limit)
-
-    # Attribute Sets
-    # ==============
-
-    def get_attribute_sets(self, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
-        """Get all attribute sets (generator)."""
-        return self.get_paginated("/V1/eav/attribute-sets/list", limit=limit, **kwargs)
-
-    def get_attribute_set_attributes(self, attribute_set_id: int, **kwargs):
-        """Get all attributes for the given attribute set id."""
-        return self.get_json_api(f"/V1/products/attribute-sets/{attribute_set_id}/attributes", **kwargs)
-
-    def assign_attribute_set_attribute(self, attribute_set_id: int, attribute_group_id: int, attribute_code: str,
-                                       sort_order: int = 0, **kwargs):
-        """
-        Assign an attribute to an attribute set.
-
-        :param attribute_set_id: ID of the attribute set.
-        :param attribute_group_id: ID of the attribute group. It must be in the attribute set.
-        :param attribute_code: code of the attribute to add in that attribute group and so in that attribute set.
-        :param sort_order:
-        :param kwargs:
-        :return:
-        """
-        payload = {
-            "attributeCode": attribute_code,
-            "attributeGroupId": attribute_group_id,
-            "attributeSetId": attribute_set_id,
-            "sortOrder": sort_order,
-        }
-        return self.post_api("/V1/products/attribute-sets/attributes", json=payload, **kwargs)
-
-    def remove_attribute_set_attribute(self, attribute_set_id: int, attribute_code: str, **kwargs):
-        return self.delete_api(f"/V1/products/attribute-sets/{attribute_set_id}/attributes/{attribute_code}", **kwargs)
-
-    # Attributes
-    # ==========
-
-    def save_attribute(self, attribute: MagentoEntity, *, with_defaults=True, throw=True, **kwargs) -> MagentoEntity:
-        if with_defaults:
-            base = DEFAULT_ATTRIBUTE_DICT.copy()
-            base.update(attribute)
-            attribute = base
-
-        return self.post_api('/V1/products/attributes', json={"attribute": attribute}, throw=throw, **kwargs).json()
-
-    def delete_attribute(self, attribute_code: str, **kwargs):
-        return self.delete_api(f"/V1/products/attributes/{attribute_code}", **kwargs)
-
-    # Bulk Operations
-    # ===============
-
-    def get_bulk_status(self, bulk_uuid: str) -> MagentoEntity:
-        """
-        Get the status of an async/bulk operation.
-        """
-        return self.get_api(f'/V1/bulk/{bulk_uuid}/status', throw=True).json()
-
-    # Customers
-    # =========
-
-    def get_customers(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
-        """Get all customers (generator)."""
-        return self.get_paginated("/V1/customers/search", query=query, limit=limit)
-
-    def get_customer(self, customer_id: int) -> dict:
-        """Return a single customer."""
-        return self.get_api(f"/V1/customers/{customer_id}", throw=True).json()
-
-    def get_customer_groups(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
-        """Get all customer groups (generator)."""
-        return self.get_paginated("/V1/customerGroups/search", query=query, limit=limit)
-
-    # Carts
-    # =====
-
-    def get_carts(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
-        """Get all carts (generator)."""
-        return self.get_paginated("/V1/carts/search", query=query, limit=limit)
-
-    # Coupons
-    # =======
-
-    def get_coupons(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
-        """Get all coupons (generator)."""
-        return self.get_paginated("/V1/coupons/search", query=query, limit=limit)
-
-    # CMS
-    # ===
-
-    def get_cms_pages(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
-        """Get all CMS pages (generator)."""
-        return self.get_paginated("/V1/cmsPage/search", query=query, limit=limit)
-
-    def get_cms_blocks(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
-        """Get all CMS blocks (generator)."""
-        return self.get_paginated("/V1/cmsBlock/search", query=query, limit=limit)
 
     # Internals
     # =========
