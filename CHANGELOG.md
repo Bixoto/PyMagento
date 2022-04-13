@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* Deprecate `get_product_source_items(sku)` in favor of `get_source_items(sku=sku)`, which returns exactly the same data
+
 ## 1.3.2 (2022/03/14)
 
 * Improve docstrings of `magento.batches`

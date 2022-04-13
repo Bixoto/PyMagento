@@ -666,21 +666,11 @@ class Magento(APISession):
         payload = [{"product": product_update} for product_update in product_updates]
         return self.put_api('/V1/products/bySku', json=payload, throw=True, async_bulk=True).json()
 
-    def get_product_source_items(self, sku) -> List[SourceItem]:
+    def get_product_source_items(self, sku) -> Iterable[SourceItem]:
         """
-        Return source items of a product.
-
-        Example:
-            >>> client = Magento(...)
-            >>> client.get_product_source_items("S3400160")
-            [{'sku': 'S3400160', 'source_code': 'bigbuy', 'quantity': 218, 'status': 1}]
-
-        :param sku: product SKU
-        :return:
+        Deprecated. Use `.get_source_items(sku=sku)` instead, which is equivalent.
         """
-        query = make_field_value_query("sku", sku)
-        response = self.get_api("/V1/inventory/source-items", query, throw=True)
-        return response.json()["items"]
+        return self.get_source_items(sku=sku)
 
     def set_product_stock_item(self, sku: Sku, quantity: int, is_in_stock=1):
         """
