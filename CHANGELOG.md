@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.3.3 (2022/04/14)
 
 * Deprecate `get_product_source_items(sku)` in favor of `get_source_items(sku=sku)`, which returns exactly the same data
 * Add `get_stock_source_links`, `get_product_stock_item` and `get_product_stock_status` methods
