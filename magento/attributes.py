@@ -66,3 +66,37 @@ def pretty_custom_attributes(custom_attributes: List[Dict[str, Any]]):
         pairs.append(f"{k}={repr(v)}")
 
     return ", ".join(pairs)
+
+
+def set_custom_attribute(item: dict, attribute_code: str, attribute_value: Union[str, int, float, bool, None]):
+    """
+    Set a custom attribute in an item dict.
+
+    For example:
+        >>> set_custom_attribute({}, "my_custom_attribute", 42)
+        >>> set_custom_attribute({}, "my_custom_attribute", False)
+
+    :param item: item dict. It’s modified in-place.
+    :param attribute_code:
+    :param attribute_value:
+    :return: the modified item dict.
+    """
+    if isinstance(attribute_value, bool):
+        serialized_value = "1" if attribute_value else "0"
+    elif attribute_value is None:
+        serialized_value = ""
+    else:
+        serialized_value = str(attribute_value)
+
+    item.setdefault("custom_attributes", [])
+
+    for attribute in item["custom_attributes"]:
+        if attribute["attribute_code"] == attribute_code:
+            attribute["value"] = serialized_value
+            return item
+
+    item["custom_attributes"].append({
+        "attribute_code": attribute_code,
+        "value": serialized_value,
+    })
+    return item
