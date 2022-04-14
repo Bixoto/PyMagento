@@ -682,6 +682,14 @@ class Magento(APISession):
         payload = {"stockItem": {"qty": quantity, "is_in_stock": is_in_stock}}
         return self.put_api(f'/V1/products/{sku}/stockItems/1', json=payload, throw=True)
 
+    def get_product_stock_status(self, sku: Sku) -> MagentoEntity:
+        """Get stock status for an SKU."""
+        return self.get_api(f"/V1/stockStatuses/{sku}", throw=True).json()
+
+    def get_product_stock_item(self, sku: Sku) -> MagentoEntity:
+        """Get the stock item for an SKU."""
+        return self.get_api(f"/V1/stockItems/{sku}", throw=True).json()
+
     def link_child_product(self, parent_sku: Sku, child_sku: Sku, **kwargs) -> requests.Response:
         """
         Link two products, one as the parent of the other.
@@ -696,6 +704,10 @@ class Magento(APISession):
     def unlink_child_product(self, parent_sku: Sku, child_sku: Sku, **kwargs) -> requests.Response:
         """
         Opposite of link_child_product().
+
+        :param parent_sku: SKU of the parent product
+        :param child_sku: SKU of the child product
+        :return: `requests.Response` object
         """
         return self.delete_api(f"/V1/configurable-products/{parent_sku}/children/{child_sku}", **kwargs)
 
@@ -776,6 +788,12 @@ class Magento(APISession):
     def get_order_shipments(self, order_id: Union[int, str]):
         """Get shipments for the given order id."""
         return self.get_shipments(query=make_field_value_query("order_id", order_id))
+
+    # Stock
+    # =====
+
+    def get_stock_source_links(self, query: Query = None) -> Iterable[MagentoEntity]:
+        return self.get_paginated("/V1/inventory/stock-source-links", query=query)
 
     # Source Items
     # ============

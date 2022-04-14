@@ -3,6 +3,8 @@
 ## Unreleased
 
 * Deprecate `get_product_source_items(sku)` in favor of `get_source_items(sku=sku)`, which returns exactly the same data
+* Add `get_stock_source_links`, `get_product_stock_item`, `get_product_stock_status`
+* Document parameters of `unlink_child_product`
 
 ## 1.3.2 (2022/03/14)
 
