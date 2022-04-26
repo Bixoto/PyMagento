@@ -9,7 +9,7 @@ from pytest_mock import MockerFixture
 import magento
 from magento import client
 # noinspection PyProtectedMember
-from magento.client import make_search_query, make_field_value_query, raise_for_response, Magento
+from magento.client import raise_for_response, Magento
 
 
 class TemporaryEnv:
@@ -70,61 +70,6 @@ def test_url(mocker: MockerFixture):
 
     url = m.request_api('get', '/V1/test/url', async_bulk=True).json()["url"]
     assert url == "http://test/rest/toto/async/bulk/V1/test/url", url
-
-
-def test_make_search_query():
-    assert (
-            make_search_query([[("a", 1, "gt"), ("b", 2, "eq")], [("c", 3, None)]],
-                              page_size=12, current_page=4)
-            ==
-            {
-                'searchCriteria[pageSize]': 12,
-                'searchCriteria[currentPage]': 4,
-                'searchCriteria[filter_groups][0][filters][0][field]': 'a',
-                'searchCriteria[filter_groups][0][filters][0][value]': 1,
-                'searchCriteria[filter_groups][0][filters][0][condition_type]': 'gt',
-                'searchCriteria[filter_groups][0][filters][1][field]': 'b',
-                'searchCriteria[filter_groups][0][filters][1][value]': 2,
-                'searchCriteria[filter_groups][0][filters][1][condition_type]': 'eq',
-                'searchCriteria[filter_groups][1][filters][0][field]': 'c',
-                'searchCriteria[filter_groups][1][filters][0][value]': 3, }
-    )
-
-
-def test_make_field_value_query():
-    assert (
-            make_field_value_query("status", "awaiting_shipping", page_size=100)
-            ==
-            {
-                "searchCriteria[filter_groups][0][filters][0][field]": "status",
-                "searchCriteria[filter_groups][0][filters][0][value]": "awaiting_shipping",
-                "searchCriteria[pageSize]": 100
-            }
-    )
-
-    assert (
-            make_field_value_query("source_code", "default", page_size=1, current_page=1)
-            ==
-            {
-                "searchCriteria[filter_groups][0][filters][0][field]": "source_code",
-                "searchCriteria[filter_groups][0][filters][0][value]": "default",
-                "searchCriteria[pageSize]": 1,
-                "searchCriteria[currentPage]": 1
-            }
-    )
-
-    assert (
-            make_field_value_query("source_code", "default",
-                                   condition_type="eq", page_size=34, current_page=42)
-            ==
-            {
-                "searchCriteria[filter_groups][0][filters][0][field]": "source_code",
-                "searchCriteria[filter_groups][0][filters][0][value]": "default",
-                "searchCriteria[filter_groups][0][filters][0][condition_type]": "eq",
-                "searchCriteria[pageSize]": 34,
-                "searchCriteria[currentPage]": 42
-            }
-    )
 
 
 def test_raise_for_response():

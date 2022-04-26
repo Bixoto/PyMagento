@@ -1,13 +1,12 @@
-from magento.client import Magento, make_field_value_query, make_search_query
-from magento.version import __version__
-from magento.exceptions import MagentoException
 from magento.attributes import (
     get_custom_attribute, get_boolean_custom_attribute, get_custom_attributes_dict,
     pretty_custom_attributes, set_custom_attribute
 )
-from magento.order_helpers import (
-    is_order_on_hold, is_order_cash_on_delivery, get_order_shipping_address
-)
+from magento.client import Magento
+from magento.exceptions import MagentoException
+from magento.order_helpers import is_order_on_hold, is_order_cash_on_delivery, get_order_shipping_address
+from magento.queries import Query, make_field_value_query, make_search_query
+from magento.version import __version__
 
 # ids of the default categories in Magento
 ROOT_CATEGORY_ID = 1

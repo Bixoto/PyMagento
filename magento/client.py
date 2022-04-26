@@ -2,7 +2,7 @@ from json.decoder import JSONDecodeError
 from logging import Logger
 import time
 from os import environ
-from typing import Optional, Sequence, Dict, Any, Union, cast, Iterator, Iterable, Tuple, List
+from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List
 from datetime import timedelta
 from api_session import APISession
 import requests
@@ -12,8 +12,10 @@ from magento.types import Product, SourceItem, Sku, Category, MediaEntry, Magent
 from magento.version import __version__
 from magento.exceptions import MagentoException
 
+from magento.queries import Query, make_search_query, make_field_value_query
+
 __all__ = (
-    'Query', 'make_search_query', 'make_field_value_query', 'Magento',
+    'Magento',
 )
 
 USER_AGENT = f'Bixoto/PyMagento {__version__} +git.io/JDp0h'
@@ -53,8 +55,6 @@ DEFAULT_ATTRIBUTE_DICT = {
 
 DEFAULT_SCOPE = "all"
 
-Query = Optional[Dict[str, Any]]
-
 
 def raise_for_response(response: requests.Response):
     """
@@ -74,75 +74,6 @@ def raise_for_response(response: requests.Response):
                                        trace=body.get("trace"), response=response)
 
     response.raise_for_status()
-
-
-def make_search_query(filter_groups: Sequence[Sequence[Tuple[str, Any, Optional[str]]]],
-                      *,
-                      sort_orders: Optional[Sequence[Tuple[str, str]]] = None,
-                      page_size: Optional[int] = None,
-                      current_page: Optional[int] = None):
-    """
-    Build a search query.
-
-    Documentation: https://devdocs.magento.com/guides/v2.4/rest/performing-searches.html
-
-    Filter groups are AND clauses while filters are OR clauses:
-
-        [[("a", 1, "eq"), ("b", 2, "eq")], [("c", 3, "eq")]]
-
-    Means ``(a=1 OR b=2) AND c=3``. There’s no way to do an OR between AND clauses.
-
-    :param filter_groups: sequence of filters. Each filter is a sequence of conditions.
-        Each condition is a tuple of (field, value, condition_type). The condition_type can be None if it's "eq"
-        (the default). See the documentation for the list of possible condition_types.
-    :param sort_orders: sequence of tuples (field, direction) for the sort order.
-    :param page_size:
-    :param current_page:
-    :return:
-    """
-    query_params: Dict[str, Any] = {}
-    if page_size is not None:
-        query_params["searchCriteria[pageSize]"] = page_size
-
-    if current_page is not None:
-        query_params["searchCriteria[currentPage]"] = current_page
-
-    for filter_group_index, filter_group in enumerate(filter_groups):
-        for filter_index, filter_ in enumerate(filter_group):
-            for k, v in (
-                    ("field", filter_[0]),
-                    ("value", filter_[1]),
-                    ("condition_type", filter_[2]),
-            ):
-                # NOTE: from the doc, "condition_type is optional if the operator is eq".
-                if k == "condition_type" and v is None:
-                    continue
-                query_params[f"searchCriteria[filter_groups][{filter_group_index}][filters][{filter_index}][{k}]"] = v
-
-    if sort_orders:
-        for i, (field, direction) in enumerate(sort_orders):
-            query_params[f"searchCriteria[sortOrders][{i}][field]"] = field
-            query_params[f"searchCriteria[sortOrders][{i}][direction]"] = direction
-
-    return query_params
-
-
-def make_field_value_query(field: str, value,
-                           condition_type: Optional[str] = None,
-                           page_size: Optional[int] = None,
-                           current_page: Optional[int] = None):
-    """
-    Create a query params dictionary for Magento. This is a simplified version of ``make_search_query``.
-
-    :param field:
-    :param value:
-    :param condition_type: "eq", "neq", or another.
-        See https://devdocs.magento.com/guides/v2.4/rest/performing-searches.html for the full list.
-    :param page_size:
-    :param current_page:
-    :return:
-    """
-    return make_search_query([[(field, value, condition_type)]], page_size=page_size, current_page=current_page)
 
 
 class Magento(APISession):
