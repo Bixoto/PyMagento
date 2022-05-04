@@ -54,3 +54,19 @@ def test_make_field_value_query():
                 "searchCriteria[currentPage]": 42
             }
     )
+
+    assert (
+            q.make_field_value_query("source_code", "default",
+                                     condition_type="eq", page_size=34, current_page=42,
+                                     sort_orders=[("sku", "desc")])
+            ==
+            {
+                "searchCriteria[filter_groups][0][filters][0][field]": "source_code",
+                "searchCriteria[filter_groups][0][filters][0][value]": "default",
+                "searchCriteria[filter_groups][0][filters][0][condition_type]": "eq",
+                "searchCriteria[pageSize]": 34,
+                "searchCriteria[currentPage]": 42,
+                "searchCriteria[sortOrders][0][field]": "sku",
+                "searchCriteria[sortOrders][0][direction]": "desc",
+            }
+    )

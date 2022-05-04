@@ -1,16 +1,54 @@
+import pytest
+
 from magento import Magento
-from magento.batches import ProductBatchSaver, ProductBatchGetter, BatchGetter
-from magento.client import Query
+from magento.batches import ProductBatchSaver, ProductBatchGetter, BatchGetter, BatchSaver
+from magento.queries import Query
 
 
-def test_product_batch_saver():
-    client = Magento(token="123", base_url="https://example.com", read_only=True, scope="toto")
-    p = ProductBatchSaver(client, [])
-    with p as _:
-        pass
+@pytest.fixture()
+def test_client():
+    return Magento(token="123", base_url="https://example.com", read_only=True, scope="toto")
 
-    assert p._sent_items == 0
-    assert p._sent_batches == 0
+
+def test_batch_saver(test_client):
+    put_batches = []
+
+    class TestBatchSaver(BatchSaver):
+        def _put_batch(self):
+            put_batches.append(self._batch)
+
+    bs = TestBatchSaver(client=test_client, api_path="test", batch_size=4)
+
+    for n in range(15):
+        bs.add_item({"t": n})
+
+    assert bs.finalize() == {"sent_batches": 4, "sent_items": 15}
+
+    bs.send_batch()  # this should be a no-op
+    assert bs.finalize() == {"sent_batches": 4, "sent_items": 15}
+
+    assert put_batches == [
+        [{"t": n} for n in range(4)],
+        [{"t": n} for n in range(4, 8)],
+        [{"t": n} for n in range(8, 12)],
+        [{"t": n} for n in range(12, 15)],
+    ]
+
+
+def test_product_batch_saver(test_client):
+    put_batches = []
+
+    class TestProductBatchSaver(ProductBatchSaver):
+        def _put_batch(self):
+            put_batches.append(self._batch)
+
+    p = TestProductBatchSaver(test_client)
+    with p as p_:
+        p_.save_product({"sku": "A123"})
+
+    assert p._sent_items == 1
+    assert p._sent_batches == 1
+    assert put_batches == [[{"product": {"sku": "A123"}}]]
 
 
 def test_batch_getter():

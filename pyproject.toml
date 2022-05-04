@@ -35,6 +35,14 @@ pytest-cov = "^3.0.0"
 [tool.poetry.extras]
 docs = ["Sphinx", "sphinx-rtd-theme"]
 
+[tool.coverage.report]
+omit = ["tests/*"]
+exclude_lines = [
+    "pragma: nocover",
+    "raise NotImplementedError",
+    "except ImportError:",
+]
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

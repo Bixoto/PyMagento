@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import pytest
 
 from magento import attributes
@@ -86,12 +88,6 @@ def test_get_custom_attributes_dict(product0, product1, product2):
     assert attributes.get_custom_attributes_dict(product2) == {"foo": "bar", "bar": "foo foo"}
 
 
-def test_pretty_custom_attributes(custom_attributes1, custom_attributes2):
-    assert attributes.pretty_custom_attributes([]) == ""
-    assert attributes.pretty_custom_attributes(custom_attributes1) == "foo='bar'"
-    assert attributes.pretty_custom_attributes(custom_attributes2) == "foo='bar', bar='foo foo'"
-
-
 def test_set_custom_attribute_empty_item():
     assert attributes.set_custom_attribute({}, "a", True) == \
            {"custom_attributes": [{"attribute_code": "a", "value": "1"}]}
@@ -110,3 +106,21 @@ def test_set_custom_attribute(product3):
     for attribute in product3["custom_attributes"]:
         product4 = attributes.set_custom_attribute(product4, attribute["attribute_code"], attribute["value"])
     assert product4 == product3
+
+
+def test_set_custom_attributes(product0):
+    attrs = [("a", "a1"), ("b", "b1"), ("a", "a2"), ("a", "a3"), ("c", "c1"), ("d", "d1"), ("c", "c2")]
+
+    expected_dict = OrderedDict([
+        ("a", "a3"),
+        ("b", "b1"),
+        ("c", "c2"),
+        ("d", "d1"),
+    ])
+
+    product = attributes.set_custom_attributes(product0, attrs)
+    assert attributes.get_custom_attributes_dict(product) == expected_dict
+
+    # setting them again doesn't change anything
+    product = attributes.set_custom_attributes(product, attrs)
+    assert attributes.get_custom_attributes_dict(product) == expected_dict
