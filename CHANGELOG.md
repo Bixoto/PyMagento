@@ -3,7 +3,9 @@
 ## 1.3.4 (2022/05/04)
 
 * Fix a bug in `BatchSaver` where the `batch_size` constructor argument was ignored
+* Deprecate `pretty_custom_attributes`; use your own function instead
 * Add `sort_orders` optional argument to `make_field_value_query`
+* `get_custom_attributes_dict` now returns an ordered dictionary
 
 ## 1.3.3 (2022/04/14)
 

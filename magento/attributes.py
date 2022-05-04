@@ -1,7 +1,9 @@
 """
-(Custom) Attributes utilities.
+Custom attributes utilities.
 """
-from typing import Callable, Optional, cast, Dict, Any, Union, Sequence, List
+from collections import OrderedDict
+from typing import Callable, Optional, cast, Dict, Any, Union, Sequence, List, \
+    OrderedDict as OrderedDictType
 
 
 def get_custom_attribute(item: dict, attribute_code: str, coerce_as: Optional[Callable] = None):
@@ -39,33 +41,25 @@ def get_boolean_custom_attribute(item: dict, attribute_code: str) -> Optional[bo
     return cast(Optional[bool], get_custom_attribute(item, attribute_code, coerce_as=bool))
 
 
-def get_custom_attributes_dict(item: Dict[str, Any]) -> Dict[str, Union[Sequence[str], str]]:
+def get_custom_attributes_dict(item: Dict[str, Any]) -> OrderedDictType[str, Union[Sequence[str], str]]:
     """
-    Get all custom attributes from an item as a dict of code->value.
-    :param item:
-    :return: dict
+    Get all custom attributes from an item as an ordered dict of code->value.
     """
-    d = {}
+    d = OrderedDict()
     for attribute in item.get("custom_attributes", []):
         d[attribute["attribute_code"]] = attribute["value"]
 
     return d
 
 
-def pretty_custom_attributes(custom_attributes: List[Dict[str, Any]]):
+def pretty_custom_attributes(custom_attributes: List[Dict[str, Any]]):  # pragma: nocover
     """
-    Return a human-friendly compact representation of a sequence of custom attributes.
-
-    :param custom_attributes:
-    :return:
+    [Deprecated] Return a human-friendly compact representation of a sequence of custom attributes.
     """
-    pairs = []
-    for custom_attribute in custom_attributes:
-        k = custom_attribute["attribute_code"]
-        v = custom_attribute["value"]
-        pairs.append(f"{k}={repr(v)}")
+    attributes = get_custom_attributes_dict({"custom_attributes": custom_attributes})
+    return ", ".join(f"{k}={repr(v)}" for k, v in attributes.items())
 
-    return ", ".join(pairs)
+
 
 
 def set_custom_attribute(item: dict, attribute_code: str, attribute_value: Union[str, int, float, bool, None]):
