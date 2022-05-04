@@ -27,7 +27,7 @@ class BatchSaver:
         batch is created.
         """
         self._batch.append(item_data)
-        if len(self._batch) >= BATCH_SIZE:
+        if len(self._batch) >= self.batch_size:
             self.send_batch()
 
     def send_batch(self):

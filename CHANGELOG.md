@@ -1,5 +1,10 @@
 # PyMagento Changelog
 
+## 1.3.4 (2022/05/04)
+
+* Fix a bug in `BatchSaver` where the `batch_size` constructor argument was ignored
+* 
+
 ## 1.3.3 (2022/04/14)
 
 * Deprecate `get_product_source_items(sku)` in favor of `get_source_items(sku=sku)`, which returns exactly the same data
