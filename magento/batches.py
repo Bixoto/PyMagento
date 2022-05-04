@@ -1,6 +1,7 @@
 from typing import List, Callable, Iterable, TypeVar, Generic
 
-from .client import Magento, make_field_value_query
+from .client import Magento
+from .queries import make_field_value_query
 from .types import MagentoEntity
 
 BATCH_SIZE = 500
@@ -36,12 +37,14 @@ class BatchSaver:
         if not self._batch:
             return
 
-        sent = len(self._batch)
-        # Note this raises on error
-        _resp = self.client.put_api(self.path, json=self._batch, throw=True, async_bulk=True).json()
-        self._sent_items += sent
+        self._put_batch()
+        self._sent_items += len(self._batch)
         self._sent_batches += 1
         self._batch = []
+
+    def _put_batch(self):  # pragma: nocover
+        # Note this raises on error
+        _resp = self.client.put_api(self.path, json=self._batch, throw=True, async_bulk=True).json()
 
     def finalize(self):
         """
