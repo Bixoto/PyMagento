@@ -27,6 +27,7 @@ def make_search_query(filter_groups: Sequence[Sequence[Tuple[str, Any, Optional[
         Each condition is a tuple of (field, value, condition_type). The condition_type can be None if it's "eq"
         (the default). See the documentation for the list of possible condition_types.
     :param sort_orders: sequence of tuples (field, direction) for the sort order.
+        The direction should be "asc" or "desc".
     :param page_size:
     :param current_page:
     :return:
@@ -61,7 +62,9 @@ def make_search_query(filter_groups: Sequence[Sequence[Tuple[str, Any, Optional[
 def make_field_value_query(field: str, value,
                            condition_type: Optional[str] = None,
                            page_size: Optional[int] = None,
-                           current_page: Optional[int] = None):
+                           current_page: Optional[int] = None,
+                           *,
+                           sort_orders: Optional[Sequence[Tuple[str, str]]] = None):
     """
     Create a query params dictionary for Magento. This is a simplified version of ``make_search_query``.
 
@@ -71,6 +74,8 @@ def make_field_value_query(field: str, value,
         See https://devdocs.magento.com/guides/v2.4/rest/performing-searches.html for the full list.
     :param page_size:
     :param current_page:
+    :param sort_orders: sequence of tuples (field, direction) for the sort order.
     :return:
     """
-    return make_search_query([[(field, value, condition_type)]], page_size=page_size, current_page=current_page)
+    return make_search_query([[(field, value, condition_type)]],
+                             page_size=page_size, current_page=current_page, sort_orders=sort_orders)

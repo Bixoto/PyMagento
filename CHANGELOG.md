@@ -3,7 +3,7 @@
 ## 1.3.4 (2022/05/04)
 
 * Fix a bug in `BatchSaver` where the `batch_size` constructor argument was ignored
-* 
+* Add `sort_orders` optional argument to `make_field_value_query`
 
 ## 1.3.3 (2022/04/14)
 
