@@ -29,6 +29,9 @@ client = magento.Magento(base_url="...", token="...", scope="all")
 
 product = client.get_product("SKU123")
 print(magento.get_custom_attribute(product, "description"))
+
+for order in client.get_orders(status="processing"):
+    print(order["increment_id"], order["grand_total"])
 ```
 
 For more information, [read the docs](https://pymagento2.readthedocs.io/).
