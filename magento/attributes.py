@@ -2,7 +2,7 @@
 Custom attributes utilities.
 """
 from collections import OrderedDict
-from typing import Callable, Optional, cast, Dict, Any, Union, Sequence, List, \
+from typing import Callable, Optional, cast, Dict, Any, Union, Sequence, List, Tuple, Iterable, \
     OrderedDict as OrderedDictType
 
 
@@ -60,6 +60,15 @@ def pretty_custom_attributes(custom_attributes: List[Dict[str, Any]]):  # pragma
     return ", ".join(f"{k}={repr(v)}" for k, v in attributes.items())
 
 
+def serialize_attribute_value(value: Union[str, int, float, bool, None]):
+    """
+    Serialize a value to be stored in a Magento attribute.
+    """
+    if isinstance(value, bool):
+        return "1" if value else "0"
+    elif value is None:
+        return ""
+    return str(value)
 
 
 def set_custom_attribute(item: dict, attribute_code: str, attribute_value: Union[str, int, float, bool, None]):
@@ -75,22 +84,35 @@ def set_custom_attribute(item: dict, attribute_code: str, attribute_value: Union
     :param attribute_value:
     :return: the modified item dict.
     """
-    if isinstance(attribute_value, bool):
-        serialized_value = "1" if attribute_value else "0"
-    elif attribute_value is None:
-        serialized_value = ""
-    else:
-        serialized_value = str(attribute_value)
+    return set_custom_attributes(item, [(attribute_code, attribute_value)])
 
-    item.setdefault("custom_attributes", [])
 
-    for attribute in item["custom_attributes"]:
-        if attribute["attribute_code"] == attribute_code:
-            attribute["value"] = serialized_value
-            return item
+def set_custom_attributes(item: dict, attributes: Iterable[Tuple[str, Union[str, int, float, bool, None]]]):
+    """
+    Set custom attributes in an item dict.
+    Like ``set_custom_attribute`` but with an iterable of attributes.
 
-    item["custom_attributes"].append({
-        "attribute_code": attribute_code,
-        "value": serialized_value,
-    })
+    :param item: item dict. It’s modified in-place.
+    :param attributes: iterable of label/value attribute tuples
+    :return: the modified item dict.
+    """
+    item_custom_attributes: List[Dict[str, str]] = item.get("custom_attributes", [])
+
+    attributes_index = {attribute["attribute_code"]: index for index, attribute in enumerate(item_custom_attributes)}
+
+    for attribute_code, attribute_value in attributes:
+        serialized_value = serialize_attribute_value(attribute_value)
+
+        if attribute_code in attributes_index:
+            index = attributes_index[attribute_code]
+            item_custom_attributes[index]["value"] = serialized_value
+        else:
+            attributes_index[attribute_code] = len(item_custom_attributes)
+            item_custom_attributes.append({
+                "attribute_code": attribute_code,
+                "value": serialized_value,
+            })
+
+    item["custom_attributes"] = item_custom_attributes
+
     return item

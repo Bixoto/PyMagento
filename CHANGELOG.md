@@ -4,8 +4,9 @@
 
 * Fix a bug in `BatchSaver` where the `batch_size` constructor argument was ignored
 * Deprecate `pretty_custom_attributes`; use your own function instead
+* Add `set_custom_attributes` and `serialize_attribute_value` functions
 * Add `sort_orders` optional argument to `make_field_value_query`
-* `get_custom_attributes_dict` now returns an ordered dictionary
+* The dictionary returned by `get_custom_attributes_dict` is now ordered
 
 ## 1.3.3 (2022/04/14)
 

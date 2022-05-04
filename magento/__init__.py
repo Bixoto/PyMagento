@@ -1,6 +1,6 @@
 from magento.attributes import (
     get_custom_attribute, get_boolean_custom_attribute, get_custom_attributes_dict,
-    pretty_custom_attributes, set_custom_attribute
+    pretty_custom_attributes, set_custom_attribute, set_custom_attributes, serialize_attribute_value
 )
 from magento.client import Magento
 from magento.exceptions import MagentoException
