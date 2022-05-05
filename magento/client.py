@@ -94,9 +94,11 @@ class Magento(APISession):
                  base_url: Optional[str] = None,
                  scope: Optional[str] = None,
                  logger: Logger = None,
-                 log_progress=False,
                  read_only=False,
-                 user_agent=None):
+                 user_agent=None,
+                 verbose=False,
+                 # Deprecated
+                 log_progress=False):
         """
         Create a Magento client instance. All arguments are optional and fall back on environment variables named
         ``PYMAGENTO_ + argument.upper()`` (``PYMAGENTO_TOKEN``, ``PYMAGENTO_BASE_URL``, etc).
@@ -106,9 +108,10 @@ class Magento(APISession):
         :param base_url: base URL of the Magento instance
         :param scope: API scope
         :param logger: optional logger.
-        :param log_progress: if True, log the progress of get_paginated. This has no effect if logger is not set.
+        :param verbose: if True, log the progress of get_paginated. This has no effect if logger is not set.
         :param read_only: if True,
         :param user_agent: User-Agent
+        :param log_progress: deprecated alias for `verbose`.
         """
         token = token or environ.get("PYMAGENTO_TOKEN")
         base_url = base_url or environ.get("PYMAGENTO_BASE_URL")
@@ -122,9 +125,12 @@ class Magento(APISession):
 
         super().__init__(base_url=base_url, user_agent=user_agent, read_only=read_only)
 
+        if log_progress:
+            verbose = True
+
         self.scope = scope
         self.logger = logger
-        self.log_progress = log_progress if logger else False
+        self.verbose = verbose if logger else False
         self.headers['Authorization'] = f"Bearer {token}"
 
     # Attributes
@@ -885,7 +891,7 @@ class Magento(APISession):
             total_count = res["total_count"]
 
             for item in items:
-                if self.log_progress and self.logger and count and count % 1000 == 0:
+                if self.verbose and self.logger and count and count % 1000 == 0:
                     self.logger.info(f'loaded {count} items')
                 yield item
                 count += 1
