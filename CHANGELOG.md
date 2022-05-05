@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+* Add `magento.format_datetime`
 * Rename the parameter `log_progress` to `verbose`. Keep `log_progress` as an alias for backward compatibility.
 
 ## 1.3.4 (2022/05/04)

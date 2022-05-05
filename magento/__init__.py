@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from magento.attributes import (
     get_custom_attribute, get_boolean_custom_attribute, get_custom_attributes_dict,
     pretty_custom_attributes, set_custom_attribute, set_custom_attributes, serialize_attribute_value
@@ -23,3 +25,9 @@ VISIBILITY_NOT_VISIBLE = 1
 # https://magento.stackexchange.com/q/10693/92968
 ENABLED_PRODUCT = 1
 DISABLED_PRODUCT = 2
+
+
+def format_datetime(dt: datetime):
+    """Format a datetime for Magento."""
+    # "2021-07-02 13:19:18.300700" -> "2021-07-02 13:19:18"
+    return dt.isoformat(sep=" ").split(".", 1)[0]
