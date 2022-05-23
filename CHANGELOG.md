@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.4.0 (2022/05/23)
 
 * `get_order_shipping_address` now return a reference to the shipping address instead of a modified copy. This is a
   breaking change if you relied on this value to be a copy of the shipping address.

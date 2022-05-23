@@ -394,7 +394,7 @@ class Magento(APISession):
         payload = {
             "entity_id": order["entity_id"],
             "status": status,
-            "increment_id": order["increment_id"],  # we need to repeat increment_id or it is regenerated
+            "increment_id": order["increment_id"],  # we need to repeat increment_id, otherwise it is regenerated
         }
         if external_order_id is not None:
             payload["ext_order_id"] = external_order_id
