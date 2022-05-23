@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* `get_order_shipping_address` now return a reference to the shipping address instead of a modified copy. This is a
+  breaking change if you relied on this value to be a copy of the shipping address.
 * Add `magento.format_datetime`
 * Rename the parameter `log_progress` to `verbose`. Keep `log_progress` as an alias for backward compatibility.
 

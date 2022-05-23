@@ -21,10 +21,9 @@ def is_order_cash_on_delivery(order: Order):
 
 
 def get_order_shipping_address(order: Order) -> Dict[str, Any]:
-    """Return the first shipping address of an order."""
-    shipping_address = order["extension_attributes"]["shipping_assignments"][0]["shipping"]["address"]
-    return {
-        # customers tend to add trailing spaces to some fields
-        field: value.strip() if isinstance(value, str) else value
-        for field, value in shipping_address.items()
-    }
+    """
+    Return the first shipping address of an order.
+    Note the returned dict is a reference, so if you modify it, it modifies the order.
+    Make a copy if you want to modify the address without affecting the order.
+    """
+    return order["extension_attributes"]["shipping_assignments"][0]["shipping"]["address"]

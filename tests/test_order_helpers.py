@@ -32,4 +32,7 @@ def test_get_order_shipping_address():
             ]
         }
     }
-    assert magento.get_order_shipping_address(order) == {"city": "Barcelona", "postcode": "12345"}
+    address = magento.get_order_shipping_address(order)
+    assert address == {"city": "Barcelona  ", "postcode": " 12345"}
+    address["city"] = "Madrid"
+    assert magento.get_order_shipping_address(order) == address
