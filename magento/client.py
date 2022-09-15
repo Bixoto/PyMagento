@@ -702,6 +702,15 @@ class Magento(APISession):
         response = self.delete_api(f'/V1/products/attributes/{attribute_code}/options/{option_id}', throw=True)
         return cast(bool, response.json())
 
+    # Aliases
+    # -------
+
+    def get_manufacturers(self):
+        """
+        Shortcut for `.get_products_attribute_options("manufacturer")`.
+        """
+        return self.get_products_attribute_options("manufacturer")
+
     # Sales Rules
     # ===========
 

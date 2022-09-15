@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* Add `Magento#get_manufacturers` as a shortcut for `Magento#get_products_attribute_options("manufacturer")`
+
 ## 1.4.0 (2022/05/23)
 
 * `get_order_shipping_address` now return a reference to the shipping address instead of a modified copy. This is a
