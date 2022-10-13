@@ -1,10 +1,11 @@
-from typing import Dict, Any, Union
+from typing import Union
+from api_session import JSONDict
 
 __all__ = (
     'MagentoEntity', 'Order', 'Product', 'Category', 'MediaEntry', 'SourceItem', 'Sku', 'PathId',
 )
 
-MagentoEntity = Dict[str, Any]
+MagentoEntity = JSONDict
 Order = MagentoEntity
 Product = MagentoEntity
 Category = MagentoEntity
