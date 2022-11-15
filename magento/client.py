@@ -401,6 +401,13 @@ class Magento(APISession):
 
         return self.save_order(payload)
 
+    # Credit Memos
+    # ============
+
+    def get_credit_memos(self, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all credit memos (generator)."""
+        return self.get_paginated("/V1/creditmemos", query=query, limit=limit)
+
     # Prices
     # ======
 
@@ -819,6 +826,13 @@ class Magento(APISession):
     def get_tax_rules(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
         """Get all tax rules (generator)."""
         return self.get_paginated("/V1/taxRules/search", query=query, limit=limit)
+
+    # Modules
+    # =======
+
+    def get_modules(self, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+        """Get all enabled modules (generator)."""
+        return self.get_paginated("/V1/modules", query=query, limit=limit)
 
     # Internals
     # =========

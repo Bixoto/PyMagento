@@ -3,6 +3,7 @@
 ## Unreleased
 
 * Add `Magento#get_manufacturers` as a shortcut for `Magento#get_products_attribute_options("manufacturer")`
+* Add `get_credit_memos` and `get_modules`
 
 ## 1.4.0 (2022/05/23)
 
