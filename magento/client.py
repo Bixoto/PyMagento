@@ -546,7 +546,7 @@ class Magento(APISession):
     def delete_product_media(self, sku: Sku, media_id: PathId, throw=False):
         return self.delete_api(f'/V1/products/{sku}/media/{media_id}', throw=throw)
 
-    def save_product(self, product, log_response=False) -> Product:
+    def save_product(self, product, *, log_response=False) -> Product:
         """
         Save a product.
 
