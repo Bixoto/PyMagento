@@ -38,4 +38,4 @@ For more information, [read the docs](https://pymagento2.readthedocs.io/).
 
 ## License
 
-Copyright 2020-2022 [Bixoto](https://bixoto.com/).
+Copyright 2020-2023 [Bixoto](https://bixoto.com/).
