@@ -93,7 +93,7 @@ class Magento(APISession):
                  token: Optional[str] = None,
                  base_url: Optional[str] = None,
                  scope: Optional[str] = None,
-                 logger: Logger = None,
+                 logger: Optional[Logger] = None,
                  read_only=False,
                  user_agent=None,
                  verbose=False,

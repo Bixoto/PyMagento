@@ -7,6 +7,7 @@
 * `save_product`: `log_response` must now be passed as a keyword argument. Before you could use
   `.save_product(p, True)`; now you muse use `.save_product(p, log_response=True)`.
 * `get_source_items` can now take a list of `skus` instead of a single one
+* Fix type hint of the `logger` parameter of the constructor of `Magento`
 
 ## 1.4.0 (2022/05/23)
 
