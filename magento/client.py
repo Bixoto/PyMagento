@@ -752,22 +752,27 @@ class Magento(APISession):
     # ============
 
     def get_source_items(self, source_code: Optional[str] = None, sku: Optional[str] = None,
-                         *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+                         *,
+                         skus: Optional[Iterable[str]] = None,
+                         query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
         """
         Return a generator of all source items.
 
         :param source_code: optional source_code to filter on. This takes precedence over the query parameter.
-        :param sku: option SKU to filter on. This takes precedence over the query parameter.
+        :param sku: optional SKU to filter on. This takes precedence over the query and the skus parameter.
+        :param skus: optional SKUs list to filter on. This takes precedence of the query parameter.
         :param query: optional query.
         :param limit: -1 for unlimited.
         :return:
         """
-        if source_code or sku:
+        if source_code or sku or skus:
             filter_groups = []
             if source_code:
                 filter_groups.append([("source_code", source_code, "eq")])
             if sku:
                 filter_groups.append([("sku", sku, "eq")])
+            elif skus:
+                filter_groups.append([("sku", ",".join(skus), "in")])
 
             query = make_search_query(filter_groups)
 
