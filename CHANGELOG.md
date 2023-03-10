@@ -2,11 +2,19 @@
 
 ## 1.5.0 (Unreleased)
 
-* Add `get_manufacturers` as a shortcut for `get_products_attribute_options("manufacturer")`
-* Add `get_credit_memos` and `get_modules`
-* `save_product`: `log_response` must now be passed as a keyword argument. Before you could use
+### Breaking changes
+
+* `save_product`: `log_response` must now be passed as a keyword argument. Before, you could use
   `.save_product(p, True)`; now you muse use `.save_product(p, log_response=True)`.
+* `update_product`’s second argument is now called `product` instead of `product_data` to be consistent with
+  `save_product`.
+
+### Other changes
+
+* Add `get_credit_memos` and `get_modules`
+* Add `get_manufacturers` as a shortcut for `get_products_attribute_options("manufacturer")`
 * `get_source_items` can now take a list of `skus` instead of a single one
+* `save_product` and `update_product` now accept an optional `save_options` boolean
 * Fix type hint of the `logger` parameter of the constructor of `Magento`
 
 ## 1.4.0 (2022/05/23)

@@ -4,7 +4,7 @@ import time
 from os import environ
 from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List
 from datetime import timedelta
-from api_session import APISession
+from api_session import APISession, JSONDict
 import requests
 from requests.exceptions import HTTPError
 
@@ -546,33 +546,47 @@ class Magento(APISession):
     def delete_product_media(self, sku: Sku, media_id: PathId, throw=False):
         return self.delete_api(f'/V1/products/{sku}/media/{media_id}', throw=throw)
 
-    def save_product(self, product, *, log_response=False) -> Product:
+    def save_product(self, product, *, log_response=False, save_options: Optional[bool] = None) -> Product:
         """
         Save a product.
 
         :param product: (partial) product to save.
         :param log_response: if True and ``self.logger`` is set, log the response.
+        :param save_options: set the `saveOptions` attribute.
         :return:
         """
+        payload: JSONDict = {"product": product}
+        if save_options is not None:
+            payload["saveOptions"] = save_options
+
         # throw=False so the log is printed before we raise
-        resp = self.post_api('/V1/products', json={"product": product}, throw=False)
+        resp = self.post_api('/V1/products', json=payload, throw=False)
         if log_response and self.logger:
             self.logger.info("Save product response: %s", resp.text)
         raise_for_response(resp)
         return cast(Product, resp.json())
 
-    def update_product(self, sku: Sku, product_data: Product) -> Product:
+    def update_product(self, sku: Sku, product: Product, *, save_options: Optional[bool] = None) -> Product:
         """
         Update a product.
 
         Example:
             >>> Magento().update_product("SK1234", {"name": "My New Name"})
 
+        To update the SKU of a product, pass its id along the new SKU and set `save_options=True`:
+
+            >>> Magento().update_product("old-sku", {"id": 123, "sku": "new-sku"}, save_options=True)
+
         :param sku: SKU of the product to update
-        :param product_data: (partial) product data to update
+        :param product: (partial) product data to update
+        :param save_options: set the `saveOptions` attribute.
         :return: updated product
         """
-        return cast(Product, self.put_api(f'/V1/products/{sku}', json={"product": product_data}, throw=True).json())
+        payload: JSONDict = {"product": product}
+        if save_options is not None:
+            payload["saveOptions"] = save_options
+
+        return cast(Product, self.put_api(f'/V1/products/{sku}', json=payload, throw=True).json())
 
     def delete_product(self, sku: Sku, skip_missing=False, throw=True, **kwargs) -> bool:
         """
