@@ -10,7 +10,7 @@ from requests.exceptions import HTTPError
 
 from magento.types import Product, SourceItem, Sku, Category, MediaEntry, MagentoEntity, Order, PathId
 from magento.version import __version__
-from magento.exceptions import MagentoException
+from magento.exceptions import MagentoException, MagentoAssertionError
 
 from magento.queries import Query, make_search_query, make_field_value_query
 
@@ -504,7 +504,7 @@ class Magento(APISession):
         """
         Get a single product. Return ``None`` if it doesn’t exist.
 
-        :param sku:
+        :param sku: SKU of the product
         :return:
         """
         return self.get_json_api(f'/V1/products/{sku}')
@@ -513,13 +513,34 @@ class Magento(APISession):
         """
         Get a product given its id. Return ``None`` if the product doesn’t exist.
 
-        :param product_id:
+        :param product_id: ID of the product
         :return:
         """
         query = make_field_value_query("entity_id", product_id)
         for product in self.get_products(query=query, limit=1):
             return product
         return None
+
+    def get_product_by_query(self, query: Query, *, expect_one=True) -> Optional[Product]:
+        """
+        Get a product with a custom query. Return ``None`` if the query doesn’t return match any product, and raise
+        an exception if it returns more than one, unless ``expect_one`` is set to ``False``.
+
+        :param query:
+        :param expect_one: if True (the default), raise an exception if the query returns more than one result.
+        :return:
+        """
+        if not expect_one:
+            for product in self.get_products(query=query, limit=1):
+                return product
+            return None
+
+        products = list(self.get_products(query=query, limit=2))
+        if not products:
+            return None
+        if len(products) == 1:
+            return products[0]
+        raise MagentoAssertionError("Got more than one product for query %r" % query)
 
     def get_product_medias(self, sku: Sku) -> Sequence[MediaEntry]:
         """

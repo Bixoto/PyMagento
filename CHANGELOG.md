@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* Add `get_product_by_query`
+
 ## 1.5.0 (2023/03/10)
 
 ### Breaking changes

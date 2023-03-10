@@ -40,3 +40,12 @@ class MagentoException(Exception):
 
         text = build_exception_text(message, parameters)
         super().__init__(text)
+
+
+class MagentoAssertionError(AssertionError):
+    """
+    Exception raised by ``Magento#get_product_by_query`` when the query returns more than one product.
+
+    This exception doesn’t inherit from ``MagentoException`` because it’s not a Magento error per se.
+    """
+    pass
