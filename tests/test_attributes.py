@@ -42,6 +42,12 @@ def product3(custom_attributes3):
     return {"custom_attributes": custom_attributes3}
 
 
+def test_serialize_attribute_value_none():
+    assert attributes.serialize_attribute_value(None) == ""
+    assert attributes.serialize_attribute_value(None, force_none=False) == ""
+    assert attributes.serialize_attribute_value(None, force_none=True) is None
+
+
 def test_get_custom_attribute(product0, product1, product2):
     assert attributes.get_custom_attribute(product0, "foo") is None
     assert attributes.get_custom_attribute(product1, "idontexist") is None
@@ -95,6 +101,8 @@ def test_set_custom_attribute_empty_item():
            {"custom_attributes": [{"attribute_code": "a", "value": "0"}]}
     assert attributes.set_custom_attribute({}, "a", None) == \
            {"custom_attributes": [{"attribute_code": "a", "value": ""}]}
+    assert attributes.set_custom_attribute({}, "a", None, force_none=True) == \
+           {"custom_attributes": [{"attribute_code": "a", "value": None}]}
     assert attributes.set_custom_attribute({}, "a", 42) == \
            {"custom_attributes": [{"attribute_code": "a", "value": "42"}]}
     assert attributes.set_custom_attribute({}, "a", "b") == \

@@ -60,18 +60,21 @@ def pretty_custom_attributes(custom_attributes: List[Dict[str, Any]]):  # pragma
     return ", ".join(f"{k}={repr(v)}" for k, v in attributes.items())
 
 
-def serialize_attribute_value(value: Union[str, int, float, bool, None]):
+def serialize_attribute_value(value: Union[str, int, float, bool, None], force_none=False):
     """
     Serialize a value to be stored in a Magento attribute.
     """
     if isinstance(value, bool):
         return "1" if value else "0"
     elif value is None:
+        if force_none:
+            return None
         return ""
     return str(value)
 
 
-def set_custom_attribute(item: dict, attribute_code: str, attribute_value: Union[str, int, float, bool, None]):
+def set_custom_attribute(item: dict, attribute_code: str, attribute_value: Union[str, int, float, bool, None],
+                         *, force_none=False):
     """
     Set a custom attribute in an item dict.
 
@@ -82,18 +85,22 @@ def set_custom_attribute(item: dict, attribute_code: str, attribute_value: Union
     :param item: item dict. It’s modified in-place.
     :param attribute_code:
     :param attribute_value:
+    :param force_none: by default, the attribute value ``None`` is serialized as an empty string. Setting this parameter
+      to ``True`` forces this attribute value to ``None`` instead. This can be used to delete attributes.
     :return: the modified item dict.
     """
-    return set_custom_attributes(item, [(attribute_code, attribute_value)])
+    return set_custom_attributes(item, [(attribute_code, attribute_value)], force_none=force_none)
 
 
-def set_custom_attributes(item: dict, attributes: Iterable[Tuple[str, Union[str, int, float, bool, None]]]):
+def set_custom_attributes(item: dict, attributes: Iterable[Tuple[str, Union[str, int, float, bool, None]]],
+                          *, force_none=False):
     """
     Set custom attributes in an item dict.
     Like ``set_custom_attribute`` but with an iterable of attributes.
 
     :param item: item dict. It’s modified in-place.
     :param attributes: iterable of label/value attribute tuples
+    :param force_none: see ``set_custom_attribute`` for usage.
     :return: the modified item dict.
     """
     item_custom_attributes: List[Dict[str, str]] = item.get("custom_attributes", [])
@@ -101,7 +108,7 @@ def set_custom_attributes(item: dict, attributes: Iterable[Tuple[str, Union[str,
     attributes_index = {attribute["attribute_code"]: index for index, attribute in enumerate(item_custom_attributes)}
 
     for attribute_code, attribute_value in attributes:
-        serialized_value = serialize_attribute_value(attribute_value)
+        serialized_value = serialize_attribute_value(attribute_value, force_none=force_none)
 
         if attribute_code in attributes_index:
             index = attributes_index[attribute_code]

@@ -3,6 +3,9 @@
 ## Unreleased
 
 * Add `get_product_by_query`
+* `set_custom_attributes`, `set_custom_attribute` and `serialize_attribute_value` now support an optional
+  `force_none=True` to prevent `None` values from being serialized as empty string. This can be useful to erase
+  attributes.
 
 ## 1.5.0 (2023/03/10)
 
