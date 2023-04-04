@@ -4,7 +4,7 @@ from typing import List, Optional, Union, Dict, cast
 
 RE_PARAM = re.compile(r"%([A-Za-z0-9]+)")
 
-__all__ = ('build_exception_text', 'MagentoException')
+__all__ = ('build_exception_text', 'MagentoException', 'MagentoAssertionError')
 
 
 def build_exception_text(message: str, parameters: Optional[Union[Dict[str, str], List[str]]]):

@@ -6,6 +6,7 @@
 * `set_custom_attributes`, `set_custom_attribute` and `serialize_attribute_value` now support an optional
   `force_none=True` to prevent `None` values from being serialized as empty string. This can be useful to erase
   attributes.
+* `MagentoAssertionError` is now accessible from the `magento` module (`magento.MagentoAssertionError`)
 
 ## 1.5.0 (2023/03/10)
 

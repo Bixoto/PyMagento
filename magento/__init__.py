@@ -5,7 +5,7 @@ from magento.attributes import (
     pretty_custom_attributes, set_custom_attribute, set_custom_attributes, serialize_attribute_value
 )
 from magento.client import Magento
-from magento.exceptions import MagentoException
+from magento.exceptions import MagentoException, MagentoAssertionError
 from magento.order_helpers import is_order_on_hold, is_order_cash_on_delivery, get_order_shipping_address
 from magento.queries import Query, make_field_value_query, make_search_query
 from magento.version import __version__
