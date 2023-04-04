@@ -7,8 +7,6 @@
 # -- Path setup --------------------------------------------------------------
 
 import sys
-import os
-
 from os.path import dirname
 
 here = dirname(__file__)
@@ -20,7 +18,8 @@ import magento
 # -- Project information -----------------------------------------------------
 
 project = 'PyMagento'
-copyright = '2022, Bixoto'
+# noinspection PyShadowingBuiltins
+copyright = '2020-2023, Bixoto'
 author = 'Bixoto'
 
 # The full version, including alpha/beta/rc tags
@@ -32,6 +31,7 @@ release = magento.__version__
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+# noinspection SpellCheckingInspection
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',

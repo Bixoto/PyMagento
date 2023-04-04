@@ -56,11 +56,11 @@ def test_batch_getter():
         assert limit == 2
         assert isinstance(query, dict)
         assert query['searchCriteria[filter_groups][0][filters][0][condition_type]'] == 'in'
-        assert query['searchCriteria[filter_groups][0][filters][0][field]'] == 'myfield'
+        assert query['searchCriteria[filter_groups][0][filters][0][field]'] == 'my_field'
         values = [int(n) for n in query['searchCriteria[filter_groups][0][filters][0][value]'].split(",")]
         return (value * 2 for value in values)
 
-    bg = BatchGetter(dummy_getter, "myfield", range(20), batch_size=2)
+    bg = BatchGetter(dummy_getter, "my_field", range(20), batch_size=2)
     assert list(bg) == list(range(0, 40, 2))
 
 

@@ -13,7 +13,7 @@ def build_exception_text(message: str, parameters: Optional[Union[Dict[str, str]
 
     # Magento sometimes return a dict, sometimes a list.
     # For example:
-    #   message = 'Se requiere "%fieldName".'
+    #   message = "%fieldName is a required field."
     #   parameters = {"fieldName":"product"}
     if isinstance(parameters, dict):
         return cast(str, RE_PARAM.sub(lambda m: str(parameters[m.group(1)]), message))  # type: ignore

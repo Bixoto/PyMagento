@@ -50,8 +50,8 @@ def test_serialize_attribute_value_none():
 
 def test_get_custom_attribute(product0, product1, product2):
     assert attributes.get_custom_attribute(product0, "foo") is None
-    assert attributes.get_custom_attribute(product1, "idontexist") is None
-    assert attributes.get_custom_attribute(product2, "idontexist") is None
+    assert attributes.get_custom_attribute(product1, "i-dont-exist") is None
+    assert attributes.get_custom_attribute(product2, "i-dont-exist") is None
     assert attributes.get_custom_attribute(product1, "foo") == "bar"
 
     product = {
@@ -82,7 +82,7 @@ def test_get_custom_attribute(product0, product1, product2):
     assert not attributes.get_custom_attribute(product, "false", bool)
 
 
-def test_get_boolean_custom_attribute(product0, product1, product2, product3):
+def test_get_boolean_custom_attribute(product0, product3):
     assert attributes.get_boolean_custom_attribute(product0, "foo") is None
     assert attributes.get_boolean_custom_attribute(product3, "yes") is True
     assert attributes.get_boolean_custom_attribute(product3, "nope") is False
