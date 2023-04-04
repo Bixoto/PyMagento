@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.5.1 (2023/04/04)
 
 * Add `get_product_by_query`
 * `set_custom_attributes`, `set_custom_attribute` and `serialize_attribute_value` now support an optional
