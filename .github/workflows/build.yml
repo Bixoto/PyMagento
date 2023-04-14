@@ -27,7 +27,7 @@ jobs:
           poetry install
       - name: Lint with Mypy
         run: |
-          poetry run mypy *.py magento tests
+          poetry run mypy --check-untyped-defs *.py magento tests
       - name: Run Tests
         run: |
           poetry run pytest --cov=magento

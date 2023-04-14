@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from typing import Any, Dict
 
 import pytest
 
@@ -60,6 +61,7 @@ def test_get_custom_attribute(product0, product1, product2):
             {"attribute_code": "float", "value": "3.14"},
             {"attribute_code": "true", "value": "1"},
             {"attribute_code": "false", "value": "0"},
+            {"attribute_code": "category_ids", "value": ["1", "2", "3"]},
         ]
     }
 
@@ -80,6 +82,9 @@ def test_get_custom_attribute(product0, product1, product2):
     assert attributes.get_custom_attribute(product, "false") == "0"
     assert attributes.get_custom_attribute(product, "false", int) == 0
     assert not attributes.get_custom_attribute(product, "false", bool)
+
+    assert attributes.get_custom_attribute(product, "category_ids") == ["1", "2", "3"]
+    assert attributes.get_custom_attribute(product, "category_ids", int) == [1, 2, 3]
 
 
 def test_get_boolean_custom_attribute(product0, product3):
@@ -110,7 +115,7 @@ def test_set_custom_attribute_empty_item():
 
 
 def test_set_custom_attribute(product3):
-    product4 = {}
+    product4: Dict[str, Any] = {}
     for attribute in product3["custom_attributes"]:
         product4 = attributes.set_custom_attribute(product4, attribute["attribute_code"], attribute["value"])
     assert product4 == product3

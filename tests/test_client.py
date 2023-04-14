@@ -1,5 +1,6 @@
 import json
 from collections import ChainMap
+from typing import Dict, cast
 from unittest import mock
 
 import pytest
@@ -14,9 +15,9 @@ from magento.client import raise_for_response, Magento
 
 class TemporaryEnv:
     def __enter__(self):
-        temporary_env = {}
+        temporary_env: Dict[str, str] = {}
         self._environ = client.environ
-        client.environ = ChainMap(temporary_env, client.environ)
+        client.environ = ChainMap(temporary_env, client.environ)  # type: ignore[assignment]
         return temporary_env
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -99,7 +100,7 @@ def test_client_env():
         environ["PYMAGENTO_TOKEN"] = token
         m = Magento()
         assert m.base_url == base_url
-        assert token in m.headers.get("authorization")
+        assert token in m.headers.get("authorization", "")
         assert m.scope == client.DEFAULT_SCOPE
 
         scope = "abc"
