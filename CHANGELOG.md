@@ -3,6 +3,7 @@
 ## Unreleased
 
 * Remove `pretty_custom_attributes` (deprecated since 1.3.4)
+* `get_custom_attribute`: add a more precise type hint on the return type
 
 ## 1.5.1 (2023/04/04)
 

@@ -3,10 +3,23 @@ Custom attributes utilities.
 """
 from collections import OrderedDict
 from typing import Callable, Optional, cast, Dict, Any, Union, Sequence, List, Tuple, Iterable, \
-    OrderedDict as OrderedDictType
+    OrderedDict as OrderedDictType, overload, TypeVar
+
+T = TypeVar('T')
 
 
-def get_custom_attribute(item: dict, attribute_code: str, coerce_as: Optional[Callable] = None):
+@overload
+def get_custom_attribute(item: dict, attribute_code: str,
+                         coerce_as: Callable[[str], T]) -> Optional[T]:
+    ...
+
+
+@overload
+def get_custom_attribute(item: dict, attribute_code: str) -> Optional[str]:
+    ...
+
+
+def get_custom_attribute(item, attribute_code, coerce_as=None):
     """
     Get a custom attribute from an item given its code.
 
@@ -32,6 +45,7 @@ def get_custom_attribute(item: dict, attribute_code: str, coerce_as: Optional[Ca
                     return bool(int(value))
                 return coerce_as(value)
             return value
+    return None
 
 
 def get_boolean_custom_attribute(item: dict, attribute_code: str) -> Optional[bool]:
