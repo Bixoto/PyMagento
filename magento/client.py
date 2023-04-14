@@ -96,9 +96,7 @@ class Magento(APISession):
                  logger: Optional[Logger] = None,
                  read_only=False,
                  user_agent=None,
-                 verbose=False,
-                 # Deprecated
-                 log_progress=False):
+                 verbose=False):
         """
         Create a Magento client instance. All arguments are optional and fall back on environment variables named
         ``PYMAGENTO_ + argument.upper()`` (``PYMAGENTO_TOKEN``, ``PYMAGENTO_BASE_URL``, etc).
@@ -111,7 +109,6 @@ class Magento(APISession):
         :param verbose: if True, log the progress of get_paginated. This has no effect if logger is not set.
         :param read_only: if True,
         :param user_agent: User-Agent
-        :param log_progress: deprecated alias for `verbose`.
         """
         token = token or environ.get("PYMAGENTO_TOKEN")
         base_url = base_url or environ.get("PYMAGENTO_BASE_URL")
@@ -124,9 +121,6 @@ class Magento(APISession):
             raise RuntimeError("Missing API base URL")
 
         super().__init__(base_url=base_url, user_agent=user_agent, read_only=read_only)
-
-        if log_progress:
-            verbose = True
 
         self.scope = scope
         self.logger = logger
