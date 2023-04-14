@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## 1.6.0 (unreleased)
+## 1.6.0 (2023/04/14)
 
 * Remove `Magento.get_product_source_items` (deprecated since 1.3.3)
 * Remove `pretty_custom_attributes` (deprecated since 1.3.4)
