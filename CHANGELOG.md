@@ -1,7 +1,8 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.6.0 (unreleased)
 
+* Remove `Magento.get_product_source_items` (deprecated since 1.3.3)
 * Remove `pretty_custom_attributes` (deprecated since 1.3.4)
 * Remove `log_progress` parameter to `Magento` (deprecated since 1.4.0)
 * `get_custom_attribute`: add a more precise type hint on the return type

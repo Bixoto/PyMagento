@@ -639,12 +639,6 @@ class Magento(APISession):
         payload = [{"product": product_update} for product_update in product_updates]
         return self.put_api('/V1/products/bySku', json=payload, throw=True, async_bulk=True).json()
 
-    def get_product_source_items(self, sku) -> Iterable[SourceItem]:
-        """
-        Deprecated. Use `.get_source_items(sku=sku)` instead, which is equivalent.
-        """
-        return self.get_source_items(sku=sku)
-
     def set_product_stock_item(self, sku: Sku, quantity: int, is_in_stock=1):
         """
         :param sku:
