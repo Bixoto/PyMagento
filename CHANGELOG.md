@@ -1,5 +1,11 @@
 # PyMagento Changelog
 
+## 1.6.1 (2023/04/14)
+
+* Fix `coerce_as` for list values in `get_custom_attribute`. The function now correctly gets each individual value
+  rather than the whole list.
+* Fix type hint for list values in `get_custom_attribute`
+
 ## 1.6.0 (2023/04/14)
 
 * Remove `Magento.get_product_source_items` (deprecated since 1.3.3)
