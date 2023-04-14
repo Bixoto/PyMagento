@@ -10,12 +10,12 @@ T = TypeVar('T')
 
 @overload
 def get_custom_attribute(item: dict, attribute_code: str,
-                         coerce_as: Callable[[str], T]) -> Optional[T]:
+                         coerce_as: Callable[[str], T]) -> Union[None, T, List[T]]:
     ...
 
 
 @overload
-def get_custom_attribute(item: dict, attribute_code: str) -> Optional[str]:
+def get_custom_attribute(item: dict, attribute_code: str) -> Union[None, str, List[str]]:
     ...
 
 
@@ -36,15 +36,20 @@ def get_custom_attribute(item, attribute_code, coerce_as=None):
       This is useful to circumvent Magento's limitation where all attribute values are strings.
     :return: attribute value or None.
     """
+    if coerce_as == bool:
+        # "0" -> False / "1" -> True
+        coerce_as = lambda s: bool(int(s))
+
     for attribute in item.get("custom_attributes", []):
         if attribute["attribute_code"] == attribute_code:
-            value = attribute["value"]
-            if coerce_as:
-                if coerce_as == bool:
-                    # "0" -> False / "1" -> True
-                    return bool(int(value))
-                return coerce_as(value)
-            return value
+            value: Union[str, List[str]] = attribute["value"]
+            if coerce_as is None:
+                return value
+
+            if isinstance(value, list):
+                return [coerce_as(s) for s in value]
+
+            return coerce_as(value)
     return None
 
 
