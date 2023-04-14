@@ -52,14 +52,6 @@ def get_custom_attributes_dict(item: Dict[str, Any]) -> OrderedDictType[str, Uni
     return d
 
 
-def pretty_custom_attributes(custom_attributes: List[Dict[str, Any]]):  # pragma: nocover
-    """
-    [Deprecated] Return a human-friendly compact representation of a sequence of custom attributes.
-    """
-    attributes = get_custom_attributes_dict({"custom_attributes": custom_attributes})
-    return ", ".join(f"{k}={repr(v)}" for k, v in attributes.items())
-
-
 def serialize_attribute_value(value: Union[str, int, float, bool, None], force_none=False):
     """
     Serialize a value to be stored in a Magento attribute.

@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* Remove `pretty_custom_attributes` (deprecated since 1.3.4)
+
 ## 1.5.1 (2023/04/04)
 
 * Add `get_product_by_query`
