@@ -96,7 +96,6 @@ class Magento(APISession):
                  logger: Optional[Logger] = None,
                  read_only=False,
                  user_agent=None,
-                 verbose=False,
                  **kwargs):
         """
         Create a Magento client instance. All arguments are optional and fall back on environment variables named
@@ -107,7 +106,6 @@ class Magento(APISession):
         :param base_url: base URL of the Magento instance
         :param scope: API scope
         :param logger: optional logger.
-        :param verbose: if True, log the progress of get_paginated. This has no effect if logger is not set.
         :param read_only: if True,
         :param user_agent: User-Agent
         """
@@ -125,7 +123,6 @@ class Magento(APISession):
 
         self.scope = scope
         self.logger = logger
-        self.verbose = verbose if logger else False
         self.headers['Authorization'] = f"Bearer {token}"
 
     # Attributes
@@ -562,12 +559,11 @@ class Magento(APISession):
     def delete_product_media(self, sku: Sku, media_id: PathId, throw=False):
         return self.delete_api(f'/V1/products/{sku}/media/{media_id}', throw=throw)
 
-    def save_product(self, product, *, log_response=False, save_options: Optional[bool] = None) -> Product:
+    def save_product(self, product, *, save_options: Optional[bool] = None) -> Product:
         """
         Save a product.
 
         :param product: (partial) product to save.
-        :param log_response: if True and ``self.logger`` is set, log the response.
         :param save_options: set the `saveOptions` attribute.
         :return:
         """
@@ -577,8 +573,8 @@ class Magento(APISession):
 
         # throw=False so the log is printed before we raise
         resp = self.post_api('/V1/products', json=payload, throw=False)
-        if log_response and self.logger:
-            self.logger.info("Save product response: %s", resp.text)
+        if self.logger:
+            self.logger.debug("Save product response: %s", resp.text)
         raise_for_response(resp)
         return cast(Product, resp.json())
 
@@ -943,8 +939,8 @@ class Magento(APISession):
             total_count = res["total_count"]
 
             for item in items:
-                if self.verbose and self.logger and count and count % 1000 == 0:
-                    self.logger.info(f'loaded {count} items')
+                if self.logger and count and count % 1000 == 0:
+                    self.logger.debug(f'loaded {count} items')
                 yield item
                 count += 1
                 if count >= total_count:
