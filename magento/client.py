@@ -96,7 +96,8 @@ class Magento(APISession):
                  logger: Optional[Logger] = None,
                  read_only=False,
                  user_agent=None,
-                 verbose=False):
+                 verbose=False,
+                 **kwargs):
         """
         Create a Magento client instance. All arguments are optional and fall back on environment variables named
         ``PYMAGENTO_ + argument.upper()`` (``PYMAGENTO_TOKEN``, ``PYMAGENTO_BASE_URL``, etc).
@@ -120,7 +121,7 @@ class Magento(APISession):
         if base_url is None:
             raise RuntimeError("Missing API base URL")
 
-        super().__init__(base_url=base_url, user_agent=user_agent, read_only=read_only)
+        super().__init__(base_url=base_url, user_agent=user_agent, read_only=read_only, **kwargs)
 
         self.scope = scope
         self.logger = logger
