@@ -1,5 +1,11 @@
 # PyMagento Changelog
 
+## 1.7.0 (unreleased)
+
+* Pass additional keyword arguments in `Magento()` to the underlying `APISession()` constructor
+* Remove the `verbose` optional keyword option as well as the `log_response` parameter. Instead, use the `DEBUG` level
+  for logging. Instead of setting these variables to `True`, set your logger level to `DEBUG`.
+
 ## 1.6.1 (2023/04/14)
 
 * Fix `coerce_as` for list values in `get_custom_attribute`. The function now correctly gets each individual value
