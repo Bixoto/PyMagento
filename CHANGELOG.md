@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## 1.7.0 (unreleased)
+## 1.7.0 (2023/05/24)
 
 * Pass additional keyword arguments in `Magento()` to the underlying `APISession()` constructor
 * Remove the `verbose` optional keyword option as well as the `log_response` parameter. Instead, use the `DEBUG` level
