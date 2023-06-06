@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## 1.7.1
+## 1.7.1 (2023/06/06)
 
 * Support SKUs that contain slashes
 
