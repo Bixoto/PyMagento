@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## 1.7.1
+
+* Support SKUs that contain slashes
+
 ## 1.7.0 (2023/05/24)
 
 * Pass additional keyword arguments in `Magento()` to the underlying `APISession()` constructor

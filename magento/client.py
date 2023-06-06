@@ -76,6 +76,10 @@ def raise_for_response(response: requests.Response):
     response.raise_for_status()
 
 
+def escape_path(sku: str):
+    return sku.replace("%", "%25").replace("/", "%2F")
+
+
 class Magento(APISession):
     """
     Client for the Magento API.
@@ -137,7 +141,7 @@ class Magento(APISession):
         return self.post_api('/V1/products/attributes', json={"attribute": attribute}, throw=throw, **kwargs).json()
 
     def delete_attribute(self, attribute_code: str, **kwargs):
-        return self.delete_api(f"/V1/products/attributes/{attribute_code}", **kwargs)
+        return self.delete_api(f"/V1/products/attributes/{escape_path(attribute_code)}", **kwargs)
 
     # Attribute Sets
     # ==============
@@ -171,7 +175,8 @@ class Magento(APISession):
         return self.post_api("/V1/products/attribute-sets/attributes", json=payload, **kwargs)
 
     def remove_attribute_set_attribute(self, attribute_set_id: int, attribute_code: str, **kwargs):
-        return self.delete_api(f"/V1/products/attribute-sets/{attribute_set_id}/attributes/{attribute_code}", **kwargs)
+        path = f"/V1/products/attribute-sets/{attribute_set_id}/attributes/{escape_path(attribute_code)}"
+        return self.delete_api(path, **kwargs)
 
     # Bulk Operations
     # ===============
@@ -180,7 +185,7 @@ class Magento(APISession):
         """
         Get the status of an async/bulk operation.
         """
-        return self.get_api(f'/V1/bulk/{bulk_uuid}/status', throw=True).json()
+        return self.get_api(f'/V1/bulk/{escape_path(bulk_uuid)}/status', throw=True).json()
 
     # Carts
     # =====
@@ -499,7 +504,7 @@ class Magento(APISession):
         :param sku: SKU of the product
         :return:
         """
-        return self.get_json_api(f'/V1/products/{sku}')
+        return self.get_json_api(f'/V1/products/{escape_path(sku)}')
 
     def get_product_by_id(self, product_id: int) -> Optional[Product]:
         """
@@ -541,7 +546,7 @@ class Magento(APISession):
         :param sku: SKU of the product.
         :return:
         """
-        return self.get_json_api(f'/V1/products/{sku}/media')
+        return self.get_json_api(f'/V1/products/{escape_path(sku)}/media')
 
     def get_product_media(self, sku: Sku, entry_id: PathId) -> MediaEntry:
         """
@@ -551,13 +556,13 @@ class Magento(APISession):
         :param entry_id:
         :return:
         """
-        return self.get_json_api(f'/V1/products/{sku}/media/{entry_id}')
+        return self.get_json_api(f'/V1/products/{escape_path(sku)}/media/{entry_id}')
 
     def save_product_media(self, sku: Sku, media_entry: MediaEntry):
-        return self.post_api(f'/V1/products/{sku}/media', json={"entry": media_entry}, throw=True).json()
+        return self.post_api(f'/V1/products/{escape_path(sku)}/media', json={"entry": media_entry}, throw=True).json()
 
     def delete_product_media(self, sku: Sku, media_id: PathId, throw=False):
-        return self.delete_api(f'/V1/products/{sku}/media/{media_id}', throw=throw)
+        return self.delete_api(f'/V1/products/{escape_path(sku)}/media/{media_id}', throw=throw)
 
     def save_product(self, product, *, save_options: Optional[bool] = None) -> Product:
         """
@@ -598,7 +603,7 @@ class Magento(APISession):
         if save_options is not None:
             payload["saveOptions"] = save_options
 
-        return cast(Product, self.put_api(f'/V1/products/{sku}', json=payload, throw=True).json())
+        return cast(Product, self.put_api(f'/V1/products/{escape_path(sku)}', json=payload, throw=True).json())
 
     def delete_product(self, sku: Sku, skip_missing=False, throw=True, **kwargs) -> bool:
         """
@@ -611,7 +616,7 @@ class Magento(APISession):
         :return: a boolean indicating success.
         """
         try:
-            response = self.delete_api(f'/V1/products/{sku}', throw=throw, **kwargs)
+            response = self.delete_api(f'/V1/products/{escape_path(sku)}', throw=throw, **kwargs)
         except (HTTPError, MagentoException) as e:
             if skip_missing and e.response is not None and e.response.status_code == 404:
                 return False
@@ -644,15 +649,15 @@ class Magento(APISession):
         :return: requests.Response
         """
         payload = {"stockItem": {"qty": quantity, "is_in_stock": is_in_stock}}
-        return self.put_api(f'/V1/products/{sku}/stockItems/1', json=payload, throw=True)
+        return self.put_api(f'/V1/products/{escape_path(sku)}/stockItems/1', json=payload, throw=True)
 
     def get_product_stock_status(self, sku: Sku) -> MagentoEntity:
         """Get stock status for an SKU."""
-        return self.get_api(f"/V1/stockStatuses/{sku}", throw=True).json()
+        return self.get_api(f"/V1/stockStatuses/{escape_path(sku)}", throw=True).json()
 
     def get_product_stock_item(self, sku: Sku) -> MagentoEntity:
         """Get the stock item for an SKU."""
-        return self.get_api(f"/V1/stockItems/{sku}", throw=True).json()
+        return self.get_api(f"/V1/stockItems/{escape_path(sku)}", throw=True).json()
 
     def link_child_product(self, parent_sku: Sku, child_sku: Sku, **kwargs) -> requests.Response:
         """
@@ -662,7 +667,7 @@ class Magento(APISession):
         :param child_sku: SKU of the child product
         :return: `requests.Response` object
         """
-        return self.post_api(f'/V1/configurable-products/{parent_sku}/child',
+        return self.post_api(f'/V1/configurable-products/{escape_path(parent_sku)}/child',
                              json={"childSku": child_sku}, **kwargs)
 
     def unlink_child_product(self, parent_sku: Sku, child_sku: Sku, **kwargs) -> requests.Response:
@@ -673,7 +678,8 @@ class Magento(APISession):
         :param child_sku: SKU of the child product
         :return: `requests.Response` object
         """
-        return self.delete_api(f"/V1/configurable-products/{parent_sku}/children/{child_sku}", **kwargs)
+        return self.delete_api(f"/V1/configurable-products/{escape_path(parent_sku)}/children/{escape_path(child_sku)}",
+                               **kwargs)
 
     def save_configurable_product_option(self, sku: Sku, option: MagentoEntity, throw=False):
         """
@@ -684,7 +690,8 @@ class Magento(APISession):
         :param throw:
         :return: `requests.Response` object
         """
-        return self.post_api(f'/V1/configurable-products/{sku}/options', json={"option": option}, throw=throw)
+        return self.post_api(f'/V1/configurable-products/{escape_path(sku)}/options',
+                             json={"option": option}, throw=throw)
 
     # Products Attribute Options
     # --------------------------
@@ -696,7 +703,7 @@ class Magento(APISession):
         :param attribute_code:
         :return: sequence of option dicts.
         """
-        response = self.get_api(f'/V1/products/attributes/{attribute_code}/options', throw=True)
+        response = self.get_api(f'/V1/products/attributes/{escape_path(attribute_code)}/options', throw=True)
         return cast(Sequence[Dict[str, str]], response.json())
 
     def add_products_attribute_option(self, attribute_code: str, option: Dict[str, str]) -> str:
@@ -710,7 +717,8 @@ class Magento(APISession):
         :return: new id
         """
         payload = {"option": option}
-        response = self.post_api(f'/V1/products/attributes/{attribute_code}/options', json=payload, throw=True)
+        response = self.post_api(f'/V1/products/attributes/{escape_path(attribute_code)}/options',
+                                 json=payload, throw=True)
         ret = cast(str, response.json())
 
         if ret.startswith("id_"):
@@ -726,7 +734,8 @@ class Magento(APISession):
         :param option_id:
         :return: boolean
         """
-        response = self.delete_api(f'/V1/products/attributes/{attribute_code}/options/{option_id}', throw=True)
+        response = self.delete_api(f'/V1/products/attributes/{escape_path(attribute_code)}/options/{option_id}',
+                                   throw=True)
         return cast(bool, response.json())
 
     # Aliases
