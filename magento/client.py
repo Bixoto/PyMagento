@@ -15,10 +15,10 @@ from magento.exceptions import MagentoException, MagentoAssertionError
 from magento.queries import Query, make_search_query, make_field_value_query
 
 __all__ = (
-    'Magento',
+    "Magento",
 )
 
-USER_AGENT = f'Bixoto/PyMagento {__version__} +git.io/JDp0h'
+USER_AGENT = f"Bixoto/PyMagento {__version__} +git.io/JDp0h"
 
 DEFAULT_ATTRIBUTE_DICT = {
     "apply_to": [],
@@ -63,7 +63,7 @@ def raise_for_response(response: requests.Response):
     if response.ok:
         return
 
-    if response.text and response.text[0] == '{':
+    if response.text and response.text[0] == "{":
         try:
             body = response.json()
         except (ValueError, JSONDecodeError):
@@ -127,7 +127,7 @@ class Magento(APISession):
 
         self.scope = scope
         self.logger = logger
-        self.headers['Authorization'] = f"Bearer {token}"
+        self.headers["Authorization"] = f"Bearer {token}"
 
     # Attributes
     # ==========
@@ -138,7 +138,7 @@ class Magento(APISession):
             base.update(attribute)
             attribute = base
 
-        return self.post_api('/V1/products/attributes', json={"attribute": attribute}, throw=throw, **kwargs).json()
+        return self.post_api("/V1/products/attributes", json={"attribute": attribute}, throw=throw, **kwargs).json()
 
     def delete_attribute(self, attribute_code: str, **kwargs):
         return self.delete_api(f"/V1/products/attributes/{escape_path(attribute_code)}", **kwargs)
@@ -185,7 +185,7 @@ class Magento(APISession):
         """
         Get the status of an async/bulk operation.
         """
-        return self.get_api(f'/V1/bulk/{escape_path(bulk_uuid)}/status', throw=True).json()
+        return self.get_api(f"/V1/bulk/{escape_path(bulk_uuid)}/status", throw=True).json()
 
     # Carts
     # =====
@@ -204,7 +204,7 @@ class Magento(APISession):
         :param query:
         :return:
         """
-        return self.get_paginated('/V1/categories/list', query=query)
+        return self.get_paginated("/V1/categories/list", query=query)
 
     def get_category(self, category_id: PathId) -> Optional[Category]:
         """
@@ -235,14 +235,14 @@ class Magento(APISession):
         :param category_data: (partial) category data to update
         :return: updated category
         """
-        return cast(Category, self.put_api(f'/V1/categories/{category_id}',
+        return cast(Category, self.put_api(f"/V1/categories/{category_id}",
                                            json={"category": category_data}, throw=True).json())
 
     def create_category(self, category: Category, throw=False):
         """
         Create a new category.
         """
-        return self.post_api('/V1/categories', json={"category": category}, throw=throw)
+        return self.post_api("/V1/categories", json={"category": category}, throw=throw)
 
     # CMS
     # ===
@@ -364,7 +364,7 @@ class Magento(APISession):
         """
         Get an order given its (entity) id.
         """
-        return self.get_api(f'/V1/orders/{order_id}', throw=throw).json()
+        return self.get_api(f"/V1/orders/{order_id}", throw=throw).json()
 
     def get_order_by_increment_id(self, increment_id: str) -> Optional[Order]:
         """
@@ -379,13 +379,13 @@ class Magento(APISession):
         return None
 
     def hold_order(self, order_id: str, **kwargs):
-        return self.post_api(f'/V1/orders/{order_id}/hold', **kwargs)
+        return self.post_api(f"/V1/orders/{order_id}/hold", **kwargs)
 
     def unhold_order(self, order_id: str, **kwargs):
-        return self.post_api(f'/V1/orders/{order_id}/unhold', **kwargs)
+        return self.post_api(f"/V1/orders/{order_id}/unhold", **kwargs)
 
     def save_order(self, order: Order):
-        return self.post_api(f'/V1/orders', json={"entity": order})
+        return self.post_api(f"/V1/orders", json={"entity": order})
 
     def set_order_status(self, order: Order, status: str, *, external_order_id: Optional[str] = None):
         payload = {
@@ -441,7 +441,7 @@ class Magento(APISession):
         :param skus:
         :return:
         """
-        return self.post_api('/V1/products/special-price-information',
+        return self.post_api("/V1/products/special-price-information",
                              json={"skus": skus}, throw=True, bypass_read_only=True).json()
 
     def save_special_prices(self, special_prices: Sequence[MagentoEntity]):
@@ -458,7 +458,7 @@ class Magento(APISession):
         :param special_prices: Special prices to save.
         :return:
         """
-        return self.post_api('/V1/products/special-price', json={"prices": special_prices})
+        return self.post_api("/V1/products/special-price", json={"prices": special_prices})
 
     def delete_special_prices(self, special_prices: Sequence[MagentoEntity]):
         """
@@ -467,7 +467,7 @@ class Magento(APISession):
         :param special_prices:
         :return:
         """
-        return self.post_api('/V1/products/special-price-delete', json={"prices": special_prices})
+        return self.post_api("/V1/products/special-price-delete", json={"prices": special_prices})
 
     def delete_special_prices_by_sku(self, skus: Sequence[Sku]):
         """
@@ -495,7 +495,7 @@ class Magento(APISession):
 
     def get_products_types(self) -> Sequence[MagentoEntity]:
         """Get available product types."""
-        return self.get_json_api('/V1/product/types')
+        return self.get_json_api("/V1/product/types")
 
     def get_product(self, sku: Sku) -> Optional[Product]:
         """
@@ -504,7 +504,7 @@ class Magento(APISession):
         :param sku: SKU of the product
         :return:
         """
-        return self.get_json_api(f'/V1/products/{escape_path(sku)}')
+        return self.get_json_api(f"/V1/products/{escape_path(sku)}")
 
     def get_product_by_id(self, product_id: int) -> Optional[Product]:
         """
@@ -546,7 +546,7 @@ class Magento(APISession):
         :param sku: SKU of the product.
         :return:
         """
-        return self.get_json_api(f'/V1/products/{escape_path(sku)}/media')
+        return self.get_json_api(f"/V1/products/{escape_path(sku)}/media")
 
     def get_product_media(self, sku: Sku, entry_id: PathId) -> MediaEntry:
         """
@@ -556,13 +556,13 @@ class Magento(APISession):
         :param entry_id:
         :return:
         """
-        return self.get_json_api(f'/V1/products/{escape_path(sku)}/media/{entry_id}')
+        return self.get_json_api(f"/V1/products/{escape_path(sku)}/media/{entry_id}")
 
     def save_product_media(self, sku: Sku, media_entry: MediaEntry):
-        return self.post_api(f'/V1/products/{escape_path(sku)}/media', json={"entry": media_entry}, throw=True).json()
+        return self.post_api(f"/V1/products/{escape_path(sku)}/media", json={"entry": media_entry}, throw=True).json()
 
     def delete_product_media(self, sku: Sku, media_id: PathId, throw=False):
-        return self.delete_api(f'/V1/products/{escape_path(sku)}/media/{media_id}', throw=throw)
+        return self.delete_api(f"/V1/products/{escape_path(sku)}/media/{media_id}", throw=throw)
 
     def save_product(self, product, *, save_options: Optional[bool] = None) -> Product:
         """
@@ -577,7 +577,7 @@ class Magento(APISession):
             payload["saveOptions"] = save_options
 
         # throw=False so the log is printed before we raise
-        resp = self.post_api('/V1/products', json=payload, throw=False)
+        resp = self.post_api("/V1/products", json=payload, throw=False)
         if self.logger:
             self.logger.debug("Save product response: %s", resp.text)
         raise_for_response(resp)
@@ -603,20 +603,20 @@ class Magento(APISession):
         if save_options is not None:
             payload["saveOptions"] = save_options
 
-        return cast(Product, self.put_api(f'/V1/products/{escape_path(sku)}', json=payload, throw=True).json())
+        return cast(Product, self.put_api(f"/V1/products/{escape_path(sku)}", json=payload, throw=True).json())
 
     def delete_product(self, sku: Sku, skip_missing=False, throw=True, **kwargs) -> bool:
         """
         Delete a product given its SKU.
 
         :param sku:
-        :param skip_missing: if true, don't raise if the product is missing, and return False.
+        :param skip_missing: if true, don’t raise if the product is missing, and return False.
         :param throw: throw on error response
         :param kwargs: keyword arguments passed to all underlying methods.
         :return: a boolean indicating success.
         """
         try:
-            response = self.delete_api(f'/V1/products/{escape_path(sku)}', throw=throw, **kwargs)
+            response = self.delete_api(f"/V1/products/{escape_path(sku)}", throw=throw, **kwargs)
         except (HTTPError, MagentoException) as e:
             if skip_missing and e.response is not None and e.response.status_code == 404:
                 return False
@@ -635,11 +635,11 @@ class Magento(APISession):
 
         See https://devdocs.magento.com/guides/v2.4/rest/bulk-endpoints.html
 
-        :param product_updates: sequence of product data dicts. They MUST contain an 'sku' key.
+        :param product_updates: sequence of product data dicts. They MUST contain an `sku` key.
         :return:
         """
         payload = [{"product": product_update} for product_update in product_updates]
-        return self.put_api('/V1/products/bySku', json=payload, throw=True, async_bulk=True).json()
+        return self.put_api("/V1/products/bySku", json=payload, throw=True, async_bulk=True).json()
 
     def set_product_stock_item(self, sku: Sku, quantity: int, is_in_stock=1):
         """
@@ -649,7 +649,7 @@ class Magento(APISession):
         :return: requests.Response
         """
         payload = {"stockItem": {"qty": quantity, "is_in_stock": is_in_stock}}
-        return self.put_api(f'/V1/products/{escape_path(sku)}/stockItems/1', json=payload, throw=True)
+        return self.put_api(f"/V1/products/{escape_path(sku)}/stockItems/1", json=payload, throw=True)
 
     def get_product_stock_status(self, sku: Sku) -> MagentoEntity:
         """Get stock status for an SKU."""
@@ -667,7 +667,7 @@ class Magento(APISession):
         :param child_sku: SKU of the child product
         :return: `requests.Response` object
         """
-        return self.post_api(f'/V1/configurable-products/{escape_path(parent_sku)}/child',
+        return self.post_api(f"/V1/configurable-products/{escape_path(parent_sku)}/child",
                              json={"childSku": child_sku}, **kwargs)
 
     def unlink_child_product(self, parent_sku: Sku, child_sku: Sku, **kwargs) -> requests.Response:
@@ -690,7 +690,7 @@ class Magento(APISession):
         :param throw:
         :return: `requests.Response` object
         """
-        return self.post_api(f'/V1/configurable-products/{escape_path(sku)}/options',
+        return self.post_api(f"/V1/configurable-products/{escape_path(sku)}/options",
                              json={"option": option}, throw=throw)
 
     # Products Attribute Options
@@ -703,21 +703,21 @@ class Magento(APISession):
         :param attribute_code:
         :return: sequence of option dicts.
         """
-        response = self.get_api(f'/V1/products/attributes/{escape_path(attribute_code)}/options', throw=True)
+        response = self.get_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options", throw=True)
         return cast(Sequence[Dict[str, str]], response.json())
 
     def add_products_attribute_option(self, attribute_code: str, option: Dict[str, str]) -> str:
         """
         Add an option to a products attribute.
 
+        https://magento.redoc.ly/2.3.6-admin/#operation/catalogProductAttributeOptionManagementV1AddPost
+
         :param attribute_code:
-        :param option: dict with label/value keys (mandatory).
-          See https://magento.redoc.ly/2.3.6-admin/#operation/catalogProductAttributeOptionManagementV1AddPost
-          for the optional keys.
+        :param option: dict with label/value keys (mandatory)
         :return: new id
         """
         payload = {"option": option}
-        response = self.post_api(f'/V1/products/attributes/{escape_path(attribute_code)}/options',
+        response = self.post_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options",
                                  json=payload, throw=True)
         ret = cast(str, response.json())
 
@@ -734,7 +734,7 @@ class Magento(APISession):
         :param option_id:
         :return: boolean
         """
-        response = self.delete_api(f'/V1/products/attributes/{escape_path(attribute_code)}/options/{option_id}',
+        response = self.delete_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options/{option_id}",
                                    throw=True)
         return cast(bool, response.json())
 
@@ -765,7 +765,7 @@ class Magento(APISession):
         """
         Ship an order.
         """
-        return self.post_api(f'/V1/order/{order_id}/ship', json=payload)
+        return self.post_api(f"/V1/order/{order_id}/ship", json=payload)
 
     def get_order_shipments(self, order_id: Union[int, str]):
         """Get shipments for the given order id."""
@@ -815,8 +815,8 @@ class Magento(APISession):
         :return:
         """
         if not source_items:
-            return
-        return self.post_api('/V1/inventory/source-items', json={"sourceItems": source_items}, throw=True).json()
+            return None
+        return self.post_api("/V1/inventory/source-items", json={"sourceItems": source_items}, throw=True).json()
 
     def delete_source_items(self, source_items: Iterable[SourceItem], throw=True, **kwargs):
         """
@@ -831,7 +831,7 @@ class Magento(APISession):
         payload = {
             "sourceItems": [{"sku": s["sku"], "source_code": s["source_code"]} for s in source_items],
         }
-        return self.post_api('/V1/inventory/source-items-delete', json=payload, throw=throw, **kwargs)
+        return self.post_api("/V1/inventory/source-items-delete", json=payload, throw=throw, **kwargs)
 
     def delete_default_source_items(self):
         """
@@ -891,7 +891,7 @@ class Magento(APISession):
         full_path = f"/rest/{self.scope}"
 
         if async_bulk:
-            full_path += '/async/bulk'
+            full_path += "/async/bulk"
 
         full_path += path
 
@@ -941,7 +941,7 @@ class Magento(APISession):
             page_query["searchCriteria[currentPage]"] = current_page
 
             res = self.get_api(path, page_query, throw=True, retry=retry).json()
-            items = res.get('items', [])
+            items = res.get("items", [])
             if not items:
                 break
 
@@ -949,7 +949,7 @@ class Magento(APISession):
 
             for item in items:
                 if self.logger and count and count % 1000 == 0:
-                    self.logger.debug(f'loaded {count} items')
+                    self.logger.debug(f"loaded {count} items")
                 yield item
                 count += 1
                 if count >= total_count:
