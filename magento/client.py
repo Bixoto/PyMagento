@@ -777,6 +777,33 @@ class Magento(APISession):
     def get_stock_source_links(self, query: Query = None) -> Iterable[MagentoEntity]:
         return self.get_paginated("/V1/inventory/stock-source-links", query=query)
 
+    # Sources
+    # =======
+
+    def get_sources(self, query: Query = None) -> Iterable[MagentoEntity]:
+        """
+        Get all sources.
+
+        https://adobe-commerce.redoc.ly/2.4.6-admin/tag/inventorysources#operation/GetV1InventorySources
+        """
+        return self.get_paginated("/V1/inventory/sources", query=query)
+
+    def get_source(self, source_code: str) -> Optional[MagentoEntity]:
+        """
+        Get a single source, or `None` if it doesn’t exist.
+
+        https://adobe-commerce.redoc.ly/2.4.6-admin/tag/inventorysourcessourceCode#operation/GetV1InventorySourcesSourceCode
+        """
+        return self.get_json_api(f"/V1/inventory/sources/{escape_path(source_code)}")
+
+    def save_source(self, source: MagentoEntity):
+        """
+        Save a source.
+
+        https://adobe-commerce.redoc.ly/2.4.6-admin/tag/inventorysources/#operation/PostV1InventorySources
+        """
+        return self.post_api("/V1/inventory/sources", json={"source": source}, throw=True).json()
+
     # Source Items
     # ============
 

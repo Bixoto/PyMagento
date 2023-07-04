@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## 1.7.2 (2023/07/04)
+
+* Add `get_source`, `get_sources`, `save_source`
+
 ## 1.7.1 (2023/06/06)
 
 * Support SKUs that contain slashes
