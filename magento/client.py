@@ -86,7 +86,7 @@ class Magento(APISession):
     """
     # default batch size for paginated requests
     # Note increasing it doesn’t create a significant time improvement.
-    # For example, in one test on Bixoto production in 2021, getting 2k products using a page size of 1k took 28s.
+    # For example, in one test on Bixoto in 2021, getting 2k products using a page size of 1k took 28s.
     # The same query with a page size of 2k still took 26s.
     PAGE_SIZE = 1000
 
@@ -146,9 +146,9 @@ class Magento(APISession):
     # Attribute Sets
     # ==============
 
-    def get_attribute_sets(self, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
+    def get_attribute_sets(self, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all attribute sets (generator)."""
-        return self.get_paginated("/V1/eav/attribute-sets/list", limit=limit, **kwargs)
+        return self.get_paginated("/V1/eav/attribute-sets/list", query=query, limit=limit, **kwargs)
 
     def get_attribute_set_attributes(self, attribute_set_id: int, **kwargs):
         """Get all attributes for the given attribute set id."""
@@ -190,21 +190,18 @@ class Magento(APISession):
     # Carts
     # =====
 
-    def get_carts(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+    def get_carts(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all carts (generator)."""
-        return self.get_paginated("/V1/carts/search", query=query, limit=limit)
+        return self.get_paginated("/V1/carts/search", query=query, limit=limit, **kwargs)
 
     # Categories
     # ==========
 
-    def get_categories(self, query: Query = None) -> Iterable[Category]:
+    def get_categories(self, query: Query = None, limit=-1, **kwargs) -> Iterable[Category]:
         """
         Yield all categories.
-
-        :param query:
-        :return:
         """
-        return self.get_paginated("/V1/categories/list", query=query)
+        return self.get_paginated("/V1/categories/list", query=query, limit=limit, **kwargs)
 
     def get_category(self, category_id: PathId) -> Optional[Category]:
         """
@@ -247,35 +244,35 @@ class Magento(APISession):
     # CMS
     # ===
 
-    def get_cms_pages(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+    def get_cms_pages(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all CMS pages (generator)."""
-        return self.get_paginated("/V1/cmsPage/search", query=query, limit=limit)
+        return self.get_paginated("/V1/cmsPage/search", query=query, limit=limit, **kwargs)
 
-    def get_cms_blocks(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+    def get_cms_blocks(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all CMS blocks (generator)."""
-        return self.get_paginated("/V1/cmsBlock/search", query=query, limit=limit)
+        return self.get_paginated("/V1/cmsBlock/search", query=query, limit=limit, **kwargs)
 
     # Coupons
     # =======
 
-    def get_coupons(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+    def get_coupons(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all coupons (generator)."""
-        return self.get_paginated("/V1/coupons/search", query=query, limit=limit)
+        return self.get_paginated("/V1/coupons/search", query=query, limit=limit, **kwargs)
 
     # Customers
     # =========
 
-    def get_customers(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+    def get_customers(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all customers (generator)."""
-        return self.get_paginated("/V1/customers/search", query=query, limit=limit)
+        return self.get_paginated("/V1/customers/search", query=query, limit=limit, **kwargs)
 
     def get_customer(self, customer_id: int) -> dict:
         """Return a single customer."""
         return self.get_api(f"/V1/customers/{customer_id}", throw=True).json()
 
-    def get_customer_groups(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+    def get_customer_groups(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all customer groups (generator)."""
-        return self.get_paginated("/V1/customerGroups/search", query=query, limit=limit)
+        return self.get_paginated("/V1/customerGroups/search", query=query, limit=limit, **kwargs)
 
     # Invoices
     # ========
@@ -309,9 +306,9 @@ class Magento(APISession):
             return invoice
         return None
 
-    def get_invoices(self, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+    def get_invoices(self, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all invoices (generator)."""
-        return self.get_paginated("/V1/invoices", query=query, limit=limit)
+        return self.get_paginated("/V1/invoices", query=query, limit=limit, **kwargs)
 
     def get_order_invoices(self, order_id: Union[int, str]):
         """Get invoices for the given order id."""
@@ -340,25 +337,26 @@ class Magento(APISession):
         if status:
             query = make_field_value_query("status", status, condition_type=status_condition_type)
 
-        return self.get_paginated("/V1/orders", limit=limit, query=query, retry=retry)
+        return self.get_paginated("/V1/orders", query=query, limit=limit, retry=retry)
 
     def get_last_orders(self, limit=10) -> List[Order]:
         """Return a list of the last orders (default: 10)."""
         query = make_search_query([], sort_orders=[("increment_id", "DESC")])
         return list(self.get_orders(query=query, limit=limit))
 
-    def get_orders_items(self, *, sku: Optional[str] = None, query: Query = None, **kwargs):
+    def get_orders_items(self, *, sku: Optional[str] = None, query: Query = None, limit=-1, **kwargs):
         """
         Return orders items.
 
         :param sku: filter orders items on SKU. This is a shortcut for ``query=make_field_value_query("sku", sku)``.
         :param query: optional query. This take precedence over ``sku``.
+        :param limit:
         :return:
         """
         if query is None and sku is not None:
             query = make_field_value_query("sku", sku)
 
-        return self.get_paginated("/V1/orders/items", query=query, **kwargs)
+        return self.get_paginated("/V1/orders/items", query=query, limit=limit, **kwargs)
 
     def get_order(self, order_id: str, throw=True) -> Optional[Order]:
         """
@@ -401,9 +399,9 @@ class Magento(APISession):
     # Credit Memos
     # ============
 
-    def get_credit_memos(self, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+    def get_credit_memos(self, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all credit memos (generator)."""
-        return self.get_paginated("/V1/creditmemos", query=query, limit=limit)
+        return self.get_paginated("/V1/creditmemos", query=query, limit=limit, **kwargs)
 
     # Prices
     # ======
@@ -491,7 +489,7 @@ class Magento(APISession):
         :param retry:
         :return:
         """
-        return cast(Iterator[Product], self.get_paginated("/V1/products/", limit=limit, query=query, retry=retry))
+        return cast(Iterator[Product], self.get_paginated("/V1/products/", query=query, limit=limit, retry=retry))
 
     def get_products_types(self) -> Sequence[MagentoEntity]:
         """Get available product types."""
@@ -750,16 +748,16 @@ class Magento(APISession):
     # Sales Rules
     # ===========
 
-    def get_sales_rules(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+    def get_sales_rules(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all sales rules (generator)."""
-        return self.get_paginated("/V1/salesRules/search", query=query, limit=limit)
+        return self.get_paginated("/V1/salesRules/search", query=query, limit=limit, **kwargs)
 
     # Shipments
     # =========
 
-    def get_shipments(self, **kwargs) -> Iterable[MagentoEntity]:
+    def get_shipments(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Return shipments."""
-        return self.get_paginated("/V1/shipments", **kwargs)
+        return self.get_paginated("/V1/shipments", query=query, limit=limit, **kwargs)
 
     def ship_order(self, order_id: PathId, payload: MagentoEntity):
         """
@@ -774,19 +772,19 @@ class Magento(APISession):
     # Stock
     # =====
 
-    def get_stock_source_links(self, query: Query = None) -> Iterable[MagentoEntity]:
-        return self.get_paginated("/V1/inventory/stock-source-links", query=query)
+    def get_stock_source_links(self, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
+        return self.get_paginated("/V1/inventory/stock-source-links", query=query, limit=limit, **kwargs)
 
     # Sources
     # =======
 
-    def get_sources(self, query: Query = None) -> Iterable[MagentoEntity]:
+    def get_sources(self, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """
         Get all sources.
 
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/inventorysources#operation/GetV1InventorySources
         """
-        return self.get_paginated("/V1/inventory/sources", query=query)
+        return self.get_paginated("/V1/inventory/sources", query=query, limit=limit, **kwargs)
 
     def get_source(self, source_code: str) -> Optional[MagentoEntity]:
         """
@@ -810,7 +808,8 @@ class Magento(APISession):
     def get_source_items(self, source_code: Optional[str] = None, sku: Optional[str] = None,
                          *,
                          skus: Optional[Iterable[str]] = None,
-                         query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+                         query: Query = None, limit=-1,
+                         **kwargs) -> Iterable[MagentoEntity]:
         """
         Return a generator of all source items.
 
@@ -832,7 +831,7 @@ class Magento(APISession):
 
             query = make_search_query(filter_groups)
 
-        return self.get_paginated("/V1/inventory/source-items", limit=limit, query=query)
+        return self.get_paginated("/V1/inventory/source-items", query=query, limit=limit, **kwargs)
 
     def save_source_items(self, source_items: Sequence[SourceItem]):
         """
@@ -876,24 +875,24 @@ class Magento(APISession):
     # Taxes
     # =====
 
-    def get_tax_classes(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+    def get_tax_classes(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all tax classes (generator)."""
-        return self.get_paginated("/V1/taxClasses/search", query=query, limit=limit)
+        return self.get_paginated("/V1/taxClasses/search", query=query, limit=limit, **kwargs)
 
-    def get_tax_rates(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+    def get_tax_rates(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all tax rates (generator)."""
-        return self.get_paginated("/V1/taxRates/search", query=query, limit=limit)
+        return self.get_paginated("/V1/taxRates/search", query=query, limit=limit, **kwargs)
 
-    def get_tax_rules(self, *, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+    def get_tax_rules(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all tax rules (generator)."""
-        return self.get_paginated("/V1/taxRules/search", query=query, limit=limit)
+        return self.get_paginated("/V1/taxRules/search", query=query, limit=limit, **kwargs)
 
     # Modules
     # =======
 
-    def get_modules(self, query: Query = None, limit=-1) -> Iterable[MagentoEntity]:
+    def get_modules(self, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all enabled modules (generator)."""
-        return self.get_paginated("/V1/modules", query=query, limit=limit)
+        return self.get_paginated("/V1/modules", query=query, limit=limit, **kwargs)
 
     # Internals
     # =========
