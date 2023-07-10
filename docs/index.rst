@@ -8,11 +8,11 @@ Installation
 
 With ``pip``::
 
-    pip install pymagento2
+    pip install pymagento
 
 With ``poetry``::
 
-    poetry add pymagento2
+    poetry add pymagento
 
 
 .. toctree::
