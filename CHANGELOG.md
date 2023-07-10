@@ -1,5 +1,11 @@
 # PyMagento Changelog
 
+## 1.7.3 (2023/07/10)
+
+* Uniformize the signatures of functions that return a generator. The following functions now support a `limit`:
+  `get_categories` (#3), `get_stock_source_links`, `get_sources`. All these function now pass their additional keyword
+  arguments to the internal `self.get_paginated` call.
+
 ## 1.7.2 (2023/07/04)
 
 * Add `get_source`, `get_sources`, `save_source`
