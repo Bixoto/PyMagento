@@ -211,9 +211,6 @@ class Magento(APISession):
     def get_category(self, category_id: PathId) -> Optional[Category]:
         """
         Return a category given its id.
-
-        :param category_id:
-        :return:
         """
         return self.get_json_api(f"/V1/categories/{category_id}")
 
@@ -372,9 +369,6 @@ class Magento(APISession):
     def get_order_by_increment_id(self, increment_id: str) -> Optional[Order]:
         """
         Get an order given its increment id. Return ``None`` if the order doesn’t exist.
-
-        :param increment_id:
-        :return:
         """
         query = make_field_value_query("increment_id", increment_id)
         for order in self.get_orders(query=query, limit=1):
@@ -382,15 +376,35 @@ class Magento(APISession):
         return None
 
     def hold_order(self, order_id: str, **kwargs):
+        """
+        Hold an order. This is the opposite of ``unhold_order``.
+
+        :param order_id: order id (not increment id)
+        """
         return self.post_api(f"/V1/orders/{order_id}/hold", **kwargs)
 
     def unhold_order(self, order_id: str, **kwargs):
+        """
+        Un-hold an order. This is the opposite of ``hold_order``.
+
+        :param order_id: order id (not increment id)
+        """
         return self.post_api(f"/V1/orders/{order_id}/unhold", **kwargs)
 
     def save_order(self, order: Order):
+        """Save an order."""
         return self.post_api(f"/V1/orders", json={"entity": order})
 
     def set_order_status(self, order: Order, status: str, *, external_order_id: Optional[str] = None):
+        """
+        Change the status of an order, and optionally set its ``ext_order_id``. This is a convenient wrapper around
+        ``save_order``.
+
+        :param order: order payload
+        :param status: new status
+        :param external_order_id: optional external order id
+        :return:
+        """
         payload = {
             "entity_id": order["entity_id"],
             "status": status,
@@ -440,9 +454,6 @@ class Magento(APISession):
     def get_special_prices(self, skus: Sequence[Sku]) -> List[MagentoEntity]:
         """
         Get special prices for a sequence of SKUs.
-
-        :param skus:
-        :return:
         """
         return self.post_api("/V1/products/special-price-information",
                              json={"skus": skus}, throw=True, bypass_read_only=True).json()
@@ -466,18 +477,12 @@ class Magento(APISession):
     def delete_special_prices(self, special_prices: Sequence[MagentoEntity]):
         """
         Delete a sequence of special prices.
-
-        :param special_prices:
-        :return:
         """
         return self.post_api("/V1/products/special-price-delete", json={"prices": special_prices})
 
     def delete_special_prices_by_sku(self, skus: Sequence[Sku]):
         """
-        Equivalent of `delete_special_prices(get_special_prices(skus))`.
-
-        :param skus:
-        :return:
+        Equivalent of ``delete_special_prices(get_special_prices(skus))``.
         """
         special_prices = self.get_special_prices(skus)
         return self.delete_special_prices(special_prices)
@@ -559,19 +564,31 @@ class Magento(APISession):
         :param entry_id:
         :return:
         """
+        # TODO: s/entry_id/media_id
         return self.get_json_api(f"/V1/products/{escape_path(sku)}/media/{entry_id}")
 
     def save_product_media(self, sku: Sku, media_entry: MediaEntry):
+        """
+        Save a product media.
+        """
         return self.post_api(f"/V1/products/{escape_path(sku)}/media", json={"entry": media_entry}, throw=True).json()
 
     def delete_product_media(self, sku: Sku, media_id: PathId, throw=False):
+        """
+        Delete a media associated with a product.
+
+        :param sku: SKU of the product
+        :param media_id:
+        :param throw:
+        :return:
+        """
         return self.delete_api(f"/V1/products/{escape_path(sku)}/media/{media_id}", throw=throw)
 
     def save_product(self, product, *, save_options: Optional[bool] = None) -> Product:
         """
         Save a product.
 
-        :param product: (partial) product to save.
+        :param product: product to save (can be partial).
         :param save_options: set the `saveOptions` attribute.
         :return:
         """
@@ -761,7 +778,7 @@ class Magento(APISession):
     # =========
 
     def get_shipments(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
-        """Return shipments."""
+        """Return shipments (generator)."""
         return self.get_paginated("/V1/shipments", query=query, limit=limit, **kwargs)
 
     def ship_order(self, order_id: PathId, payload: MagentoEntity):
