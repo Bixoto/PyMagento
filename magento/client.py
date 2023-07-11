@@ -3,7 +3,7 @@ from logging import Logger
 import time
 from os import environ
 from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List
-from datetime import timedelta
+
 from api_session import APISession, JSONDict
 import requests
 from requests.exceptions import HTTPError
@@ -91,9 +91,6 @@ class Magento(APISession):
     # Magento supports setting hard limits on this:
     #   https://developer.adobe.com/commerce/webapi/get-started/api-security/
     PAGE_SIZE = 1000
-
-    # default is 4 hours for admin tokens (the ones we use)
-    TOKEN_LIFETIME = timedelta(hours=3)
 
     def __init__(self,
                  token: Optional[str] = None,
