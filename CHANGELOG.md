@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* Allow to override `Magento.PAGE_SIZE` when creating a client with the `batch_page_size` keyword argument
+
 ## 1.7.3 (2023/07/10)
 
 * Uniformize the signatures of functions that return a generator. The following functions now support a `limit`:

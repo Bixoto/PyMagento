@@ -88,6 +88,8 @@ class Magento(APISession):
     # Note increasing it doesn’t create a significant time improvement.
     # For example, in one test on Bixoto in 2021, getting 2k products using a page size of 1k took 28s.
     # The same query with a page size of 2k still took 26s.
+    # Magento supports setting hard limits on this:
+    #   https://developer.adobe.com/commerce/webapi/get-started/api-security/
     PAGE_SIZE = 1000
 
     # default is 4 hours for admin tokens (the ones we use)
@@ -100,6 +102,8 @@ class Magento(APISession):
                  logger: Optional[Logger] = None,
                  read_only=False,
                  user_agent=None,
+                 *,
+                 batch_page_size: Optional[int] = None,
                  **kwargs):
         """
         Create a Magento client instance. All arguments are optional and fall back on environment variables named
@@ -108,9 +112,10 @@ class Magento(APISession):
 
         :param token: API integration token
         :param base_url: base URL of the Magento instance
-        :param scope: API scope
+        :param scope: API scope. Default on ``PYMAGENTO_SCOPE`` if set, or ``"all"``
+        :param batch_page_size: if set, override the default page size used for batch queries.
         :param logger: optional logger.
-        :param read_only: if True,
+        :param read_only:
         :param user_agent: User-Agent
         """
         token = token or environ.get("PYMAGENTO_TOKEN")
@@ -124,6 +129,9 @@ class Magento(APISession):
             raise RuntimeError("Missing API base URL")
 
         super().__init__(base_url=base_url, user_agent=user_agent, read_only=read_only, **kwargs)
+
+        if batch_page_size is not None:
+            self.PAGE_SIZE = batch_page_size
 
         self.scope = scope
         self.logger = logger
