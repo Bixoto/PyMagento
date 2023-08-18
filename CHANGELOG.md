@@ -3,6 +3,7 @@
 ## Unreleased
 
 * `get_product_media`: the second parameter is now called `media_id` instead of `entry_id` to be coherent with the API
+* All path components are now properly escaped in API calls
 
 ## 1.7.4 (2023/07/11)
 

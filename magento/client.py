@@ -3,6 +3,7 @@ from logging import Logger
 import time
 from os import environ
 from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List
+from urllib.parse import quote as urlquote
 
 from api_session import APISession, JSONDict
 import requests
@@ -77,7 +78,7 @@ def raise_for_response(response: requests.Response):
 
 
 def escape_path(sku: str):
-    return sku.replace("%", "%25").replace("/", "%2F")
+    return urlquote(sku, safe="")
 
 
 class Magento(APISession):
