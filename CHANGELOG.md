@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* `get_product_media`: the second parameter is now called `media_id` instead of `entry_id` to be coherent with the API
+
 ## 1.7.4 (2023/07/11)
 
 * Allow to override `Magento.PAGE_SIZE` when creating a client with the `batch_page_size` keyword argument

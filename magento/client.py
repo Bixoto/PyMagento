@@ -556,16 +556,15 @@ class Magento(APISession):
         """
         return self.get_json_api(f"/V1/products/{escape_path(sku)}/media")
 
-    def get_product_media(self, sku: Sku, entry_id: PathId) -> MediaEntry:
+    def get_product_media(self, sku: Sku, media_id: PathId) -> MediaEntry:
         """
         Return a gallery entry.
 
         :param sku: SKU of the product.
-        :param entry_id:
+        :param media_id:
         :return:
         """
-        # TODO: s/entry_id/media_id
-        return self.get_json_api(f"/V1/products/{escape_path(sku)}/media/{entry_id}")
+        return self.get_json_api(f"/V1/products/{escape_path(sku)}/media/{media_id}")
 
     def save_product_media(self, sku: Sku, media_entry: MediaEntry):
         """
