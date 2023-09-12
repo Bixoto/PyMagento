@@ -10,7 +10,7 @@ Note: PyMagento is not affiliated to nor endorsed by Adobe or the Magento team.
 
 ## Install
 
-We support only Python 3.8+.
+We support Python 3.8+.
 
 ### Pip
 

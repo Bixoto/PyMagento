@@ -1,6 +1,6 @@
 import json
 from collections import ChainMap
-from typing import Dict, cast
+from typing import Dict
 from unittest import mock
 
 import pytest
