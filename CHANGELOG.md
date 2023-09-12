@@ -1,9 +1,15 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.8.0 (unreleased)
 
-* `get_product_media`: the second parameter is now called `media_id` instead of `entry_id` to be coherent with the API
+* Add `get_store_configs`, `get_store_groups`, get_store_views`, `get_websites`
+* Add helpers `get_current_store_group_id`, `get_root_category_id`
 * All path components are now properly escaped in API calls
+* Add official support for Python 3.12
+
+### Breaking changes
+* `get_product_media`: the second parameter is now called `media_id` instead of `entry_id` to be coherent with the API
+* `magento.DEFAULT_CATEGORY_ID` is now named `magento.DEFAULT_ROOT_CATEGORY_ID`
 
 ## 1.7.4 (2023/07/11)
 

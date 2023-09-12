@@ -2,7 +2,7 @@ from json.decoder import JSONDecodeError
 from logging import Logger
 import time
 from os import environ
-from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List
+from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List, Any
 from urllib.parse import quote as urlquote
 
 from api_session import APISession, JSONDict
@@ -796,6 +796,67 @@ class Magento(APISession):
 
     def get_stock_source_links(self, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         return self.get_paginated("/V1/inventory/stock-source-links", query=query, limit=limit, **kwargs)
+
+    # Stores
+    # ======
+
+    def get_store_configs(self, store_codes: Optional[List[str]] = None) -> Iterable[JSONDict]:
+        params: Dict[str, Any] = {}
+        if store_codes:
+            params["storeCodes"] = store_codes
+
+        return self.get_json_api("/V1/store/storeConfigs", params=params)
+
+    def get_store_groups(self) -> Iterable[JSONDict]:
+        return self.get_json_api("/V1/store/storeGroups")
+
+    def get_store_views(self) -> Iterable[JSONDict]:
+        return self.get_json_api("/V1/store/storeViews")
+
+    def get_websites(self) -> Iterable[JSONDict]:
+        return self.get_json_api("/V1/store/websites")
+
+    def get_current_store_group_id(self, *, skip_store_groups=False) -> int:
+        """
+        Get the current store group id for the current scope. This is not part of Magento API.
+
+        :param skip_store_groups: if True, assume the current scope is not already a store group.
+        """
+        if not skip_store_groups:
+            # If scope is a already a store group
+            for store_group in self.get_store_groups():
+                if store_group["code"] == self.scope:
+                    return store_group["id"]
+
+        # If scope is a website
+        for website in self.get_websites():
+            if website["code"] == self.scope:
+                return website["default_group_id"]
+
+        # If scope is a view
+        for view in self.get_store_views():
+            if view["code"] == self.scope:
+                return view["store_group_id"]
+
+        raise RuntimeError("Can't determine the store group id of scope %r" % self.scope)
+
+    def get_root_category_id(self) -> int:
+        """
+        Get the root category id of the current scope. This is not part of Magento API.
+        """
+        store_group_root_category_id: Dict[int, int] = {}
+
+        store_groups = list(self.get_store_groups())
+        for store_group in store_groups:
+            root_category_id: int = store_group["root_category_id"]
+
+            # If scope is a store group
+            if store_group["code"] == self.scope:
+                return root_category_id
+
+            store_group_root_category_id[store_group["id"]] = root_category_id
+
+        return store_group_root_category_id[self.get_current_store_group_id(skip_store_groups=True)]
 
     # Sources
     # =======
