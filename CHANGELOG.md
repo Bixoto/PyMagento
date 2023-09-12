@@ -1,5 +1,10 @@
 # PyMagento Changelog
 
+## Unreleased
+
+### Breaking changes
+* Remove `magento.DEFAULT_ROOT_CATEGORY_ID` as it can be confusing. Use `client.get_root_category_id()` instead.
+
 ## 1.8.0 (2023/09/12)
 
 * Add `get_store_configs`, `get_store_groups`, `get_store_views`, `get_websites`

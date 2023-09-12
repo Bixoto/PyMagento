@@ -10,10 +10,7 @@ from magento.order_helpers import is_order_on_hold, is_order_cash_on_delivery, g
 from magento.queries import Query, make_field_value_query, make_search_query
 from magento.version import __version__
 
-# ids of the default categories in Magento
 ROOT_CATEGORY_ID = 1
-# Note this is the default root category, but it can be changed
-DEFAULT_ROOT_CATEGORY_ID = 2
 
 # Magento visibility options
 # https://devdocs.magento.com/guides/v2.4/rest/tutorials/configurable-product/create-configurable-product.html
