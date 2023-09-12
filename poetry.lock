@@ -520,6 +520,21 @@ pytest = ">=5.0"
 dev = ["pre-commit", "pytest-asyncio", "tox"]
 
 [[package]]
+name = "pytest-mypy-testing"
+version = "0.1.1"
+description = "Pytest plugin to check mypy output."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "pytest-mypy-testing-0.1.1.tar.gz", hash = "sha256:31b1b8ec869b2029b2e15ba9913c7dc089b6197626efd559d6e3c5e763a0725e"},
+    {file = "pytest_mypy_testing-0.1.1-py3-none-any.whl", hash = "sha256:2c10a079e4333550f648e66e1ab7ab5fc53f7791a690584abba549398e3441d7"},
+]
+
+[package.dependencies]
+mypy = ">=0.931"
+pytest = ">=7,<8"
+
+[[package]]
 name = "pytz"
 version = "2023.3.post1"
 description = "World timezone definitions, modern and historical"
@@ -804,4 +819,4 @@ docs = ["Sphinx", "sphinx-rtd-theme"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "06a558e36b458eb0946d901d041ccaea37bf9bda36f06912829981c81d3bb0db"
+content-hash = "434286dcd29714451b1fc5d04e8b91f518d9aeeb8dab7c211efb6d2eb172e851"

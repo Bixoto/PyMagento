@@ -31,6 +31,7 @@ types-requests = "^2.31"
 pytest = "^7.4"
 pytest-mock = "^3.11"
 pytest-cov = "^4.1"
+pytest-mypy-testing = "^0.1.1"
 
 [tool.poetry.extras]
 docs = ["Sphinx", "sphinx-rtd-theme"]
