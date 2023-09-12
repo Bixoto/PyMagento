@@ -1,8 +1,8 @@
 # PyMagento Changelog
 
-## 1.8.0 (unreleased)
+## 1.8.0 (2023/09/12)
 
-* Add `get_store_configs`, `get_store_groups`, get_store_views`, `get_websites`
+* Add `get_store_configs`, `get_store_groups`, `get_store_views`, `get_websites`
 * Add helpers `get_current_store_group_id`, `get_root_category_id`
 * All path components are now properly escaped in API calls
 * Fix calls when using scope `default`
