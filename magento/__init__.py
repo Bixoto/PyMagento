@@ -12,7 +12,8 @@ from magento.version import __version__
 
 # ids of the default categories in Magento
 ROOT_CATEGORY_ID = 1
-DEFAULT_CATEGORY_ID = 2
+# Note this is the default root category, but it can be changed
+DEFAULT_ROOT_CATEGORY_ID = 2
 
 # Magento visibility options
 # https://devdocs.magento.com/guides/v2.4/rest/tutorials/configurable-product/create-configurable-product.html
