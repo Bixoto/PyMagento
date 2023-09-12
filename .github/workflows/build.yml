@@ -32,13 +32,9 @@ jobs:
         run: |
           poetry install
 
-      - name: Lint with Mypy
+      - name: Test
         run: |
-          poetry run mypy --check-untyped-defs *.py magento tests
-
-      - name: Run Tests
-        run: |
-          poetry run pytest -v --cov=magento
+          ./ci.sh
 
       - name: Test build
         run: |
