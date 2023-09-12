@@ -997,7 +997,9 @@ class Magento(APISession):
         """
         assert path.startswith("/V1/")
 
-        full_path = f"/rest/{self.scope}"
+        full_path = "/rest"
+        if self.scope != "default":
+            full_path += f"/{self.scope}"
 
         if async_bulk:
             full_path += "/async/bulk"
