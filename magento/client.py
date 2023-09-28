@@ -203,10 +203,27 @@ class Magento(APISession):
     # Categories
     # ==========
 
-    def get_categories(self, query: Query = None, limit=-1, **kwargs) -> Iterable[Category]:
+    def get_categories(self, query: Query = None, path_prefix: Optional[str] = None, limit=-1, **kwargs) \
+            -> Iterable[Category]:
         """
         Yield all categories.
+
+        :param path_prefix: optional path prefix for the categories. Example: ``"1/2"`` for all categories whose path
+          is ``"1/2/..."``, including ``"1/2"`` itself. Use ``"1/2/"`` to exclude ``"1/2"`` from the returned categories.
+        :param query: optional query. This overrides ``path_prefix``.
+        :param limit: optional limit
         """
+        if query is None and path_prefix is not None:
+            if path_prefix.endswith("/"):
+                # "1/2/" -> LIKE "1/2/%"
+                query = make_field_value_query("path", f"{path_prefix}%", "like")
+            else:
+                # "1/2" -> LIKE "1/2/%" OR = "1/2"
+                query = make_search_query([[
+                    ("path", f"{path_prefix}/%", "like"),
+                    ("path", path_prefix, "eq"),
+                ]])
+
         return self.get_paginated("/V1/categories/list", query=query, limit=limit, **kwargs)
 
     def get_category(self, category_id: PathId) -> Optional[Category]:

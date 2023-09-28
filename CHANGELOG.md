@@ -1,7 +1,8 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.9.0 (2023/09/28)
 
+* `get_categories`: add optional `path_prefix` to filter categories by path
 * Add `magento.parse_datetime`
 * Add `magento.IMAGE_MIME_TYPES` and `magento.DATE_ISO_8601_FORMAT`
 
