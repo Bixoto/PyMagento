@@ -2,7 +2,11 @@
 
 ## Unreleased
 
+* Add `magento.parse_datetime`
+* Add `magento.IMAGE_MIME_TYPES` and `magento.DATE_ISO_8601_FORMAT`
+
 ### Breaking changes
+
 * Remove `magento.DEFAULT_ROOT_CATEGORY_ID` as it can be confusing. Use `client.get_root_category_id()` instead.
 
 ## 1.8.0 (2023/09/12)
@@ -14,6 +18,7 @@
 * Add official support for Python 3.12
 
 ### Breaking changes
+
 * `get_product_media`: the second parameter is now called `media_id` instead of `entry_id` to be coherent with the API
 * `magento.DEFAULT_CATEGORY_ID` is now named `magento.DEFAULT_ROOT_CATEGORY_ID`
 
