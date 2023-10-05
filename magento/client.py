@@ -273,7 +273,7 @@ class Magento(APISession):
         """
         return self.get_json_api(f"/V1/categories/{category_id}/products", **kwargs)
 
-    def assign_category_product(self, category_id: PathId, product_link: JSONDict, **kwargs):
+    def add_product_to_category(self, category_id: PathId, product_link: JSONDict, **kwargs):
         """
         Assign a product to a category.
 
@@ -286,7 +286,7 @@ class Magento(APISession):
                              json={"productLink": product_link},
                              **kwargs)
 
-    def remove_category_product(self, category_id: PathId, sku: Sku, **kwargs):
+    def remove_product_from_category(self, category_id: PathId, sku: Sku, **kwargs):
         """
         Remove a product from a category.
 
