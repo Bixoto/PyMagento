@@ -261,6 +261,42 @@ class Magento(APISession):
         """
         return self.post_api("/V1/categories", json={"category": category}, throw=throw)
 
+    def get_category_products(self, category_id: PathId, **kwargs) -> List[JSONDict]:
+        """
+        Get products assigned to a category.
+
+        https://adobe-commerce.redoc.ly/2.4.6-admin/tag/categoriescategoryIdproducts#operation/GetV1CategoriesCategoryIdProducts
+
+        Example:
+
+            {'sku': 'MYSKU123', 'position': 2, 'category_id': '17'}
+        """
+        return self.get_json_api(f"/V1/categories/{category_id}/products", **kwargs)
+
+    def assign_category_product(self, category_id: PathId, product_link: JSONDict, **kwargs):
+        """
+        Assign a product to a category.
+
+        https://adobe-commerce.redoc.ly/2.4.6-admin/tag/categoriescategoryIdproducts/#operation/PostV1CategoriesCategoryIdProducts
+
+        :param category_id: ID of the category
+        :param product_link: product link. See the Adobe Commerce documentation for the format.
+        """
+        return self.post_api(f"/V1/categories/{category_id}/products",
+                             json={"productLink": product_link},
+                             **kwargs)
+
+    def remove_category_product(self, category_id: PathId, sku: Sku, **kwargs):
+        """
+        Remove a product from a category.
+
+        https://adobe-commerce.redoc.ly/2.4.6-admin/tag/categoriescategoryIdproductssku/#operation/DeleteV1CategoriesCategoryIdProductsSku
+
+        :param category_id: ID of the category
+        :param sku: SKU of the product
+        """
+        return self.delete_api(f"/V1/categories/{category_id}/products/{sku}", **kwargs)
+
     # CMS
     # ===
 

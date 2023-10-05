@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* 
+
 ## 1.9.0 (2023/09/28)
 
 * `get_categories`: add optional `path_prefix` to filter categories by path
