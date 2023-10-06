@@ -255,11 +255,19 @@ class Magento(APISession):
         return cast(Category, self.put_api(f"/V1/categories/{category_id}",
                                            json={"category": category_data}, throw=True).json())
 
-    def create_category(self, category: Category, throw=False):
+    def create_category(self, category: Category, **kwargs):
         """
         Create a new category.
         """
-        return self.post_api("/V1/categories", json={"category": category}, throw=throw)
+        return self.post_api("/V1/categories", json={"category": category}, **kwargs)
+
+    def remove_category(self, category_id: PathId, **kwargs):
+        """
+        Remove a category.
+
+        https://adobe-commerce.redoc.ly/2.4.6-admin/tag/categoriescategoryId/#operation/DeleteV1CategoriesCategoryId
+        """
+        return self.delete_api(f"/V1/categories/{category_id}", **kwargs)
 
     def get_category_products(self, category_id: PathId, **kwargs) -> List[JSONDict]:
         """

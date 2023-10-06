@@ -2,6 +2,7 @@
 
 ## 1.9.2 (unreleased)
 
+* Add `remove_category`
 * Limit the query made by `get_category_by_name` to a single result
 
 ## 1.9.1 (2023/10/05)
