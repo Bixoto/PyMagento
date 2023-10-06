@@ -239,7 +239,7 @@ class Magento(APISession):
         :param name: exact name of the category
         :return:
         """
-        for category in self.get_categories(make_field_value_query("name", name)):
+        for category in self.get_categories(make_field_value_query("name", name), limit=1):
             return category
 
         return None

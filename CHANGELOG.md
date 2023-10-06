@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## 1.9.2 (unreleased)
+
+* Limit the query made by `get_category_by_name` to a single result
+
 ## 1.9.1 (2023/10/05)
 
 * Add `get_category_products`, `add_product_to_category`, and `remove_product_from_category`
