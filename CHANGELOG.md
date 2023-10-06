@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## 1.9.2 (unreleased)
+## 1.9.2 (2023/10/06)
 
 * Add `remove_category`
 * Limit the query made by `get_category_by_name` to a single result
