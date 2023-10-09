@@ -574,7 +574,7 @@ class Magento(APISession):
         :param sku: SKU of the product
         :return:
         """
-        return self.get_json_api(f"/V1/products/{escape_path(sku)}")
+        return self.get_json_api(f"/V1/products/{escape_path(sku)}", none_on_404=True)
 
     def get_product_by_id(self, product_id: int) -> Optional[Product]:
         """
