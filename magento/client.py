@@ -712,7 +712,7 @@ class Magento(APISession):
         Update multiple products using the async bulk API.
 
         Example:
-            >>> Magento().async_update_products([{"sku": "SK123", "name": "Abc"}), {"sku": "SK4", "name": "Def"}])
+            >>> Magento().async_update_products([{"sku": "SK123", "name": "Abc"}, {"sku": "SK4", "name": "Def"}])
 
         See https://devdocs.magento.com/guides/v2.4/rest/bulk-endpoints.html
 
