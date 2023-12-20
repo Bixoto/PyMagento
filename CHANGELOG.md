@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* `BatchSaver.send_batch` now returns the response from the Magento API
+
 ## 1.9.2 (2023/10/06)
 
 * Add `remove_category`

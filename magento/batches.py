@@ -32,19 +32,20 @@ class BatchSaver:
 
     def send_batch(self):
         """
-        Send the current pending batch (if any).
+        Send the current pending batch (if any) and return the response from the Magento API.
         """
         if not self._batch:
-            return
+            return None
 
-        self._put_batch()
+        resp = self._put_batch()
         self._sent_items += len(self._batch)
         self._sent_batches += 1
         self._batch = []
+        return resp
 
     def _put_batch(self):  # pragma: nocover
         # Note this raises on error
-        _resp = self.client.put_api(self.path, json=self._batch, throw=True, async_bulk=True).json()
+        return self.client.put_api(self.path, json=self._batch, throw=True, async_bulk=True).json()
 
     def finalize(self):
         """
