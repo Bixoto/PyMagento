@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.9.3 (2024/01/08)
 
 * Add `get_cart`
 * `BatchSaver.send_batch` now returns the response from the Magento API
