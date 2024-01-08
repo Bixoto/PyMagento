@@ -196,6 +196,9 @@ class Magento(APISession):
     # Carts
     # =====
 
+    def get_cart(self, *, cart_id: PathId, **kwargs) -> MagentoEntity:
+        return self.get_json_api(f"/V1/carts/{cart_id}", **kwargs)
+
     def get_carts(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all carts (generator)."""
         return self.get_paginated("/V1/carts/search", query=query, limit=limit, **kwargs)
