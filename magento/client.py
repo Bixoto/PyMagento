@@ -138,13 +138,13 @@ class Magento(APISession):
     # Attributes
     # ==========
 
-    def save_attribute(self, attribute: MagentoEntity, *, with_defaults=True, throw=True, **kwargs) -> MagentoEntity:
+    def save_attribute(self, attribute: MagentoEntity, *, with_defaults=True, **kwargs) -> MagentoEntity:
         if with_defaults:
             base = DEFAULT_ATTRIBUTE_DICT.copy()
             base.update(attribute)
             attribute = base
 
-        return self.post_api("/V1/products/attributes", json={"attribute": attribute}, throw=throw, **kwargs).json()
+        return self.post_json_api("/V1/products/attributes", json={"attribute": attribute}, **kwargs)
 
     def delete_attribute(self, attribute_code: str, **kwargs):
         return self.delete_api(f"/V1/products/attributes/{escape_path(attribute_code)}", **kwargs)
@@ -191,7 +191,10 @@ class Magento(APISession):
         """
         Get the status of an async/bulk operation.
         """
-        return self.get_api(f"/V1/bulk/{escape_path(bulk_uuid)}/status", throw=True).json()
+        return self.get_json_api(f"/V1/bulk/{escape_path(bulk_uuid)}/status",
+                                 # backward compatibility
+                                 none_on_404=False,
+                                 none_on_empty=False)
 
     # Carts
     # =====
@@ -335,7 +338,10 @@ class Magento(APISession):
 
     def get_customer(self, customer_id: int) -> dict:
         """Return a single customer."""
-        return self.get_api(f"/V1/customers/{customer_id}", throw=True).json()
+        return self.get_json_api(f"/V1/customers/{customer_id}",
+                                 # backward compatibility
+                                 none_on_404=False,
+                                 none_on_empty=False)
 
     def get_customer_groups(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all customer groups (generator)."""
@@ -362,10 +368,13 @@ class Magento(APISession):
 
         payload.setdefault("notify", notify)
 
-        return self.post_api(f"/V1/order/{order_id}/invoice", json=payload, throw=True).json()
+        return self.post_json_api(f"/V1/order/{order_id}/invoice", json=payload)
 
     def get_invoice(self, invoice_id: int) -> MagentoEntity:
-        return self.get_api(f"/V1/invoices/{invoice_id}", throw=True).json()
+        return self.get_json_api(f"/V1/invoices/{invoice_id}",
+                                 # backward compatibility
+                                 none_on_404=False,
+                                 none_on_empty=False)
 
     def get_invoice_by_increment_id(self, increment_id: str) -> Optional[MagentoEntity]:
         query = make_field_value_query("increment_id", increment_id)
@@ -425,11 +434,14 @@ class Magento(APISession):
 
         return self.get_paginated("/V1/orders/items", query=query, limit=limit, **kwargs)
 
-    def get_order(self, order_id: str, throw=True) -> Optional[Order]:
+    def get_order(self, order_id: str) -> Order:
         """
-        Get an order given its (entity) id.
+        Get an order given its entity id.
         """
-        return self.get_api(f"/V1/orders/{order_id}", throw=throw).json()
+        return self.get_json_api(f"/V1/orders/{order_id}",
+                                 # backward compatibility
+                                 none_on_404=False,
+                                 none_on_empty=False)
 
     def get_order_by_increment_id(self, increment_id: str) -> Optional[Order]:
         """
@@ -497,8 +509,8 @@ class Magento(APISession):
         """
         Get base prices for a sequence of SKUs.
         """
-        return self.post_api("/V1/products/base-prices-information",
-                             json={"skus": skus}, throw=True, bypass_read_only=True).json()
+        return self.post_json_api("/V1/products/base-prices-information",
+                                  json={"skus": skus}, throw=True, bypass_read_only=True)
 
     def save_base_prices(self, prices: Sequence[MagentoEntity]):
         """
@@ -520,8 +532,8 @@ class Magento(APISession):
         """
         Get special prices for a sequence of SKUs.
         """
-        return self.post_api("/V1/products/special-price-information",
-                             json={"skus": skus}, throw=True, bypass_read_only=True).json()
+        return self.post_json_api("/V1/products/special-price-information",
+                                  json={"skus": skus}, bypass_read_only=True)
 
     def save_special_prices(self, special_prices: Sequence[MagentoEntity]):
         """
@@ -635,7 +647,7 @@ class Magento(APISession):
         """
         Save a product media.
         """
-        return self.post_api(f"/V1/products/{escape_path(sku)}/media", json={"entry": media_entry}, throw=True).json()
+        return self.post_json_api(f"/V1/products/{escape_path(sku)}/media", json={"entry": media_entry})
 
     def delete_product_media(self, sku: Sku, media_id: PathId, throw=False):
         """
@@ -648,12 +660,13 @@ class Magento(APISession):
         """
         return self.delete_api(f"/V1/products/{escape_path(sku)}/media/{media_id}", throw=throw)
 
-    def save_product(self, product, *, save_options: Optional[bool] = None) -> Product:
+    def save_product(self, product, *, save_options: Optional[bool] = None, log_response=True) -> Product:
         """
         Save a product.
 
         :param product: product to save (can be partial).
         :param save_options: set the `saveOptions` attribute.
+        :param log_response: log the Magento response
         :return:
         """
         payload: JSONDict = {"product": product}
@@ -662,7 +675,7 @@ class Magento(APISession):
 
         # throw=False so the log is printed before we raise
         resp = self.post_api("/V1/products", json=payload, throw=False)
-        if self.logger:
+        if log_response and self.logger:
             self.logger.debug("Save product response: %s", resp.text)
         raise_for_response(resp)
         return cast(Product, resp.json())
@@ -737,11 +750,17 @@ class Magento(APISession):
 
     def get_product_stock_status(self, sku: Sku) -> MagentoEntity:
         """Get stock status for an SKU."""
-        return self.get_api(f"/V1/stockStatuses/{escape_path(sku)}", throw=True).json()
+        return self.get_json_api(f"/V1/stockStatuses/{escape_path(sku)}",
+                                 # backward compatibility
+                                 none_on_404=False,
+                                 none_on_empty=False)
 
     def get_product_stock_item(self, sku: Sku) -> MagentoEntity:
         """Get the stock item for an SKU."""
-        return self.get_api(f"/V1/stockItems/{escape_path(sku)}", throw=True).json()
+        return self.get_json_api(f"/V1/stockItems/{escape_path(sku)}",
+                                 # backward compatibility
+                                 none_on_404=False,
+                                 none_on_empty=False)
 
     def link_child_product(self, parent_sku: Sku, child_sku: Sku, **kwargs) -> requests.Response:
         """
@@ -787,8 +806,11 @@ class Magento(APISession):
         :param attribute_code:
         :return: sequence of option dicts.
         """
-        response = self.get_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options", throw=True)
-        return cast(Sequence[Dict[str, str]], response.json())
+        response = self.get_json_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options",
+                                     # backward compatibility
+                                     none_on_404=False,
+                                     none_on_empty=False)
+        return cast(Sequence[Dict[str, str]], response)
 
     def add_products_attribute_option(self, attribute_code: str, option: Dict[str, str]) -> str:
         """
@@ -801,9 +823,9 @@ class Magento(APISession):
         :return: new id
         """
         payload = {"option": option}
-        response = self.post_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options",
-                                 json=payload, throw=True)
-        ret = cast(str, response.json())
+        response = self.post_json_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options",
+                                      json=payload)
+        ret = cast(str, response)
 
         if ret.startswith("id_"):
             ret = ret[3:]
@@ -947,7 +969,7 @@ class Magento(APISession):
 
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/inventorysources/#operation/PostV1InventorySources
         """
-        return self.post_api("/V1/inventory/sources", json={"source": source}, throw=True).json()
+        return self.post_json_api("/V1/inventory/sources", json={"source": source})
 
     # Source Items
     # ============
@@ -989,7 +1011,7 @@ class Magento(APISession):
         """
         if not source_items:
             return None
-        return self.post_api("/V1/inventory/source-items", json={"sourceItems": source_items}, throw=True).json()
+        return self.post_json_api("/V1/inventory/source-items", json={"sourceItems": source_items})
 
     def delete_source_items(self, source_items: Iterable[SourceItem], throw=True, **kwargs):
         """
@@ -1115,7 +1137,10 @@ class Magento(APISession):
             page_query = query.copy()
             page_query["searchCriteria[currentPage]"] = current_page
 
-            res = self.get_api(path, page_query, throw=True, retry=retry).json()
+            res = self.get_json_api(path, page_query,
+                                    none_on_404=False,
+                                    none_on_empty=False,
+                                    retry=retry)
             items = res.get("items", [])
             if not items:
                 break
