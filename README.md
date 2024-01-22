@@ -36,6 +36,9 @@ for order in client.get_orders(status="processing"):
 
 For more information, [read the docs](https://pymagento2.readthedocs.io/).
 
+Note: not all endpoints are implemented with dedicated methods; you can still call them with
+`client.get_json_api("/V1/...")` for `GET` endpoints and `client.post_json_api("/V1/...", json=...)
+
 ## License
 
 Copyright 2020-2024 [Bixoto](https://bixoto.com/).
