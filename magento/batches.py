@@ -45,9 +45,8 @@ class BatchSaver:
         self._batch = []
         return resp
 
-    def _put_batch(self):  # pragma: nocover
-        # Note this raises on error
-        return self.client.put_api(self.path, json=self._batch, throw=True, async_bulk=True).json()
+    def _put_batch(self) -> JSONDict:  # pragma: nocover
+        return self.client.put_json_api(self.path, json=self._batch, async_bulk=True)
 
     def finalize(self):
         """

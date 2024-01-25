@@ -258,8 +258,8 @@ class Magento(APISession):
         :param category_data: (partial) category data to update
         :return: updated category
         """
-        return cast(Category, self.put_api(f"/V1/categories/{category_id}",
-                                           json={"category": category_data}, throw=True).json())
+        return cast(Category, self.put_json_api(f"/V1/categories/{category_id}",
+                                                json={"category": category_data}, throw=True))
 
     def create_category(self, category: Category, **kwargs):
         """
@@ -700,7 +700,7 @@ class Magento(APISession):
         if save_options is not None:
             payload["saveOptions"] = save_options
 
-        return cast(Product, self.put_api(f"/V1/products/{escape_path(sku)}", json=payload, throw=True).json())
+        return cast(Product, self.put_json_api(f"/V1/products/{escape_path(sku)}", json=payload, throw=True))
 
     def delete_product(self, sku: Sku, skip_missing=False, throw=True, **kwargs) -> bool:
         """
@@ -736,7 +736,7 @@ class Magento(APISession):
         :return:
         """
         payload = [{"product": product_update} for product_update in product_updates]
-        return self.put_api("/V1/products/bySku", json=payload, throw=True, async_bulk=True).json()
+        return self.put_json_api("/V1/products/bySku", json=payload, throw=True, async_bulk=True)
 
     def set_product_stock_item(self, sku: Sku, quantity: int, is_in_stock=1):
         """

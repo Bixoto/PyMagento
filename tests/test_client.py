@@ -66,7 +66,7 @@ class DummyMagento(magento.Magento):
 def test_url(mocker: MockerFixture):
     mocker.patch('magento.Magento', DummyMagento)
     m = magento.Magento(base_url="http://test", token="secret", scope="toto")
-    url = m.get_api('/V1/test/url').json()["url"]
+    url = m.get_json_api('/V1/test/url')["url"]
     assert url == "http://test/rest/toto/V1/test/url"
 
     url = m.request_api('get', '/V1/test/url', async_bulk=True).json()["url"]
