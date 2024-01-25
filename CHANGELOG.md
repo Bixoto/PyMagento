@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.10.0 (2024/01/25)
 
 * `save_product`: add `log_response` to be able to disable the log of the Magento response
 * Add `delete_custom_attribute` and `delete_custom_attributes`
