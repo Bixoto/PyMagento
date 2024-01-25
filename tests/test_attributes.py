@@ -43,6 +43,7 @@ def product2(custom_attributes2):
 def product3(custom_attributes3):
     return {"custom_attributes": custom_attributes3}
 
+
 # Note this is really slow. Moving the test in its own file doesn't help.
 # Doc: https://github.com/davidfritzsche/pytest-mypy-testing
 @pytest.mark.mypy_testing
@@ -145,3 +146,17 @@ def test_set_custom_attributes(product0):
     # setting them again doesn't change anything
     product = attributes.set_custom_attributes(product, attrs)
     assert attributes.get_custom_attributes_dict(product) == expected_dict
+
+
+def test_delete_custom_attribute():
+    assert attributes.get_custom_attributes_dict(attributes.delete_custom_attribute({}, "foo")) \
+           == {"foo": None}
+
+
+def test_delete_custom_attributes_empty():
+    assert attributes.delete_custom_attributes({}, []) == {"custom_attributes": []}
+
+
+def test_delete_custom_attributes(product3):
+    assert attributes.get_custom_attributes_dict(attributes.delete_custom_attributes(product3, ["yes", "not-present"])) \
+           == {"yes": None, "not-present": None, "nope": "0"}

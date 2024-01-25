@@ -2,7 +2,8 @@ from datetime import datetime
 
 from magento.attributes import (
     get_custom_attribute, get_boolean_custom_attribute, get_custom_attributes_dict,
-    set_custom_attribute, set_custom_attributes, serialize_attribute_value
+    set_custom_attribute, set_custom_attributes, serialize_attribute_value,
+    delete_custom_attribute, delete_custom_attributes,
 )
 from magento.client import Magento
 from magento.exceptions import MagentoException, MagentoAssertionError

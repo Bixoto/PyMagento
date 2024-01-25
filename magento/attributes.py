@@ -10,12 +10,12 @@ T = TypeVar('T')
 
 @overload
 def get_custom_attribute(item: dict, attribute_code: str,
-                         coerce_as: Callable[[str], T]) -> Union[None, T, List[T]]:
+                         coerce_as: Callable[[str], T]) -> Union[None, T, List[T]]:  # pragma: nocover
     ...
 
 
 @overload
-def get_custom_attribute(item: dict, attribute_code: str) -> Union[None, str, List[str]]:
+def get_custom_attribute(item: dict, attribute_code: str) -> Union[None, str, List[str]]:  # pragma: nocover
     ...
 
 
@@ -134,3 +134,17 @@ def set_custom_attributes(item: dict, attributes: Iterable[Tuple[str, Union[str,
     item["custom_attributes"] = item_custom_attributes
 
     return item
+
+
+def delete_custom_attribute(item: dict, attribute_code: str):
+    """
+    Delete a custom attribute by forcing its value to ``None``.
+    """
+    return delete_custom_attributes(item, [attribute_code])
+
+
+def delete_custom_attributes(item: dict, attributes: Iterable[str]):
+    """
+    Delete custom attributes by forcing their value to ``None``.
+    """
+    return set_custom_attributes(item, ((attribute, None) for attribute in attributes), force_none=True)
