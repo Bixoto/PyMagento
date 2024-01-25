@@ -1,5 +1,7 @@
 from typing import List, Callable, Iterable, TypeVar, Generic
 
+from api_session import JSONDict
+
 from .client import Magento
 from .queries import make_field_value_query
 from .types import MagentoEntity
@@ -21,7 +23,7 @@ class BatchSaver:
         self._sent_batches = 0
         self._sent_items = 0
 
-    def add_item(self, item_data):
+    def add_item(self, item_data: MagentoEntity):
         """
         Add an item to the current batch. If it makes the batch large enough, it’s sent to the API and a new empty
         batch is created.

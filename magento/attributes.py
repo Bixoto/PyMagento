@@ -5,17 +5,19 @@ from collections import OrderedDict
 from typing import Callable, Optional, cast, Dict, Any, Union, Sequence, List, Tuple, Iterable, \
     OrderedDict as OrderedDictType, overload, TypeVar
 
+from api_session import JSONDict
+
 T = TypeVar('T')
 
 
 @overload
-def get_custom_attribute(item: dict, attribute_code: str,
+def get_custom_attribute(item: JSONDict, attribute_code: str,
                          coerce_as: Callable[[str], T]) -> Union[None, T, List[T]]:  # pragma: nocover
     ...
 
 
 @overload
-def get_custom_attribute(item: dict, attribute_code: str) -> Union[None, str, List[str]]:  # pragma: nocover
+def get_custom_attribute(item: JSONDict, attribute_code: str) -> Union[None, str, List[str]]:  # pragma: nocover
     ...
 
 
