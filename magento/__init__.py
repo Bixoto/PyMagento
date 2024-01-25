@@ -15,10 +15,13 @@ ROOT_CATEGORY_ID = 1
 
 # Magento visibility options
 # https://devdocs.magento.com/guides/v2.4/rest/tutorials/configurable-product/create-configurable-product.html
-VISIBILITY_BOTH = 4
+VISIBILITY_IN_CATALOG_AND_SEARCH = 4
 VISIBILITY_IN_CATALOG = 2
 VISIBILITY_IN_SEARCH = 3
 VISIBILITY_NOT_VISIBLE = 1
+
+# backward compatibility
+VISIBILITY_BOTH = VISIBILITY_IN_CATALOG_AND_SEARCH
 
 # Magento product statuses
 # https://magento.stackexchange.com/q/10693/92968
