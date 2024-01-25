@@ -13,13 +13,13 @@ files = [
 
 [[package]]
 name = "api-session"
-version = "1.3.5"
+version = "1.3.6"
 description = "requests.Session to work with JSON APIs"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "api_session-1.3.5-py3-none-any.whl", hash = "sha256:f7103c07c968a266d986c107f4c20ba59db7a4ffb0c19b51b15af4a3b0252d4b"},
-    {file = "api_session-1.3.5.tar.gz", hash = "sha256:5910402a5e3e4cbf72b649958243f4d3a9ba0785610db1dcadf14c1ef5cde7c2"},
+    {file = "api_session-1.3.6-py3-none-any.whl", hash = "sha256:e035d2fe3b60e4a0bb2bc14119fb6d3ab22bc04457ce42d8b00a41c5fc46548c"},
+    {file = "api_session-1.3.6.tar.gz", hash = "sha256:7bbf07c433db864085e1d36a4e19204c073bbf76e9058babad853a666b978268"},
 ]
 
 [package.dependencies]
@@ -464,13 +464,13 @@ files = [
 
 [[package]]
 name = "pluggy"
-version = "1.3.0"
+version = "1.4.0"
 description = "plugin and hook calling mechanisms for python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pluggy-1.3.0-py3-none-any.whl", hash = "sha256:d89c696a773f8bd377d18e5ecda92b7a3793cbe66c87060a6fb58c7b6e1061f7"},
-    {file = "pluggy-1.3.0.tar.gz", hash = "sha256:cf61ae8f126ac6f7c451172cf30e3e43d3ca77615509771b3a984a0730651e12"},
+    {file = "pluggy-1.4.0-py3-none-any.whl", hash = "sha256:7db9f7b503d67d1c5b95f59773ebb58a8c1c288129a88665838012cfb07b8981"},
+    {file = "pluggy-1.4.0.tar.gz", hash = "sha256:8c85c2876142a764e5b7548e7d9a0e0ddb46f5185161049a79b7e974454223be"},
 ]
 
 [package.extras]
@@ -777,13 +777,13 @@ files = [
 
 [[package]]
 name = "types-requests"
-version = "2.31.0.20240106"
+version = "2.31.0.20240125"
 description = "Typing stubs for requests"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "types-requests-2.31.0.20240106.tar.gz", hash = "sha256:0e1c731c17f33618ec58e022b614a1a2ecc25f7dc86800b36ef341380402c612"},
-    {file = "types_requests-2.31.0.20240106-py3-none-any.whl", hash = "sha256:da997b3b6a72cc08d09f4dba9802fdbabc89104b35fe24ee588e674037689354"},
+    {file = "types-requests-2.31.0.20240125.tar.gz", hash = "sha256:03a28ce1d7cd54199148e043b2079cdded22d6795d19a2c2a6791a4b2b5e2eb5"},
+    {file = "types_requests-2.31.0.20240125-py3-none-any.whl", hash = "sha256:9592a9a4cb92d6d75d9b491a41477272b710e021011a2a3061157e2fb1f1a5d1"},
 ]
 
 [package.dependencies]
