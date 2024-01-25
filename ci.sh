@@ -4,10 +4,10 @@
 COV_ARGS=""
 
 if [ -n "$HTMLCOV" ]; then
-  COV_ARG="$COV_ARGS --cov-report=html"
+  COV_ARGS="$COV_ARGS --cov-report=html"
 fi
 if [ -n "$BRANCHCOV" ]; then
-  COV_ARG="$COV_ARGS --cov-branch"
+  COV_ARGS="$COV_ARGS --cov-branch"
 fi
 
 
