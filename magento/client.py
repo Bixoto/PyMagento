@@ -340,9 +340,39 @@ class Magento(APISession):
     # Coupons
     # =======
 
+    def create_coupon(self, coupon: MagentoEntity, **kwargs) -> MagentoEntity:
+        """Create a coupon."""
+        return self.post_json_api("/V1/coupons", json={"coupon": coupon}, **kwargs)
+
+    def update_coupon(self, coupon_id: int, coupon: MagentoEntity, **kwargs) -> MagentoEntity:
+        """Update a coupon."""
+        return self.put_json_api(f"/V1/coupons/{coupon_id}", json={"coupon": coupon}, **kwargs)
+
     def get_coupons(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all coupons (generator)."""
         return self.get_paginated("/V1/coupons/search", query=query, limit=limit, **kwargs)
+
+    def get_coupon(self, coupon_id: int) -> MagentoEntity:
+        """Get a coupon by ID."""
+        return self.get_json_api(f"/V1/coupons/{coupon_id}")
+
+    def delete_coupon(self, coupon_id: int) -> bool:
+        """Delete a coupon by ID."""
+        return self.delete_json_api(f"/V1/coupons/{coupon_id}")
+
+    def delete_coupons(self, coupon_ids: Iterable[int], *, ignore_invalid_coupons=True, **kwargs):
+        """Delete multiple coupons by ID."""
+        return self.post_json_api("/V1/coupons/deleteByIds", json={
+            "ids": list(coupon_ids),
+            "ignoreInvalidCoupons": ignore_invalid_coupons,
+        }, **kwargs)
+
+    def delete_coupons_by_codes(self, coupon_codes: Iterable[str], *, ignore_invalid_coupons=True, **kwargs):
+        """Delete multiple coupons by code."""
+        return self.post_json_api("/V1/coupons/deleteByIds", json={
+            "codes": list(coupon_codes),
+            "ignoreInvalidCoupons": ignore_invalid_coupons,
+        }, **kwargs)
 
     # Customers
     # =========

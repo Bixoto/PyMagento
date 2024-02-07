@@ -1,5 +1,14 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* Implement more methods:
+  * `get_cms_block`, `delete_cms_block`
+  * `create_coupon`, `update_coupon`, `get_coupon`, `delete_coupon`, `delete_coupons`, `delete_coupons_by_codes`
+  * `delete_customer_address`
+* Add helpers `sku_exists`, `sku_was_bought`, `get_categories_under_root`
+* `remove_product_from_category`: fix for SKUs that contain slashes
+
 ## 1.10.0 (2024/01/25)
 
 * `save_product`: add `log_response` to be able to disable the log of the Magento response
