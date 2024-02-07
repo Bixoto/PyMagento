@@ -309,7 +309,7 @@ class Magento(APISession):
         :param category_id: ID of the category
         :param sku: SKU of the product
         """
-        return self.delete_api(f"/V1/categories/{category_id}/products/{sku}", **kwargs)
+        return self.delete_api(f"/V1/categories/{category_id}/products/{escape_path(sku)}", **kwargs)
 
     # CMS
     # ===
