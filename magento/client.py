@@ -1078,6 +1078,50 @@ class Magento(APISession):
         """Get all enabled modules (generator)."""
         return self.get_paginated("/V1/modules", query=query, limit=limit, **kwargs)
 
+    # Helpers
+    # =======
+
+    # Categories
+    # ----------
+
+    def get_categories_under_root(self, root_category_id: Optional[int] = None, include_root=False):
+        """
+        Like get_categories(), but get only categories under a root id.
+
+        :param root_category_id: optional root category to use.
+          If not provided, defaults to the store’s root category id.
+        :param include_root: if True, include the root category in the results (default: False).
+        :return:
+        """
+        if root_category_id is None:
+            root_category_id = self.get_root_category_id()
+
+        root_category = self.get_category(root_category_id)
+        if root_category is None:
+            return
+
+        path_prefix = root_category["path"]
+        if not include_root:
+            path_prefix += "/"
+
+        yield from self.get_categories(path_prefix=path_prefix)
+
+    # Products
+    # --------
+
+    def sku_exists(self, sku: str):
+        """Test if a SKU exists in Magento."""
+        # Update this if you find a more efficient way of doing it
+        return self.get_product(sku) is not None
+
+    def sku_was_bought(self, sku: str):
+        """
+        Test if there exists at least one order with the given SKU.
+        """
+        for _ in self.get_orders_items(sku=sku, limit=1):
+            return True
+        return False
+
     # Internals
     # =========
 
