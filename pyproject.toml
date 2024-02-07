@@ -44,6 +44,15 @@ exclude_lines = [
     "except ImportError:",
 ]
 
+[tool.ruff]
+line-length = 120
+ignore-init-module-imports = true
+ignore = [
+    "E402", # "Module level import not at top of file"
+    "E501", # line too long
+    "F401", # "unused" imports
+]
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

@@ -221,8 +221,9 @@ class Magento(APISession):
         """
         Yield all categories.
 
-        :param path_prefix: optional path prefix for the categories. Example: ``"1/2"`` for all categories whose path
-          is ``"1/2/..."``, including ``"1/2"`` itself. Use ``"1/2/"`` to exclude ``"1/2"`` from the returned categories.
+        :param path_prefix: optional path prefix for the categories.
+          Example: ``"1/2"`` for all categories whose path is ``"1/2/..."``, including ``"1/2"`` itself.
+          Use ``"1/2/"`` to exclude ``"1/2"`` from the returned categories.
         :param query: optional query. This overrides ``path_prefix``.
         :param limit: optional limit
         """

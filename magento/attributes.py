@@ -40,7 +40,8 @@ def get_custom_attribute(item, attribute_code, coerce_as=None):
     """
     if coerce_as == bool:
         # "0" -> False / "1" -> True
-        coerce_as = lambda s: bool(int(s))
+        def coerce_as(s: str):
+            return bool(int(s))
 
     for attribute in item.get("custom_attributes", []):
         if attribute["attribute_code"] == attribute_code:

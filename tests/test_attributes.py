@@ -79,7 +79,7 @@ def test_get_custom_attribute(product0, product1, product2):
 
     assert attributes.get_custom_attribute(product, "int") == "42"
     assert attributes.get_custom_attribute(product, "int", int) == 42
-    assert attributes.get_custom_attribute(product, "int", bool) == True
+    assert attributes.get_custom_attribute(product, "int", bool) is True
 
     assert attributes.get_custom_attribute(product, "float") == "3.14"
     assert attributes.get_custom_attribute(product, "float", float) == 3.14
