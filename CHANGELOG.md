@@ -8,6 +8,7 @@
   * `delete_customer_address`
 * Add helpers `sku_exists`, `sku_was_bought`, `get_categories_under_root`
 * `remove_product_from_category`: fix for SKUs that contain slashes
+* Improve some type hints on attributes methods
 
 ## 1.10.0 (2024/01/25)
 
