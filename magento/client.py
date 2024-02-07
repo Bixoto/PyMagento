@@ -135,6 +135,13 @@ class Magento(APISession):
         self.logger = logger
         self.headers["Authorization"] = f"Bearer {token}"
 
+    # Addresses
+    # =========
+
+    def delete_customer_address(self, address_id: int) -> bool:
+        """Delete customer address by ID."""
+        return self.delete_json_api(f"/V1/addresses/{address_id}")
+
     # Attributes
     # ==========
 
@@ -322,6 +329,14 @@ class Magento(APISession):
         """Get all CMS blocks (generator)."""
         return self.get_paginated("/V1/cmsBlock/search", query=query, limit=limit, **kwargs)
 
+    def get_cms_block(self, block_id: str) -> MagentoEntity:
+        """Get a single CMS block."""
+        return self.get_json_api(f"/V1/cmsBlock/{block_id}")
+
+    def delete_cms_block(self, block_id: str) -> bool:
+        """Delete a CMS block by ID."""
+        return self.delete_json_api(f"/V1/cmsBlock/{block_id}")
+
     # Coupons
     # =======
 
@@ -470,7 +485,7 @@ class Magento(APISession):
 
     def save_order(self, order: Order):
         """Save an order."""
-        return self.post_api(f"/V1/orders", json={"entity": order})
+        return self.post_api("/V1/orders", json={"entity": order})
 
     def set_order_status(self, order: Order, status: str, *, external_order_id: Optional[str] = None):
         """
