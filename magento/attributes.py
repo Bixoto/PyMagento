@@ -2,7 +2,7 @@
 Custom attributes utilities.
 """
 from collections import OrderedDict
-from typing import Callable, Optional, cast, Dict, Any, Union, Sequence, List, Tuple, Iterable, \
+from typing import Callable, Optional, cast, Dict, Union, Sequence, List, Tuple, Iterable, \
     OrderedDict as OrderedDictType, overload, TypeVar
 
 from api_session import JSONDict
@@ -56,14 +56,14 @@ def get_custom_attribute(item, attribute_code, coerce_as=None):
     return None
 
 
-def get_boolean_custom_attribute(item: dict, attribute_code: str) -> Optional[bool]:
+def get_boolean_custom_attribute(item: JSONDict, attribute_code: str) -> Optional[bool]:
     """
     Equivalent of ``get_custom_attribute(item, attribute_code, coerce_as=bool)`` with proper typing.
     """
     return cast(Optional[bool], get_custom_attribute(item, attribute_code, coerce_as=bool))
 
 
-def get_custom_attributes_dict(item: Dict[str, Any]) -> OrderedDictType[str, Union[Sequence[str], str]]:
+def get_custom_attributes_dict(item: JSONDict) -> OrderedDictType[str, Union[Sequence[str], str]]:
     """
     Get all custom attributes from an item as an ordered dict of code->value.
     """
@@ -87,7 +87,7 @@ def serialize_attribute_value(value: Union[str, int, float, bool, None], force_n
     return str(value)
 
 
-def set_custom_attribute(item: dict, attribute_code: str, attribute_value: Union[str, int, float, bool, None],
+def set_custom_attribute(item: JSONDict, attribute_code: str, attribute_value: Union[str, int, float, bool, None],
                          *, force_none=False):
     """
     Set a custom attribute in an item dict.
@@ -106,7 +106,7 @@ def set_custom_attribute(item: dict, attribute_code: str, attribute_value: Union
     return set_custom_attributes(item, [(attribute_code, attribute_value)], force_none=force_none)
 
 
-def set_custom_attributes(item: dict, attributes: Iterable[Tuple[str, Union[str, int, float, bool, None]]],
+def set_custom_attributes(item: JSONDict, attributes: Iterable[Tuple[str, Union[str, int, float, bool, None]]],
                           *, force_none=False):
     """
     Set custom attributes in an item dict.
@@ -139,14 +139,14 @@ def set_custom_attributes(item: dict, attributes: Iterable[Tuple[str, Union[str,
     return item
 
 
-def delete_custom_attribute(item: dict, attribute_code: str):
+def delete_custom_attribute(item: JSONDict, attribute_code: str):
     """
     Delete a custom attribute by forcing its value to ``None``.
     """
     return delete_custom_attributes(item, [attribute_code])
 
 
-def delete_custom_attributes(item: dict, attributes: Iterable[str]):
+def delete_custom_attributes(item: JSONDict, attributes: Iterable[str]):
     """
     Delete custom attributes by forcing their value to ``None``.
     """
