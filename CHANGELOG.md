@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.10.1 (2024/02/07)
 
 * Implement more methods:
   * `get_cms_block`, `delete_cms_block`
@@ -13,10 +13,13 @@
 
 * `save_product`: add `log_response` to be able to disable the log of the Magento response
 * Add `delete_custom_attribute` and `delete_custom_attributes`
-* `get_order` and `save_attribute`: remove the `throw` parameter; the default was `True` but even if one passed `False`
-  the method would still throw when trying to JSON-decode the error responses.
 * Deprecate `VISIBILITY_BOTH` in favor of `VISIBILITY_IN_CATALOG_AND_SEARCH`
 * Simplify some code using [`api-session`](https://github.com/bixoto/api-session) 1.3.6
+
+### Breaking changes
+
+* `get_order` and `save_attribute`: remove the `throw` parameter; the default was `True` but even if one passed `False`
+  the method would still throw when trying to JSON-decode the error responses.
 
 ## 1.9.3 (2024/01/08)
 
