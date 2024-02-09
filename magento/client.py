@@ -2,7 +2,7 @@ from json.decoder import JSONDecodeError
 from logging import Logger
 import time
 from os import environ
-from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List, Any
+from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List
 from urllib.parse import quote as urlquote
 
 from api_session import APISession, JSONDict
@@ -963,9 +963,9 @@ class Magento(APISession):
     # ======
 
     def get_store_configs(self, store_codes: Optional[List[str]] = None) -> Iterable[JSONDict]:
-        params: Dict[str, Any] = {}
+        params: Dict[str, List[str]] = {}
         if store_codes:
-            params["storeCodes"] = store_codes
+            params = {"storeCodes": store_codes}
 
         return self.get_json_api("/V1/store/storeConfigs", params=params)
 
