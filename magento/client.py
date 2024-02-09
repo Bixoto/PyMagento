@@ -142,6 +142,17 @@ class Magento(APISession):
         """Delete customer address by ID."""
         return self.delete_json_api(f"/V1/addresses/{address_id}")
 
+    # Apple Pay
+    # =========
+
+    def get_apple_pay_auth(self) -> MagentoEntity:
+        """
+        Returns details required to be able to submit a payment with Apple Pay.
+
+        https://adobe-commerce.redoc.ly/2.4.6-admin/tag/applepayauth/#operation/GetV1ApplepayAuth
+        """
+        return self.get_json_api("/V1/applepay/auth")
+
     # Attributes
     # ==========
 
@@ -194,6 +205,10 @@ class Magento(APISession):
     # Bulk Operations
     # ===============
 
+    def get_bulk_operations(self, *, query: Query = None, limit=-1, **kwargs):
+        """Lists the bulk operation items."""
+        return self.get_paginated("/V1/bulk", query=query, limit=limit, **kwargs)
+
     def get_bulk_status(self, bulk_uuid: str) -> MagentoEntity:
         """
         Get the status of an async/bulk operation.
@@ -202,6 +217,16 @@ class Magento(APISession):
                                  # backward compatibility
                                  none_on_404=False,
                                  none_on_empty=False)
+
+    def get_bulk_detailed_status(self, bulk_uuid: str) -> MagentoEntity:
+        """
+        Get the detailed status of an async/bulk operation.
+        """
+        return self.get_json_api(f"/V1/bulk/{escape_path(bulk_uuid)}/detailed-status")
+
+    def get_bulk_operation_status_count(self, bulk_uuid: str, status: int) -> int:
+        """Get operations count by bulk UUID and status."""
+        return self.get_json_api(f"/V1/bulk/{escape_path(bulk_uuid)}/operation-status/{status}")
 
     # Carts
     # =====
