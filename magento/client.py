@@ -59,7 +59,7 @@ DEFAULT_SCOPE = "all"
 
 def raise_for_response(response: requests.Response):
     """
-    Equivalent of requests.Response#raise_for_status with some Magento specifics.
+    Equivalent of `requests.Response#raise_for_status` with some Magento specifics.
     """
     if response.ok:
         return
@@ -71,8 +71,12 @@ def raise_for_response(response: requests.Response):
             pass
         else:
             if isinstance(body, dict) and "message" in body:
-                raise MagentoException(body["message"], parameters=body.get("parameters"),
-                                       trace=body.get("trace"), response=response)
+                raise MagentoException(
+                    body["message"],
+                    parameters=body.get("parameters"),
+                    trace=body.get("trace"),
+                    response=response,
+                )
 
     response.raise_for_status()
 
@@ -85,13 +89,12 @@ class Magento(APISession):
     """
     Client for the Magento API.
     """
-    # default batch size for paginated requests
-    # Note increasing it doesn’t create a significant time improvement.
-    # For example, in one test on Bixoto in 2021, getting 2k products using a page size of 1k took 28s.
-    # The same query with a page size of 2k still took 26s.
-    # Magento supports setting hard limits on this:
-    #   https://developer.adobe.com/commerce/webapi/get-started/api-security/
     PAGE_SIZE = 1000
+    """
+    Default batch size for paginated requests.
+    Note Magento supports hard limits on this:
+      https://developer.adobe.com/commerce/webapi/get-started/api-security/
+    """
 
     def __init__(self,
                  token: Optional[str] = None,
@@ -1260,11 +1263,11 @@ class Magento(APISession):
                                     none_on_404=False,
                                     none_on_empty=False,
                                     retry=retry)
-            items = res.get("items", [])
+            items: list = res.get("items", [])
             if not items:
                 break
 
-            total_count = res["total_count"]
+            total_count: int = res["total_count"]
 
             for item in items:
                 if self.logger and count and count % 1000 == 0:
