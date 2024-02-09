@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* Allow to override the `page_size` in `get_paginated` and all methods that use it
+
 ## 1.10.1 (2024/02/07)
 
 * Implement more methods:

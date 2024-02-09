@@ -444,7 +444,8 @@ class Magento(APISession):
                    status_condition_type: Optional[str] = None,
                    limit=-1,
                    query: Query = None,
-                   retry=0) -> Iterator[Order]:
+                   retry=0,
+                   **kwargs) -> Iterator[Order]:
         """
         Return a generator of all orders with this status up to the limit.
 
@@ -459,7 +460,7 @@ class Magento(APISession):
         if status:
             query = make_field_value_query("status", status, condition_type=status_condition_type)
 
-        return self.get_paginated("/V1/orders", query=query, limit=limit, retry=retry)
+        return self.get_paginated("/V1/orders", query=query, limit=limit, retry=retry, **kwargs)
 
     def get_last_orders(self, limit=10) -> List[Order]:
         """Return a list of the last orders (default: 10)."""
@@ -613,7 +614,7 @@ class Magento(APISession):
     # Products
     # ========
 
-    def get_products(self, limit=-1, query: Query = None, retry=0) -> Iterator[Product]:
+    def get_products(self, limit=-1, query: Query = None, retry=0, **kwargs):
         """
         Return a generator of all products.
 
@@ -622,7 +623,8 @@ class Magento(APISession):
         :param retry:
         :return:
         """
-        return cast(Iterator[Product], self.get_paginated("/V1/products/", query=query, limit=limit, retry=retry))
+        return cast(Iterator[Product],
+                    self.get_paginated("/V1/products/", query=query, limit=limit, retry=retry, **kwargs))
 
     def get_products_types(self) -> Sequence[MagentoEntity]:
         """Get available product types."""
@@ -1194,7 +1196,7 @@ class Magento(APISession):
             raise_for_response(r)
         return r
 
-    def get_paginated(self, path: str, *, query: Query = None, limit=-1, retry=0):
+    def get_paginated(self, path: str, *, query: Query = None, limit=-1, retry=0, page_size: Optional[int] = None):
         """
         Get a paginated API path.
 
@@ -1202,12 +1204,14 @@ class Magento(APISession):
         :param query:
         :param limit: -1 for no limit
         :param retry:
+        :param page_size: default is `self.PAGE_SIZE`
         :return:
         """
         if limit == 0:
             return
 
-        page_size = self.PAGE_SIZE
+        if page_size is None:
+            page_size = self.PAGE_SIZE
         is_limited = limit > 0
 
         if is_limited and limit < page_size:
