@@ -1,3 +1,4 @@
+import warnings
 from json.decoder import JSONDecodeError
 from logging import Logger
 import time
@@ -814,26 +815,59 @@ class Magento(APISession):
         payload = [{"product": product_update} for product_update in product_updates]
         return self.put_json_api("/V1/products/bySku", json=payload, throw=True, async_bulk=True)
 
-    def set_product_stock_item(self, sku: Sku, quantity: int, is_in_stock=1):
-        """
-        :param sku:
-        :param quantity:
-        :param is_in_stock:
-        :return: requests.Response
-        """
-        payload = {"stockItem": {"qty": quantity, "is_in_stock": is_in_stock}}
-        return self.put_api(f"/V1/products/{escape_path(sku)}/stockItems/1", json=payload, throw=True)
-
-    def get_product_stock_status(self, sku: Sku) -> MagentoEntity:
-        """Get stock status for an SKU."""
-        return self.get_json_api(f"/V1/stockStatuses/{escape_path(sku)}",
+    def get_product_stock_item(self, sku: Sku) -> MagentoEntity:
+        """Get the stock item for an SKU."""
+        return self.get_json_api(f"/V1/stockItems/{escape_path(sku)}",
                                  # backward compatibility
                                  none_on_404=False,
                                  none_on_empty=False)
 
-    def get_product_stock_item(self, sku: Sku) -> MagentoEntity:
-        """Get the stock item for an SKU."""
-        return self.get_json_api(f"/V1/stockItems/{escape_path(sku)}",
+    def update_product_stock_item(self, sku: Sku, stock_item_id: int, stock_item: dict) -> int:
+        """
+        Update the stock item of a product.
+        https://adobe-commerce.redoc.ly/2.4.6-admin/tag/productsproductSkustockItemsitemId/#operation/PutV1ProductsProductSkuStockItemsItemId
+
+        :param sku: SKU of the product
+        :param stock_item_id:
+        :param stock_item:
+        :return: the stock item id
+        """
+        return self.put_json_api(f"/V1/products/{escape_path(sku)}/stockItems/{stock_item_id}", json={
+            "stockItem": stock_item,
+        })
+
+    def update_product_stock_item_quantity(self, sku: Sku, stock_item_id: int, quantity: int,
+                                           is_in_stock: Optional[bool] = None):
+        """
+        Update the stock item of a product to set its quantity. This is a simplified version of
+        ``update_product_stock_item``.
+
+        :param sku: SKU of the product
+        :param stock_item_id:
+        :param quantity:
+        :param is_in_stock: if not set, default to ``quantity > 0``
+        :return: the stock item id
+        """
+        if is_in_stock is None:
+            is_in_stock = quantity > 0
+
+        return self.update_product_stock_item(sku, stock_item_id, {
+            "qty": quantity,
+            "is_in_stock": is_in_stock,
+        })
+
+    def set_product_stock_item(self, sku: Sku, quantity: int, is_in_stock=1):
+        warnings.warn("set_product_stock_item is deprecated."
+                      " Use update_product_stock_item_quantity(sku, stock_item_id, quantity) instead",
+                      DeprecationWarning)
+        return self.update_product_stock_item_quantity(sku,
+                                                       1,
+                                                       quantity=quantity,
+                                                       is_in_stock=(is_in_stock == 1))
+
+    def get_product_stock_status(self, sku: Sku) -> MagentoEntity:
+        """Get stock status for an SKU."""
+        return self.get_json_api(f"/V1/stockStatuses/{escape_path(sku)}",
                                  # backward compatibility
                                  none_on_404=False,
                                  none_on_empty=False)

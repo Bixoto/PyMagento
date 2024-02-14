@@ -5,6 +5,8 @@
 * Implement more methods:
   * `get_apple_pay_auth`
   * `get_bulk_operations`, `get_bulk_detailed_status`, `get_bulk_operation_status_count`
+  * `update_product_stock_item`
+* Add `update_product_stock_item_quantity` and deprecate `set_product_stock_item`
 * Allow to override the `page_size` in `get_paginated` and all methods that use it
 
 ## 1.10.1 (2024/02/07)
