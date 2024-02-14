@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.10.2 (2024/02/14)
 
 * Implement more methods:
   * `get_apple_pay_auth`
