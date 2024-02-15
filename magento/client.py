@@ -486,7 +486,7 @@ class Magento(APISession):
         :param retry: max retries count
         :return: generator of orders
         """
-        if status:
+        if status is not None:
             query = make_field_value_query("status", status, condition_type=status_condition_type)
 
         return self.get_paginated("/V1/orders", query=query, limit=limit, retry=retry, **kwargs)
@@ -998,7 +998,7 @@ class Magento(APISession):
 
     def get_store_configs(self, store_codes: Optional[List[str]] = None) -> Iterable[JSONDict]:
         params: Dict[str, List[str]] = {}
-        if store_codes:
+        if store_codes is not None:
             params = {"storeCodes": store_codes}
 
         return self.get_json_api("/V1/store/storeConfigs", params=params)
@@ -1099,7 +1099,7 @@ class Magento(APISession):
         :param limit: -1 for unlimited.
         :return:
         """
-        if source_code or sku or skus:
+        if source_code is not None or sku is not None or skus is not None:
             filter_groups = []
             if source_code:
                 filter_groups.append([("source_code", source_code, "eq")])
