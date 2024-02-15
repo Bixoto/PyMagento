@@ -1,10 +1,11 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.10.3 (2024/02/15)
 
 * fix `get_source_items` to accept an empty list of SKUs. In previous versions `skus=[]` (filter on an empty list) was
   interpreted the same way as `skus=None` (don’t filter at all)
 * fix `get_store_configs` to accept an empty list of `store_codes`
+* `update_product_stock_item`: improve the docstring
 
 ## 1.10.2 (2024/02/14)
 

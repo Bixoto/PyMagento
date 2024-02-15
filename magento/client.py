@@ -828,9 +828,10 @@ class Magento(APISession):
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/productsproductSkustockItemsitemId/#operation/PutV1ProductsProductSkuStockItemsItemId
 
         :param sku: SKU of the product
-        :param stock_item_id:
+        :param stock_item_id: stock item ID. Note that it’s not clear why this ID is needed; it seems to be ignored by
+          Magento and products always have a single stock item anyway.
         :param stock_item:
-        :return: the stock item id
+        :return: the stock item ID
         """
         return self.put_json_api(f"/V1/products/{escape_path(sku)}/stockItems/{stock_item_id}", json={
             "stockItem": stock_item,
