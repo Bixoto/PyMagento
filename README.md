@@ -42,3 +42,10 @@ Note: not all endpoints are implemented with dedicated methods; you can still ca
 ## License
 
 Copyright 2020-2024 [Bixoto](https://bixoto.com/).
+
+## Other projects
+
+* [MyMagento](https://github.com/TDKorn/my-magento): new project started in 2022; MyMagento didn’t exist when we started PyMagento.
+* [PyMagento-REST](https://pypi.org/project/PyMagento-REST/) (abandoned)
+* [bialecki/pymagento](https://github.com/bialecki/pymagento): Magento 1.x only (abandoned)
+* [python-magento](https://github.com/bernieke/python-magento): Magento 1.x only (abandoned)
