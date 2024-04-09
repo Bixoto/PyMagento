@@ -1,5 +1,7 @@
 # PyMagento
 
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/pymagento)](https://pypi.org/project/pymagento/)
+
 **PyMagento** is a Python client for the Magento 2 API. Its goal is to provide an easy-to-use
 Pythonic interface to the Magento 2 API, while being lightweight and extendable.
 

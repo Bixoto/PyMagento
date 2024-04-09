@@ -15,6 +15,7 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     'Programming Language :: Python :: 3',
 ]
+keywords = ["magento", "magento-api", "python-magento", "magento-python", "pymagento", "py-magento", "magento2", "magento-2", "magento2-api"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
