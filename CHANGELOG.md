@@ -1,8 +1,12 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.11.0 (unreleased)
 
 * `get_category_by_name`: add `assert_one` optional keyword parameter
+
+### Breaking changes
+
+* `create_category` now returns the created category rather than a `Response` object
 
 ## 1.10.3 (2024/02/15)
 

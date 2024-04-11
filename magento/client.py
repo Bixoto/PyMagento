@@ -304,11 +304,11 @@ class Magento(APISession):
         return cast(Category, self.put_json_api(f"/V1/categories/{category_id}",
                                                 json={"category": category_data}, throw=True))
 
-    def create_category(self, category: Category, **kwargs):
+    def create_category(self, category: Category, **kwargs) -> JSONDict:
         """
-        Create a new category.
+        Create a new category and return it.
         """
-        return self.post_api("/V1/categories", json={"category": category}, **kwargs)
+        return self.post_json_api("/V1/categories", json={"category": category}, **kwargs)
 
     def remove_category(self, category_id: PathId, **kwargs):
         """
