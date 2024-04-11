@@ -1,20 +1,19 @@
+import time
 import warnings
 from json.decoder import JSONDecodeError
 from logging import Logger
-import time
 from os import environ
 from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List
 from urllib.parse import quote as urlquote
 
-from api_session import APISession, JSONDict
 import requests
+from api_session import APISession, JSONDict
 from requests.exceptions import HTTPError
 
+from magento.exceptions import MagentoException, MagentoAssertionError
+from magento.queries import Query, make_search_query, make_field_value_query
 from magento.types import Product, SourceItem, Sku, Category, MediaEntry, MagentoEntity, Order, PathId
 from magento.version import __version__
-from magento.exceptions import MagentoException, MagentoAssertionError
-
-from magento.queries import Query, make_search_query, make_field_value_query
 
 __all__ = (
     "Magento",
@@ -275,15 +274,22 @@ class Magento(APISession):
         """
         return self.get_json_api(f"/V1/categories/{category_id}")
 
-    def get_category_by_name(self, name: str) -> Optional[Category]:
+    def get_category_by_name(self, name: str, *, assert_one=False) -> Optional[Category]:
         """
         Return the first category with the given name.
 
         :param name: exact name of the category
+        :param assert_one: if True, assert that either none or exactly one category matches this name
         :return:
         """
-        for category in self.get_categories(make_field_value_query("name", name), limit=1):
-            return category
+        limit = 2 if assert_one else 1
+        categories = list(self.get_categories(make_field_value_query("name", name), limit=limit))
+
+        if categories:
+            if assert_one:
+                assert len(categories) == 1, "There should not be more than one category with the name %s" % repr(name)
+
+            return categories[0]
 
         return None
 

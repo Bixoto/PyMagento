@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* `get_category_by_name`: add `assert_one` optional keyword parameter
+
 ## 1.10.3 (2024/02/15)
 
 * fix `get_source_items` to accept an empty list of SKUs. In previous versions `skus=[]` (filter on an empty list) was
