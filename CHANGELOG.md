@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## 1.11.0 (unreleased)
+## 1.11.0 (2024/04/12)
 
 * `get_category_by_name`: add `assert_one` optional keyword parameter
 * Add `move_category`, `get_child_categories`

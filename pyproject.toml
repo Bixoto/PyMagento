@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pymagento"
-version = "1.10.3"
+version = "1.11.0"
 description = "Python client for the Magento 2 API"
 authors = ["Bixoto <tech@bixoto.com>"]
 license = "MIT"
