@@ -2,8 +2,9 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/pymagento)](https://pypi.org/project/pymagento/) [![PyPI downloads](https://img.shields.io/pypi/dm/pymagento)](https://pypi.org/project/pymagento/)
 
-**PyMagento** is a Python client for the Magento 2 API. Its goal is to provide an easy-to-use
-Pythonic interface to the Magento 2 API, while being lightweight and extendable.
+**PyMagento** is a Python client for the Magento 2 API. Its goal is to provide an easy-to-use Pythonic interface
+to the Magento 2 API, while being lightweight and extendable. It returns plain dictionaries and doesn’t hide things
+behind custom classes.
 
 * [Read the docs](https://pymagento2.readthedocs.io/)
 
@@ -32,8 +33,18 @@ client = magento.Magento(base_url="...", token="...", scope="all")
 product = client.get_product("SKU123")
 print(magento.get_custom_attribute(product, "description"))
 
+# Get orders by status
 for order in client.get_orders(status="processing"):
     print(order["increment_id"], order["grand_total"])
+
+# Make more complex queries
+query = magento.make_search_query([
+    [("customer_email", "billgates@example.com", "eq")],
+    [("status", "complete", "eq")],
+])
+
+for order in client.get_orders(query=query, limit=10):
+    print(order["increment_id"], len(order["items"]))
 ```
 
 For more information, [read the docs](https://pymagento2.readthedocs.io/).
