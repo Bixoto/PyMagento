@@ -3,6 +3,7 @@
 ## 1.11.0 (unreleased)
 
 * `get_category_by_name`: add `assert_one` optional keyword parameter
+* Add `get_child_categories`
 
 ### Breaking changes
 

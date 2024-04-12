@@ -318,6 +318,18 @@ class Magento(APISession):
         """
         return self.delete_api(f"/V1/categories/{category_id}", **kwargs)
 
+    def get_child_categories(self, category_id: int, **kwargs):
+        """
+        Yield categories whose parent ID is the given ``category_id``.
+        """
+        return self.get_categories(
+            query=make_field_value_query("parent_id", category_id),
+            **kwargs,
+        )
+
+    # Category products
+    # -----------------
+
     def get_category_products(self, category_id: PathId, **kwargs) -> List[JSONDict]:
         """
         Get products assigned to a category.
