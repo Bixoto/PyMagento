@@ -13,7 +13,7 @@ from magento.version import __version__
 
 ROOT_CATEGORY_ID = 1
 
-# Magento visibility options
+# Magento's visibility options
 # https://devdocs.magento.com/guides/v2.4/rest/tutorials/configurable-product/create-configurable-product.html
 VISIBILITY_IN_CATALOG_AND_SEARCH = 4
 VISIBILITY_IN_CATALOG = 2
@@ -29,7 +29,7 @@ ENABLED_PRODUCT = 1
 DISABLED_PRODUCT = 2
 
 # https://magento.stackexchange.com/a/244151/92968
-# https://github.com/magento/magento2/blob/c22a9db4/lib/internal/Magento/Framework/Image/Adapter/Gd2.php#L30-L34
+# https://github.com/magento/magento2/blob/ef6d9c80/lib/internal/Magento/Framework/Image/Adapter/Gd2.php#L30-L34
 IMAGE_MIME_TYPES = {"image/gif", "image/jpeg", "image/png", "image/xbm", "image/wbmp"}
 
 DATE_ISO_8601_FORMAT = "%Y-%m-%d %H:%M:%S"
