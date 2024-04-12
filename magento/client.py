@@ -327,7 +327,7 @@ class Magento(APISession):
             **kwargs,
         )
 
-    def move_category(self, category_id: PathId, parent_id: int, *, after_id: Union[int | None] = None) -> bool:
+    def move_category(self, category_id: PathId, parent_id: int, *, after_id: Union[int, None] = None) -> bool:
         """
         Move a category under a new parent.
 
