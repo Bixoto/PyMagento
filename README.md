@@ -59,7 +59,7 @@ Note: not all endpoints are implemented with dedicated methods. You can call the
 
 ## License
 
-Copyright 2020-2024 [Bixoto](https://bixoto.com/). See [`LICENSE`](./LICENSE).
+Copyright 2020-2024 [Bixoto](https://bixoto.com/). See the [`LICENSE`](./LICENSE).
 
 ## Other projects
 
