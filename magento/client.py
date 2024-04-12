@@ -327,6 +327,23 @@ class Magento(APISession):
             **kwargs,
         )
 
+    def move_category(self, category_id: PathId, parent_id: int, *, after_id: Union[int | None] = None) -> bool:
+        """
+        Move a category under a new parent.
+
+        :param category_id: ID of the category to move
+        :param parent_id: ID of the new parent of the category
+        :param after_id: optional ID of an existing child category
+        :return: ``True``
+        """
+        params = {
+            "parentId": parent_id,
+        }
+        if after_id is not None:
+            params["afterId"] = after_id
+
+        return self.put_json_api(f"/V1/categories/{category_id}/move", json=params)
+
     # Category products
     # -----------------
 
