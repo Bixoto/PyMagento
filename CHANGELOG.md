@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* `get_cart` now accepts the cart ID as a positional argument
+
 ## 1.11.0 (2024/04/12)
 
 * `get_category_by_name`: add `assert_one` optional keyword parameter
