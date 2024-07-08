@@ -7,12 +7,12 @@ from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, Li
 from urllib.parse import quote as urlquote
 
 import requests
-from api_session import APISession, JSONDict
+from api_session import APISession
 from requests.exceptions import HTTPError
 
 from magento.exceptions import MagentoException, MagentoAssertionError
 from magento.queries import Query, make_search_query, make_field_value_query
-from magento.types import Product, SourceItem, Sku, Category, MediaEntry, MagentoEntity, Order, PathId
+from magento.types import Product, SourceItem, Sku, Category, MediaEntry, MagentoEntity, Order, PathId, Customer
 from magento.version import __version__
 
 __all__ = (
@@ -305,7 +305,7 @@ class Magento(APISession):
         return cast(Category, self.put_json_api(f"/V1/categories/{escape_path(category_id)}",
                                                 json={"category": category_data}, throw=True))
 
-    def create_category(self, category: Category, **kwargs) -> JSONDict:
+    def create_category(self, category: Category, **kwargs) -> MagentoEntity:
         """
         Create a new category and return it.
         """
@@ -348,7 +348,7 @@ class Magento(APISession):
     # Category products
     # -----------------
 
-    def get_category_products(self, category_id: PathId, **kwargs) -> List[JSONDict]:
+    def get_category_products(self, category_id: PathId, **kwargs) -> List[MagentoEntity]:
         """
         Get products assigned to a category.
 
@@ -360,7 +360,7 @@ class Magento(APISession):
         """
         return self.get_json_api(f"/V1/categories/{escape_path(category_id)}/products", **kwargs)
 
-    def add_product_to_category(self, category_id: PathId, product_link: JSONDict, **kwargs):
+    def add_product_to_category(self, category_id: PathId, product_link: MagentoEntity, **kwargs):
         """
         Assign a product to a category.
 
@@ -443,16 +443,19 @@ class Magento(APISession):
     # Customers
     # =========
 
-    def get_customers(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
+    def get_customers(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[Customer]:
         """Get all customers (generator)."""
         return self.get_paginated("/V1/customers/search", query=query, limit=limit, **kwargs)
 
-    def get_customer(self, customer_id: int) -> dict:
+    def get_customer(self, customer_id: int) -> Customer:
         """Return a single customer."""
         return self.get_json_api(f"/V1/customers/{escape_path(customer_id)}",
                                  # backward compatibility
                                  none_on_404=False,
                                  none_on_empty=False)
+
+    # Customer groups
+    # ---------------
 
     def get_customer_groups(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all customer groups (generator)."""
@@ -532,7 +535,7 @@ class Magento(APISession):
         query = make_search_query([], sort_orders=[("increment_id", "DESC")])
         return list(self.get_orders(query=query, limit=limit))
 
-    def get_order_item(self, *, order_item_id: int, **kwargs) -> JSONDict:
+    def get_order_item(self, *, order_item_id: int, **kwargs) -> MagentoEntity:
         """Return a single order item."""
         return self.get_json_api(f"/V1/orders/items/{escape_path(order_item_id)}", **kwargs)
 
@@ -786,7 +789,7 @@ class Magento(APISession):
         :param log_response: log the Magento response
         :return:
         """
-        payload: JSONDict = {"product": product}
+        payload: MagentoEntity = {"product": product}
         if save_options is not None:
             payload["saveOptions"] = save_options
 
@@ -813,7 +816,7 @@ class Magento(APISession):
         :param save_options: set the `saveOptions` attribute.
         :return: updated product
         """
-        payload: JSONDict = {"product": product}
+        payload: MagentoEntity = {"product": product}
         if save_options is not None:
             payload["saveOptions"] = save_options
 
@@ -1037,20 +1040,20 @@ class Magento(APISession):
     # Stores
     # ======
 
-    def get_store_configs(self, store_codes: Optional[List[str]] = None) -> Iterable[JSONDict]:
+    def get_store_configs(self, store_codes: Optional[List[str]] = None) -> Iterable[MagentoEntity]:
         params: Dict[str, List[str]] = {}
         if store_codes is not None:
             params = {"storeCodes": store_codes}
 
         return self.get_json_api("/V1/store/storeConfigs", params=params)
 
-    def get_store_groups(self) -> Iterable[JSONDict]:
+    def get_store_groups(self) -> Iterable[MagentoEntity]:
         return self.get_json_api("/V1/store/storeGroups")
 
-    def get_store_views(self) -> Iterable[JSONDict]:
+    def get_store_views(self) -> Iterable[MagentoEntity]:
         return self.get_json_api("/V1/store/storeViews")
 
-    def get_websites(self) -> Iterable[JSONDict]:
+    def get_websites(self) -> Iterable[MagentoEntity]:
         return self.get_json_api("/V1/store/websites")
 
     def get_current_store_group_id(self, *, skip_store_groups=False) -> int:

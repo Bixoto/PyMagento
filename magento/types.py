@@ -6,6 +6,7 @@ __all__ = (
 )
 
 MagentoEntity = JSONDict
+Customer = MagentoEntity
 Order = MagentoEntity
 Product = MagentoEntity
 Category = MagentoEntity
