@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+* Add `get_order_item`
 * `get_cart` now accepts the cart ID as a positional argument
 
 ## 1.11.0 (2024/04/12)

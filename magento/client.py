@@ -81,8 +81,8 @@ def raise_for_response(response: requests.Response):
     response.raise_for_status()
 
 
-def escape_path(sku: str):
-    return urlquote(sku, safe="")
+def escape_path(x: Union[int, str]):
+    return urlquote(str(x), safe="")
 
 
 class Magento(APISession):
@@ -530,6 +530,10 @@ class Magento(APISession):
         """Return a list of the last orders (default: 10)."""
         query = make_search_query([], sort_orders=[("increment_id", "DESC")])
         return list(self.get_orders(query=query, limit=limit))
+
+    def get_order_item(self, *, order_item_id: int, **kwargs) -> JSONDict:
+        """Return a single order item."""
+        return self.get_json_api(f"/V1/orders/items/{escape_path(order_item_id)}", **kwargs)
 
     def get_orders_items(self, *, sku: Optional[str] = None, query: Query = None, limit=-1, **kwargs):
         """
