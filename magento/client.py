@@ -143,7 +143,7 @@ class Magento(APISession):
 
     def delete_customer_address(self, address_id: int) -> bool:
         """Delete customer address by ID."""
-        return self.delete_json_api(f"/V1/addresses/{address_id}")
+        return self.delete_json_api(f"/V1/addresses/{escape_path(address_id)}")
 
     # Apple Pay
     # =========
@@ -179,7 +179,8 @@ class Magento(APISession):
 
     def get_attribute_set_attributes(self, attribute_set_id: int, **kwargs):
         """Get all attributes for the given attribute set id."""
-        return self.get_json_api(f"/V1/products/attribute-sets/{attribute_set_id}/attributes", **kwargs)
+        return self.get_json_api(f"/V1/products/attribute-sets/{escape_path(attribute_set_id)}/attributes",
+                                 **kwargs)
 
     def assign_attribute_set_attribute(self, attribute_set_id: int, attribute_group_id: int, attribute_code: str,
                                        sort_order: int = 0, **kwargs):
@@ -202,7 +203,7 @@ class Magento(APISession):
         return self.post_api("/V1/products/attribute-sets/attributes", json=payload, **kwargs)
 
     def remove_attribute_set_attribute(self, attribute_set_id: int, attribute_code: str, **kwargs):
-        path = f"/V1/products/attribute-sets/{attribute_set_id}/attributes/{escape_path(attribute_code)}"
+        path = f"/V1/products/attribute-sets/{escape_path(attribute_set_id)}/attributes/{escape_path(attribute_code)}"
         return self.delete_api(path, **kwargs)
 
     # Bulk Operations
@@ -235,7 +236,7 @@ class Magento(APISession):
     # =====
 
     def get_cart(self, cart_id: PathId, **kwargs) -> MagentoEntity:
-        return self.get_json_api(f"/V1/carts/{cart_id}", **kwargs)
+        return self.get_json_api(f"/V1/carts/{escape_path(cart_id)}", **kwargs)
 
     def get_carts(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all carts (generator)."""
@@ -301,7 +302,7 @@ class Magento(APISession):
         :param category_data: (partial) category data to update
         :return: updated category
         """
-        return cast(Category, self.put_json_api(f"/V1/categories/{category_id}",
+        return cast(Category, self.put_json_api(f"/V1/categories/{escape_path(category_id)}",
                                                 json={"category": category_data}, throw=True))
 
     def create_category(self, category: Category, **kwargs) -> JSONDict:
@@ -316,7 +317,7 @@ class Magento(APISession):
 
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/categoriescategoryId/#operation/DeleteV1CategoriesCategoryId
         """
-        return self.delete_api(f"/V1/categories/{category_id}", **kwargs)
+        return self.delete_api(f"/V1/categories/{escape_path(category_id)}", **kwargs)
 
     def get_child_categories(self, category_id: int, **kwargs):
         """
@@ -342,7 +343,7 @@ class Magento(APISession):
         if after_id is not None:
             params["afterId"] = after_id
 
-        return self.put_json_api(f"/V1/categories/{category_id}/move", json=params)
+        return self.put_json_api(f"/V1/categories/{escape_path(category_id)}/move", json=params)
 
     # Category products
     # -----------------
@@ -357,7 +358,7 @@ class Magento(APISession):
 
             {'sku': 'MYSKU123', 'position': 2, 'category_id': '17'}
         """
-        return self.get_json_api(f"/V1/categories/{category_id}/products", **kwargs)
+        return self.get_json_api(f"/V1/categories/{escape_path(category_id)}/products", **kwargs)
 
     def add_product_to_category(self, category_id: PathId, product_link: JSONDict, **kwargs):
         """
@@ -368,7 +369,7 @@ class Magento(APISession):
         :param category_id: ID of the category
         :param product_link: product link. See the Adobe Commerce documentation for the format.
         """
-        return self.post_api(f"/V1/categories/{category_id}/products",
+        return self.post_api(f"/V1/categories/{escape_path(category_id)}/products",
                              json={"productLink": product_link},
                              **kwargs)
 
@@ -381,7 +382,7 @@ class Magento(APISession):
         :param category_id: ID of the category
         :param sku: SKU of the product
         """
-        return self.delete_api(f"/V1/categories/{category_id}/products/{escape_path(sku)}", **kwargs)
+        return self.delete_api(f"/V1/categories/{escape_path(category_id)}/products/{escape_path(sku)}", **kwargs)
 
     # CMS
     # ===
@@ -396,11 +397,11 @@ class Magento(APISession):
 
     def get_cms_block(self, block_id: str) -> MagentoEntity:
         """Get a single CMS block."""
-        return self.get_json_api(f"/V1/cmsBlock/{block_id}")
+        return self.get_json_api(f"/V1/cmsBlock/{escape_path(block_id)}")
 
     def delete_cms_block(self, block_id: str) -> bool:
         """Delete a CMS block by ID."""
-        return self.delete_json_api(f"/V1/cmsBlock/{block_id}")
+        return self.delete_json_api(f"/V1/cmsBlock/{escape_path(block_id)}")
 
     # Coupons
     # =======
@@ -411,7 +412,7 @@ class Magento(APISession):
 
     def update_coupon(self, coupon_id: int, coupon: MagentoEntity, **kwargs) -> MagentoEntity:
         """Update a coupon."""
-        return self.put_json_api(f"/V1/coupons/{coupon_id}", json={"coupon": coupon}, **kwargs)
+        return self.put_json_api(f"/V1/coupons/{escape_path(coupon_id)}", json={"coupon": coupon}, **kwargs)
 
     def get_coupons(self, *, query: Query = None, limit=-1, **kwargs) -> Iterable[MagentoEntity]:
         """Get all coupons (generator)."""
@@ -419,11 +420,11 @@ class Magento(APISession):
 
     def get_coupon(self, coupon_id: int) -> MagentoEntity:
         """Get a coupon by ID."""
-        return self.get_json_api(f"/V1/coupons/{coupon_id}")
+        return self.get_json_api(f"/V1/coupons/{escape_path(coupon_id)}")
 
     def delete_coupon(self, coupon_id: int) -> bool:
         """Delete a coupon by ID."""
-        return self.delete_json_api(f"/V1/coupons/{coupon_id}")
+        return self.delete_json_api(f"/V1/coupons/{escape_path(coupon_id)}")
 
     def delete_coupons(self, coupon_ids: Iterable[int], *, ignore_invalid_coupons=True, **kwargs):
         """Delete multiple coupons by ID."""
@@ -448,7 +449,7 @@ class Magento(APISession):
 
     def get_customer(self, customer_id: int) -> dict:
         """Return a single customer."""
-        return self.get_json_api(f"/V1/customers/{customer_id}",
+        return self.get_json_api(f"/V1/customers/{escape_path(customer_id)}",
                                  # backward compatibility
                                  none_on_404=False,
                                  none_on_empty=False)
@@ -478,10 +479,10 @@ class Magento(APISession):
 
         payload.setdefault("notify", notify)
 
-        return self.post_json_api(f"/V1/order/{order_id}/invoice", json=payload)
+        return self.post_json_api(f"/V1/order/{escape_path(order_id)}/invoice", json=payload)
 
     def get_invoice(self, invoice_id: int) -> MagentoEntity:
-        return self.get_json_api(f"/V1/invoices/{invoice_id}",
+        return self.get_json_api(f"/V1/invoices/{escape_path(invoice_id)}",
                                  # backward compatibility
                                  none_on_404=False,
                                  none_on_empty=False)
@@ -573,7 +574,7 @@ class Magento(APISession):
 
         :param order_id: order id (not increment id)
         """
-        return self.post_api(f"/V1/orders/{order_id}/hold", **kwargs)
+        return self.post_api(f"/V1/orders/{escape_path(order_id)}/hold", **kwargs)
 
     def unhold_order(self, order_id: str, **kwargs):
         """
@@ -581,7 +582,7 @@ class Magento(APISession):
 
         :param order_id: order id (not increment id)
         """
-        return self.post_api(f"/V1/orders/{order_id}/unhold", **kwargs)
+        return self.post_api(f"/V1/orders/{escape_path(order_id)}/unhold", **kwargs)
 
     def save_order(self, order: Order):
         """Save an order."""
