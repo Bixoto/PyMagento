@@ -108,7 +108,7 @@ class Magento(APISession):
                  **kwargs):
         """
         Create a Magento client instance. All arguments are optional and fall back on environment variables named
-        ``PYMAGENTO_ + argument.upper()`` (``PYMAGENTO_TOKEN``, ``PYMAGENTO_BASE_URL``, etc).
+        ``PYMAGENTO_ + argument.upper()`` (``PYMAGENTO_TOKEN``, ``PYMAGENTO_BASE_URL``, etc.).
         The ``token`` and ``base_url`` **must** be given either as arguments or environment variables.
 
         :param token: API integration token
@@ -1060,7 +1060,7 @@ class Magento(APISession):
         :param skip_store_groups: if True, assume the current scope is not already a store group.
         """
         if not skip_store_groups:
-            # If scope is a already a store group
+            # If scope is already a store group
             for store_group in self.get_store_groups():
                 if store_group["code"] == self.scope:
                     return store_group["id"]
