@@ -3,7 +3,7 @@ import warnings
 from json.decoder import JSONDecodeError
 from logging import Logger
 from os import environ
-from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List
+from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List, Literal
 from urllib.parse import quote as urlquote
 
 import requests
@@ -447,12 +447,17 @@ class Magento(APISession):
         """Get all customers (generator)."""
         return self.get_paginated("/V1/customers/search", query=query, limit=limit, **kwargs)
 
-    def get_customer(self, customer_id: int) -> Customer:
-        """Return a single customer."""
+    def get_customer(self, customer_id: Union[int, Literal["me"]], **kwargs) -> Customer:
+        """
+        Return a single customer.
+
+        :param customer_id: either a customer ID or the string `"me"`.
+        """
+        # backward compatibility
+        kwargs.setdefault("none_on_404", False)
+        kwargs.setdefault("none_on_empty", False)
         return self.get_json_api(f"/V1/customers/{escape_path(customer_id)}",
-                                 # backward compatibility
-                                 none_on_404=False,
-                                 none_on_empty=False)
+                                 **kwargs)
 
     # Customer groups
     # ---------------

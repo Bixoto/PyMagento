@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-* Add `get_order_item`
+* Add `get_order_item`, `get_customer("me")`
 * `get_cart` now accepts the cart ID as a positional argument
 * Escape path arguments in all calls
 
