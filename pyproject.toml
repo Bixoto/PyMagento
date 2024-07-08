@@ -15,11 +15,14 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     'Programming Language :: Python :: 3',
 ]
-keywords = ["magento", "magento-api", "python-magento", "magento-python", "pymagento", "py-magento", "magento2", "magento-2", "magento2-api", "magento2-rest-api", "magento-rest-api"]
+keywords = [
+    "magento", "magento-api", "python-magento", "magento-python", "pymagento", "py-magento", "magento-rest-api",
+    "magento2", "magento-2", "magento2-api", "magento2-rest-api",
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-api-session = "^1.3.6"
+api-session = "^1.4.0"
 # https://github.com/readthedocs/readthedocs.org/issues/4912
 # https://github.com/jacopok/mlgw_bns/commit/50e82ad2e218873d1b3a8732b6cbeb5f692dd14c
 Sphinx = {version="^4.4.0", optional=true}
