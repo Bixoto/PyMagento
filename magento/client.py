@@ -403,6 +403,25 @@ class Magento(APISession):
         """Delete a CMS block by ID."""
         return self.delete_json_api(f"/V1/cmsBlock/{escape_path(block_id)}")
 
+    # Countries
+    # =========
+
+    def get_countries(self) -> List[MagentoEntity]:
+        """
+        Get all countries and regions information for the store.
+
+        https://adobe-commerce.redoc.ly/2.4.7-admin/tag/directorycountries
+        """
+        return self.get_json_api("/V1/directory/countries")
+
+    def get_country(self, country_id: int) -> MagentoEntity:
+        """
+        Get information about a single country or region for the store.
+
+        https://adobe-commerce.redoc.ly/2.4.7-admin/tag/directorycountriescountryId
+        """
+        return self.get_json_api(f"/V1/directory/countries/{escape_path(country_id)}")
+
     # Coupons
     # =======
 

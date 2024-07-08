@@ -4,6 +4,7 @@
 
 * Add `get_order_item`, `get_customer("me")`
 * Add `get_current_customer`, `activate_current_customer`, `change_current_customer_password`
+* Add `get_countries`, `get_country`
 * `get_cart` now accepts the cart ID as a positional argument
 * Expose `magento.types.*` under `magento`
 * Escape path arguments in all calls
