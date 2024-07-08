@@ -1,11 +1,11 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.11.1 (2024/07/08)
 
 * Add `get_order_item`, `get_customer("me")`
 * Add `get_current_customer`, `activate_current_customer`, `change_current_customer_password`
 * Add `get_countries`, `get_country`
-* `get_cart` now accepts the cart ID as a positional argument
+* `get_cart` now accepts the cart ID as a positional argument (not only as a keyword argument)
 * Expose `magento.types.*` under `magento`
 * Escape path arguments in all calls
 
