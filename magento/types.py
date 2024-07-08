@@ -1,16 +1,26 @@
 from typing import Union
+
 from api_session import JSONDict
 
 __all__ = (
-    'MagentoEntity', 'Order', 'Product', 'Category', 'MediaEntry', 'SourceItem', 'Sku', 'PathId',
+    'Category',
+    'Customer',
+    'MagentoEntity',
+    'MediaEntry',
+    'Order',
+    'PathId',
+    'Product',
+    'Sku',
+    'SourceItem',
 )
 
 MagentoEntity = JSONDict
-Customer = MagentoEntity
-Order = MagentoEntity
-Product = MagentoEntity
+
 Category = MagentoEntity
+Customer = MagentoEntity
 MediaEntry = MagentoEntity
-SourceItem = MagentoEntity
-Sku = str
+Order = MagentoEntity
 PathId = Union[int, str]
+Product = MagentoEntity
+Sku = str
+SourceItem = MagentoEntity

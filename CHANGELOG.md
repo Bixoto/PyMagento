@@ -4,6 +4,7 @@
 
 * Add `get_order_item`, `get_customer("me")`
 * `get_cart` now accepts the cart ID as a positional argument
+* Expose `magento.types.*` under `magento`
 * Escape path arguments in all calls
 
 ## 1.11.0 (2024/04/12)
