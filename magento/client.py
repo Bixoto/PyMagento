@@ -459,6 +459,30 @@ class Magento(APISession):
         return self.get_json_api(f"/V1/customers/{escape_path(customer_id)}",
                                  **kwargs)
 
+    def get_current_customer(self, **kwargs):
+        """Return the current customer."""
+        return self.get_customer("me", **kwargs)
+
+    def activate_current_customer(self, confirmation_key: str) -> Customer:
+        """
+        Activate a customer account using a key that was sent in a confirmation email.
+
+        https://adobe-commerce.redoc.ly/2.4.7-admin/tag/customersmeactivate/
+
+        :param confirmation_key: key from the confirmation email.
+        :return: customer
+        """
+        return self.put_json_api("/V1/customers/me/activate", json={"confirmationKey": confirmation_key})
+
+    def change_current_customer_password(self, current_password: str, new_password: str) -> bool:
+        """
+        Change customer password.
+
+        https://adobe-commerce.redoc.ly/2.4.7-admin/tag/customersmepassword#operation/PutV1CustomersMePassword
+        """
+        return self.put_json_api("/V1/customers/me/password",
+                                 json={"currentPassword": current_password, "newPassword": new_password})
+
     # Customer groups
     # ---------------
 
