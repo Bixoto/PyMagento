@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* `get_order_item`: accept the item ID as a positional argument
+
 ## 1.11.1 (2024/07/08)
 
 * Add `get_order_item`, `get_customer("me")`

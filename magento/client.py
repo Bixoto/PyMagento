@@ -583,7 +583,7 @@ class Magento(APISession):
         query = make_search_query([], sort_orders=[("increment_id", "DESC")])
         return list(self.get_orders(query=query, limit=limit))
 
-    def get_order_item(self, *, order_item_id: int, **kwargs) -> MagentoEntity:
+    def get_order_item(self, order_item_id: int, **kwargs) -> MagentoEntity:
         """Return a single order item."""
         return self.get_json_api(f"/V1/orders/items/{escape_path(order_item_id)}", **kwargs)
 
