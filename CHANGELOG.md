@@ -3,6 +3,7 @@
 ## Unreleased
 
 * `get_order_item`: accept the item ID as a positional argument
+* Add `delete_source_items_by_source_code` and deprecate `delete_default_source_items`
 
 ## 1.11.1 (2024/07/08)
 

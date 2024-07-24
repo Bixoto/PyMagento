@@ -1230,18 +1230,25 @@ class Magento(APISession):
         }
         return self.post_api("/V1/inventory/source-items-delete", json=payload, throw=throw, **kwargs)
 
-    def delete_default_source_items(self):
+    def delete_source_items_by_source_code(self, source_code: str):
         """
-        Delete all source items that have a source_code=default.
+        Delete all source items that have the given ``source_code``.
 
         :return: requests.Response object if there are default source items, None otherwise.
         """
-        # remove default source that is set for new products
-        default_source_items = self.get_source_items(source_code="default")
-        source_items = [{"sku": item["sku"], "source_code": "default"} for item in default_source_items]
+        default_source_items = self.get_source_items(source_code=source_code)
+        if default_source_items:
+            return self.delete_source_items(default_source_items)
 
-        if source_items:
-            return self.delete_source_items(source_items)
+    def delete_default_source_items(self):
+        """
+        Delete all source items that have a source_code=default.
+        """
+        warnings.warn(
+            "delete_default_source_items() is deprecated; use delete_source_items_by_source_code('default') instead.",
+            DeprecationWarning
+        )
+        return self.delete_source_items_by_source_code("default")
 
     # Taxes
     # =====
