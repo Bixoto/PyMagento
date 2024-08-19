@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-* `get_order`: add keyword parameter `none_on_404`
+* `get_order`, `get_bulk_status`, `get_customer`, `get_invoice`, `get_product_stock_item`, `get_product_stock_status`:
+  add keyword parameter `none_on_404`
 
 ## 1.11.2 (2024/08/01)
 

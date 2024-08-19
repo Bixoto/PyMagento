@@ -213,13 +213,12 @@ class Magento(APISession):
         """Lists the bulk operation items."""
         return self.get_paginated("/V1/bulk", query=query, limit=limit, **kwargs)
 
-    def get_bulk_status(self, bulk_uuid: str) -> MagentoEntity:
+    def get_bulk_status(self, bulk_uuid: str, none_on_404=False) -> MagentoEntity:
         """
         Get the status of an async/bulk operation.
         """
         return self.get_json_api(f"/V1/bulk/{escape_path(bulk_uuid)}/status",
-                                 # backward compatibility
-                                 none_on_404=False,
+                                 none_on_404=none_on_404,
                                  none_on_empty=False)
 
     def get_bulk_detailed_status(self, bulk_uuid: str) -> MagentoEntity:
@@ -466,16 +465,20 @@ class Magento(APISession):
         """Get all customers (generator)."""
         return self.get_paginated("/V1/customers/search", query=query, limit=limit, **kwargs)
 
-    def get_customer(self, customer_id: Union[int, Literal["me"]], **kwargs) -> Customer:
+    def get_customer(self, customer_id: Union[int, Literal["me"]],*,
+                     none_on_404=False,
+                     none_on_empty=False,
+                     **kwargs) -> Customer:
         """
         Return a single customer.
 
         :param customer_id: either a customer ID or the string `"me"`.
+        :param none_on_404:
+        :param none_on_empty:
         """
-        # backward compatibility
-        kwargs.setdefault("none_on_404", False)
-        kwargs.setdefault("none_on_empty", False)
         return self.get_json_api(f"/V1/customers/{escape_path(customer_id)}",
+                                 none_on_404=none_on_404,
+                                 none_on_empty=none_on_empty,
                                  **kwargs)
 
     def get_current_customer(self, **kwargs):
@@ -532,10 +535,10 @@ class Magento(APISession):
 
         return self.post_json_api(f"/V1/order/{escape_path(order_id)}/invoice", json=payload)
 
-    def get_invoice(self, invoice_id: int) -> MagentoEntity:
+    def get_invoice(self, invoice_id: int, *,
+                    none_on_404=False) -> MagentoEntity:
         return self.get_json_api(f"/V1/invoices/{escape_path(invoice_id)}",
-                                 # backward compatibility
-                                 none_on_404=False,
+                                 none_on_404=none_on_404,
                                  none_on_empty=False)
 
     def get_invoice_by_increment_id(self, increment_id: str) -> Optional[MagentoEntity]:
@@ -906,11 +909,10 @@ class Magento(APISession):
         payload = [{"product": product_update} for product_update in product_updates]
         return self.put_json_api("/V1/products/bySku", json=payload, throw=True, async_bulk=True)
 
-    def get_product_stock_item(self, sku: Sku) -> MagentoEntity:
+    def get_product_stock_item(self, sku: Sku, *, none_on_404=False) -> MagentoEntity:
         """Get the stock item for an SKU."""
         return self.get_json_api(f"/V1/stockItems/{escape_path(sku)}",
-                                 # backward compatibility
-                                 none_on_404=False,
+                                 none_on_404=none_on_404,
                                  none_on_empty=False)
 
     def update_product_stock_item(self, sku: Sku, stock_item_id: int, stock_item: dict) -> int:
@@ -957,11 +959,10 @@ class Magento(APISession):
                                                        quantity=quantity,
                                                        is_in_stock=(is_in_stock == 1))
 
-    def get_product_stock_status(self, sku: Sku) -> MagentoEntity:
+    def get_product_stock_status(self, sku: Sku, none_on_404=False) -> MagentoEntity:
         """Get stock status for an SKU."""
         return self.get_json_api(f"/V1/stockStatuses/{escape_path(sku)}",
-                                 # backward compatibility
-                                 none_on_404=False,
+                                 none_on_404=none_on_404,
                                  none_on_empty=False)
 
     def link_child_product(self, parent_sku: Sku, child_sku: Sku, **kwargs) -> requests.Response:
