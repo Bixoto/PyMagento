@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.11.3 (2024/08/19)
 
 * `get_order`, `get_bulk_status`, `get_customer`, `get_invoice`, `get_product_stock_item`, `get_product_stock_status`:
   add keyword parameter `none_on_404`
