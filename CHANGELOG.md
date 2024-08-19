@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* `get_order`: add keyword parameter `none_on_404`
+
 ## 1.11.2 (2024/08/01)
 
 * `get_order_item`: accept the item ID as a positional argument

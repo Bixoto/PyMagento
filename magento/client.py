@@ -246,7 +246,7 @@ class Magento(APISession):
     # ==========
 
     def get_categories(self, query: Query = None, path_prefix: Optional[str] = None, limit=-1, **kwargs) \
-            -> Iterable[Category]:
+        -> Iterable[Category]:
         """
         Yield all categories.
 
@@ -601,13 +601,13 @@ class Magento(APISession):
 
         return self.get_paginated("/V1/orders/items", query=query, limit=limit, **kwargs)
 
-    def get_order(self, order_id: str) -> Order:
+    def get_order(self, order_id: str, *,
+                  none_on_404=False) -> Order:
         """
         Get an order given its entity id.
         """
         return self.get_json_api(f"/V1/orders/{order_id}",
-                                 # backward compatibility
-                                 none_on_404=False,
+                                 none_on_404=none_on_404,
                                  none_on_empty=False)
 
     def get_order_by_increment_id(self, increment_id: str) -> Optional[Order]:
