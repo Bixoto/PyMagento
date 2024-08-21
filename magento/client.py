@@ -1374,9 +1374,8 @@ class Magento(APISession):
 
         if page_size is None:
             page_size = self.PAGE_SIZE
-        is_limited = limit > 0
 
-        if is_limited and limit < page_size:
+        if 0 < limit < page_size:
             page_size = limit
 
         if query is not None:
@@ -1411,7 +1410,7 @@ class Magento(APISession):
                 if count >= total_count:
                     return
 
-                if is_limited and count >= limit:
+                if count >= limit > 0:
                     return
 
             current_page += 1
