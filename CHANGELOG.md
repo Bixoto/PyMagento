@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.11.4 (2024/08/21)
 
 * `delete_source_items_by_source_code`: don't call the Magento API if there is no item to delete
 
