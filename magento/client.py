@@ -1237,7 +1237,7 @@ class Magento(APISession):
 
         :return: requests.Response object if there are default source items, None otherwise.
         """
-        default_source_items = self.get_source_items(source_code=source_code)
+        default_source_items = list(self.get_source_items(source_code=source_code))
         if default_source_items:
             return self.delete_source_items(default_source_items)
 

@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* `delete_source_items_by_source_code`: don't call the Magento API if there is no item to delete
+
 ## 1.11.3 (2024/08/19)
 
 * `get_order`, `get_bulk_status`, `get_customer`, `get_invoice`, `get_product_stock_item`, `get_product_stock_status`:
