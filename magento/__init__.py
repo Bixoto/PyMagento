@@ -30,9 +30,6 @@ VISIBILITY_IN_CATALOG = 2
 VISIBILITY_IN_SEARCH = 3
 VISIBILITY_NOT_VISIBLE = 1
 
-# backward compatibility
-VISIBILITY_BOTH = VISIBILITY_IN_CATALOG_AND_SEARCH
-
 # Magento product statuses
 # https://magento.stackexchange.com/q/10693/92968
 ENABLED_PRODUCT = 1

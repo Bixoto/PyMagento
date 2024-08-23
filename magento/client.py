@@ -1,5 +1,4 @@
 import time
-import warnings
 from json.decoder import JSONDecodeError
 from logging import Logger
 from os import environ
@@ -963,16 +962,6 @@ class Magento(APISession):
             "is_in_stock": is_in_stock,
         }, **kwargs)
 
-    def set_product_stock_item(self, sku: Sku, quantity: int, is_in_stock=1, **kwargs):
-        warnings.warn("set_product_stock_item is deprecated."
-                      " Use update_product_stock_item_quantity(sku, stock_item_id, quantity) instead",
-                      DeprecationWarning)
-        return self.update_product_stock_item_quantity(sku,
-                                                       1,
-                                                       quantity=quantity,
-                                                       is_in_stock=(is_in_stock == 1),
-                                                       **kwargs)
-
     def get_product_stock_status(self, sku: Sku, none_on_404=False, none_on_empty=False, **kwargs) -> MagentoEntity:
         """Get stock status for an SKU."""
         return self.get_json_api(f"/V1/stockStatuses/{escape_path(sku)}",
@@ -1025,7 +1014,6 @@ class Magento(APISession):
         Get all options for a products attribute.
         """
         response = self.get_json_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options",
-                                     # backward compatibility
                                      none_on_404=none_on_404,
                                      none_on_empty=none_on_empty,
                                      **kwargs)
@@ -1260,16 +1248,6 @@ class Magento(APISession):
         default_source_items = list(self.get_source_items(source_code=source_code, **kwargs))
         if default_source_items:
             return self.delete_source_items(default_source_items, **kwargs)
-
-    def delete_default_source_items(self, **kwargs):
-        """
-        Delete all source items that have a source_code=default.
-        """
-        warnings.warn(
-            "delete_default_source_items() is deprecated; use delete_source_items_by_source_code('default') instead.",
-            DeprecationWarning
-        )
-        return self.delete_source_items_by_source_code("default", **kwargs)
 
     # Taxes
     # =====

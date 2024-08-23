@@ -1,5 +1,12 @@
 # PyMagento Changelog
 
+## 1.12.0 (unreleased)
+
+### Breaking changes
+
+* Remove the functions deprecated since 1.11.2 and before: `set_product_stock_item`, `delete_default_source_items`,
+  `VISIBILITY_BOTH`
+
 ## 1.11.6 (2024/08/23)
 
 * All methods now pass down their additional `**kwargs` to the underlying `request_api` method call
