@@ -1,8 +1,9 @@
 # PyMagento Changelog
 
-## Unreleased
+## 1.11.6 (2024/08/23)
 
 * All methods now pass down their additional `**kwargs` to the underlying `request_api` method call
+* Add official support for Python 3.13.0-rc.1
 
 ## 1.11.5 (2024/08/23)
 
