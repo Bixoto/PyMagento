@@ -245,7 +245,7 @@ class Magento(APISession):
     # ==========
 
     def get_categories(self, query: Query = None, path_prefix: Optional[str] = None, limit=-1, **kwargs) \
-        -> Iterable[Category]:
+            -> Iterable[Category]:
         """
         Yield all categories.
 
@@ -465,7 +465,7 @@ class Magento(APISession):
         """Get all customers (generator)."""
         return self.get_paginated("/V1/customers/search", query=query, limit=limit, **kwargs)
 
-    def get_customer(self, customer_id: Union[int, Literal["me"]],*,
+    def get_customer(self, customer_id: Union[int, Literal["me"]], *,
                      none_on_404=False,
                      none_on_empty=False,
                      **kwargs) -> Customer:
@@ -1105,29 +1105,33 @@ class Magento(APISession):
     def get_websites(self) -> Iterable[MagentoEntity]:
         return self.get_json_api("/V1/store/websites")
 
-    def get_current_store_group_id(self, *, skip_store_groups=False) -> int:
+    def get_current_store_group_id(self, *, skip_store_groups=False, scope: Optional[str] = None) -> int:
         """
         Get the current store group id for the current scope. This is not part of Magento API.
 
         :param skip_store_groups: if True, assume the current scope is not already a store group.
+        :param scope: Override the client's scope
         """
+        if scope is None:
+            scope = self.scope
+
         if not skip_store_groups:
             # If scope is already a store group
             for store_group in self.get_store_groups():
-                if store_group["code"] == self.scope:
+                if store_group["code"] == scope:
                     return store_group["id"]
 
         # If scope is a website
         for website in self.get_websites():
-            if website["code"] == self.scope:
+            if website["code"] == scope:
                 return website["default_group_id"]
 
         # If scope is a view
         for view in self.get_store_views():
-            if view["code"] == self.scope:
+            if view["code"] == scope:
                 return view["store_group_id"]
 
-        raise RuntimeError("Can't determine the store group id of scope %r" % self.scope)
+        raise RuntimeError("Can't determine the store group id of scope %r" % scope)
 
     def get_root_category_id(self) -> int:
         """
@@ -1320,7 +1324,12 @@ class Magento(APISession):
     # Internals
     # =========
 
-    def request_api(self, method: str, path: str, *args, async_bulk=False, throw=False, retry=0, **kwargs):
+    def request_api(self, method: str, path: str, *args,
+                    async_bulk=False,
+                    throw=False,
+                    retry=0,
+                    scope: Optional[str] = None,
+                    **kwargs):
         """
         Equivalent of .request() that prefixes the path with the base API URL.
 
@@ -1332,14 +1341,19 @@ class Magento(APISession):
         :param throw: if True, raise an exception if the response is an error
         :param retry: if non-zero, retry the request that many times if there is an error, sleeping 10s between
             each request.
+        :param scope: overrides the client's scope for this request
         :param kwargs: keyword arguments passed to ``.request()``
         :return:
         """
         assert path.startswith("/V1/")
 
         full_path = "/rest"
-        if self.scope != "default":
-            full_path += f"/{self.scope}"
+
+        if scope is None:
+            scope = self.scope
+
+        if scope != "default":
+            full_path += f"/{scope}"
 
         if async_bulk:
             full_path += "/async/bulk"
@@ -1347,7 +1361,7 @@ class Magento(APISession):
         full_path += path
 
         if self.logger:
-            self.logger.debug("%s %s", method, full_path)
+            self.logger.debug("%s %s" % (method, full_path))
         r = super().request_api(method, full_path, *args, throw=False, **kwargs)
         while not r.ok and retry > 0:
             retry -= 1
