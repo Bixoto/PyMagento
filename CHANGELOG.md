@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## 1.11.5 (unreleased)
+## 1.11.5 (2024/08/23)
 
 * Allow to override the `scope` on a per-request basis
 
