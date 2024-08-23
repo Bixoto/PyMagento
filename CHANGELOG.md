@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* All methods now pass down their additional `**kwargs` to the underlying `request_api` method call
+
 ## 1.11.5 (2024/08/23)
 
 * Allow to override the `scope` on a per-request basis
