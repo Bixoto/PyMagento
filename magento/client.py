@@ -167,7 +167,7 @@ class Magento(APISession):
         return self.post_json_api("/V1/products/attributes", json={"attribute": attribute}, **kwargs)
 
     def delete_attribute(self, attribute_code: str, **kwargs):
-        return self.delete_api(f"/V1/products/attributes/{escape_path(attribute_code)}", **kwargs)
+        return self.delete_json_api(f"/V1/products/attributes/{escape_path(attribute_code)}", **kwargs)
 
     # Attribute Sets
     # ==============
@@ -193,17 +193,16 @@ class Magento(APISession):
         :param kwargs:
         :return:
         """
-        payload = {
+        return self.post_json_api("/V1/products/attribute-sets/attributes", json={
             "attributeCode": attribute_code,
             "attributeGroupId": attribute_group_id,
             "attributeSetId": attribute_set_id,
             "sortOrder": sort_order,
-        }
-        return self.post_api("/V1/products/attribute-sets/attributes", json=payload, **kwargs)
+        }, **kwargs)
 
     def remove_attribute_set_attribute(self, attribute_set_id: int, attribute_code: str, **kwargs):
         path = f"/V1/products/attribute-sets/{escape_path(attribute_set_id)}/attributes/{escape_path(attribute_code)}"
-        return self.delete_api(path, **kwargs)
+        return self.delete_json_api(path, **kwargs)
 
     # Bulk Operations
     # ===============
@@ -317,7 +316,7 @@ class Magento(APISession):
 
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/categoriescategoryId/#operation/DeleteV1CategoriesCategoryId
         """
-        return self.delete_api(f"/V1/categories/{escape_path(category_id)}", **kwargs)
+        return self.delete_json_api(f"/V1/categories/{escape_path(category_id)}", **kwargs)
 
     def get_child_categories(self, category_id: int, **kwargs):
         """
@@ -370,9 +369,9 @@ class Magento(APISession):
         :param category_id: ID of the category
         :param product_link: product link. See the Adobe Commerce documentation for the format.
         """
-        return self.post_api(f"/V1/categories/{escape_path(category_id)}/products",
-                             json={"productLink": product_link},
-                             **kwargs)
+        return self.post_json_api(f"/V1/categories/{escape_path(category_id)}/products",
+                                  json={"productLink": product_link},
+                                  **kwargs)
 
     def remove_product_from_category(self, category_id: PathId, sku: Sku, **kwargs):
         """
@@ -383,7 +382,8 @@ class Magento(APISession):
         :param category_id: ID of the category
         :param sku: SKU of the product
         """
-        return self.delete_api(f"/V1/categories/{escape_path(category_id)}/products/{escape_path(sku)}", **kwargs)
+        return self.delete_json_api(f"/V1/categories/{escape_path(category_id)}/products/{escape_path(sku)}",
+                                    **kwargs)
 
     # CMS
     # ===
@@ -639,7 +639,7 @@ class Magento(APISession):
 
         :param order_id: order id (not increment id)
         """
-        return self.post_api(f"/V1/orders/{escape_path(order_id)}/hold", **kwargs)
+        return self.post_json_api(f"/V1/orders/{escape_path(order_id)}/hold", **kwargs)
 
     def unhold_order(self, order_id: str, **kwargs):
         """
@@ -647,7 +647,7 @@ class Magento(APISession):
 
         :param order_id: order id (not increment id)
         """
-        return self.post_api(f"/V1/orders/{escape_path(order_id)}/unhold", **kwargs)
+        return self.post_json_api(f"/V1/orders/{escape_path(order_id)}/unhold", **kwargs)
 
     def save_order(self, order: Order, **kwargs):
         """Save an order."""
@@ -704,7 +704,7 @@ class Magento(APISession):
         :param prices: base prices to save.
         :return: `requests.Response` object
         """
-        return self.post_api("/V1/products/base-prices", json={"prices": prices}, **kwargs)
+        return self.post_json_api("/V1/products/base-prices", json={"prices": prices}, **kwargs)
 
     # Special Prices
     # --------------
@@ -730,13 +730,13 @@ class Magento(APISession):
         :param special_prices: Special prices to save.
         :return:
         """
-        return self.post_api("/V1/products/special-price", json={"prices": special_prices}, **kwargs)
+        return self.post_json_api("/V1/products/special-price", json={"prices": special_prices}, **kwargs)
 
     def delete_special_prices(self, special_prices: Sequence[MagentoEntity], **kwargs):
         """
         Delete a sequence of special prices.
         """
-        return self.post_api("/V1/products/special-price-delete", json={"prices": special_prices}, **kwargs)
+        return self.post_json_api("/V1/products/special-price-delete", json={"prices": special_prices}, **kwargs)
 
     def delete_special_prices_by_sku(self, skus: Sequence[Sku], **kwargs):
         """
@@ -831,16 +831,15 @@ class Magento(APISession):
         """
         return self.post_json_api(f"/V1/products/{escape_path(sku)}/media", json={"entry": media_entry}, **kwargs)
 
-    def delete_product_media(self, sku: Sku, media_id: PathId, throw=False, **kwargs):
+    def delete_product_media(self, sku: Sku, media_id: PathId, **kwargs):
         """
         Delete a media associated with a product.
 
         :param sku: SKU of the product
         :param media_id:
-        :param throw:
         :return:
         """
-        return self.delete_api(f"/V1/products/{escape_path(sku)}/media/{media_id}", throw=throw, **kwargs)
+        return self.delete_json_api(f"/V1/products/{escape_path(sku)}/media/{media_id}", **kwargs)
 
     def save_product(self, product, *, save_options: Optional[bool] = None, log_response=True, **kwargs) -> Product:
         """
@@ -977,8 +976,8 @@ class Magento(APISession):
         :param child_sku: SKU of the child product
         :return: `requests.Response` object
         """
-        return self.post_api(f"/V1/configurable-products/{escape_path(parent_sku)}/child",
-                             json={"childSku": child_sku}, **kwargs)
+        return self.post_json_api(f"/V1/configurable-products/{escape_path(parent_sku)}/child",
+                                  json={"childSku": child_sku}, **kwargs)
 
     def unlink_child_product(self, parent_sku: Sku, child_sku: Sku, **kwargs) -> requests.Response:
         """
@@ -986,10 +985,10 @@ class Magento(APISession):
 
         :param parent_sku: SKU of the parent product
         :param child_sku: SKU of the child product
-        :return: `requests.Response` object
         """
-        return self.delete_api(f"/V1/configurable-products/{escape_path(parent_sku)}/children/{escape_path(child_sku)}",
-                               **kwargs)
+        return self.delete_json_api(
+            f"/V1/configurable-products/{escape_path(parent_sku)}/children/{escape_path(child_sku)}",
+            **kwargs)
 
     def save_configurable_product_option(self, sku: Sku, option: MagentoEntity, **kwargs) -> int:
         """
@@ -1046,9 +1045,8 @@ class Magento(APISession):
         :param option_id:
         :return: boolean
         """
-        response = self.delete_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options/{option_id}",
-                                   throw=True, **kwargs)
-        return cast(bool, response.json())
+        return self.delete_json_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options/{option_id}",
+                                    **kwargs)
 
     # Aliases
     # -------
@@ -1223,20 +1221,18 @@ class Magento(APISession):
             return None
         return self.post_json_api("/V1/inventory/source-items", json={"sourceItems": source_items}, **kwargs)
 
-    def delete_source_items(self, source_items: Iterable[SourceItem], throw=True, **kwargs):
+    def delete_source_items(self, source_items: Iterable[SourceItem], **kwargs):
         """
         Delete a sequence of source-items. Only the SKU and the source_code are used.
         Note: Magento returns an error if this is called with empty source_items.
 
         :param source_items:
-        :param throw:
         :param kwargs: keyword arguments passed to the underlying POST call.
-        :return: requests.Response object
         """
         payload = {
             "sourceItems": [{"sku": s["sku"], "source_code": s["source_code"]} for s in source_items],
         }
-        return self.post_api("/V1/inventory/source-items-delete", json=payload, throw=throw, **kwargs)
+        return self.post_json_api("/V1/inventory/source-items-delete", json=payload, **kwargs)
 
     def delete_source_items_by_source_code(self, source_code: str, **kwargs):
         """

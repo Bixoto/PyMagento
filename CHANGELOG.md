@@ -6,8 +6,25 @@
 
 * Remove the functions deprecated since 1.11.2 and before: `set_product_stock_item`, `delete_default_source_items`,
   `VISIBILITY_BOTH`
-* `save_configurable_product_option` now returns the JSON-parsed payload instead of a raw `requests.Response` object.
-  This means it raises in case of error response instead of silently ignoring it.
+* Some functions that were previously returning a `requests.Response` object now return the JSON-parsed payload:
+  * `add_product_to_category`
+  * `assign_attribute_set_attribute`
+  * `delete_attribute`
+  * `delete_product_media`
+  * `delete_source_items`
+  * `delete_special_prices`
+  * `hold_order`
+  * `link_child_product`
+  * `remove_category`
+  * `remove_attribute_set_attribute`
+  * `remove_product_from_category`
+  * `save_base_prices`
+  * `save_configurable_product_option`
+  * `save_special_prices`
+  * `unlink_child_product`
+  * `unhold_order`
+
+  This means they raise in case of error response instead of silently ignoring it.
 
 ## 1.11.6 (2024/08/23)
 
