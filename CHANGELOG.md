@@ -6,6 +6,8 @@
 
 * Remove the functions deprecated since 1.11.2 and before: `set_product_stock_item`, `delete_default_source_items`,
   `VISIBILITY_BOTH`
+* `save_configurable_product_option` now returns the JSON-parsed payload instead of a raw `requests.Response` object.
+  This means it raises in case of error response instead of silently ignoring it.
 
 ## 1.11.6 (2024/08/23)
 

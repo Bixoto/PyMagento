@@ -991,17 +991,16 @@ class Magento(APISession):
         return self.delete_api(f"/V1/configurable-products/{escape_path(parent_sku)}/children/{escape_path(child_sku)}",
                                **kwargs)
 
-    def save_configurable_product_option(self, sku: Sku, option: MagentoEntity, throw=False, **kwargs):
+    def save_configurable_product_option(self, sku: Sku, option: MagentoEntity, **kwargs) -> int:
         """
         Save a configurable product option.
 
         :param sku: SKU of the product
         :param option: option to save
-        :param throw:
-        :return: `requests.Response` object
+        :return:
         """
-        return self.post_api(f"/V1/configurable-products/{escape_path(sku)}/options",
-                             json={"option": option}, throw=throw, **kwargs)
+        return self.post_json_api(f"/V1/configurable-products/{escape_path(sku)}/options",
+                                  json={"option": option}, **kwargs)
 
     # Products Attribute Options
     # --------------------------
