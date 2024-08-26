@@ -2,6 +2,8 @@
 
 ## 2.0.0 (unreleased)
 
+* Add `add_product_website_link` and `remove_product_website_link`
+
 ### Breaking changes
 
 * Remove the functions deprecated since 1.11.2 and before: `set_product_stock_item`, `delete_default_source_items`,

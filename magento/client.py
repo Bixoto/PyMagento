@@ -1001,6 +1001,22 @@ class Magento(APISession):
         return self.post_json_api(f"/V1/configurable-products/{escape_path(sku)}/options",
                                   json={"option": option}, **kwargs)
 
+    def add_product_website_link(self, sku: Sku, website_id: int, **kwargs) -> bool:
+        """Assign a product to a website."""
+        # The API also supports PUT but does not explain the difference with POST
+        return self.post_json_api(
+            f"/V1/products/{escape_path(sku)}/websites",
+            json={"productWebsiteLink": {"sku": sku, "website_id": website_id}},
+            **kwargs,
+        )
+
+    def remove_product_website_link(self, sku: Sku, website_id: int, **kwargs) -> bool:
+        """Remove a product from a website."""
+        return self.delete_json_api(
+            f"/V1/products/{escape_path(sku)}/websites/{escape_path(website_id)}",
+            **kwargs,
+        )
+
     # Products Attribute Options
     # --------------------------
 
