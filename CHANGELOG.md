@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## 2.0.0 (unreleased)
+## 2.0.0 (2024/08/26)
 
 * Add `add_product_website_link` and `remove_product_website_link`
 
