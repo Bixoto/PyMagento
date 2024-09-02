@@ -22,7 +22,7 @@ keywords = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-api-session = "^1.4.1"
+api-session = "^1.4.2"
 # https://github.com/readthedocs/readthedocs.org/issues/4912
 # https://github.com/jacopok/mlgw_bns/commit/50e82ad2e218873d1b3a8732b6cbeb5f692dd14c
 Sphinx = {version="^4.4.0", optional=true}

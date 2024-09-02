@@ -13,17 +13,17 @@ files = [
 
 [[package]]
 name = "api-session"
-version = "1.4.1"
+version = "1.4.2"
 description = "requests.Session to work with JSON APIs"
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "api_session-1.4.1-py3-none-any.whl", hash = "sha256:afa7c2a44ae449a24627dc9cfca0b3e1727e52c9b2a82c939116935881925137"},
-    {file = "api_session-1.4.1.tar.gz", hash = "sha256:a9a16f553b3acc64ea6393c9bd94e57bd9f304f0a04f35e646b495160e5645fd"},
+    {file = "api_session-1.4.2-py3-none-any.whl", hash = "sha256:650cfcba61dd58aee3b70c386cc9ac87d82580b15591d0c2741c80d929fe7ba6"},
+    {file = "api_session-1.4.2.tar.gz", hash = "sha256:1fbbd497b247c8d405ba3fb606be9a4ba28ad46ece347b120a50cbaf167d901c"},
 ]
 
 [package.dependencies]
-requests = ">=2.26.0,<3.0.0"
+requests = ">=2.26,<3.0"
 
 [[package]]
 name = "babel"
@@ -857,4 +857,4 @@ docs = ["Sphinx", "sphinx-rtd-theme"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "6fa5a494c4f0937fe020811560c0696c6a6f299f240e48970a365026b47cadc5"
+content-hash = "12bc7a797d9a96e8978a012237aff9bd2870593a2d4745df84b1afa0df293bd1"

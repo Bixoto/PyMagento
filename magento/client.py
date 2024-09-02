@@ -3,10 +3,9 @@ from json.decoder import JSONDecodeError
 from logging import Logger
 from os import environ
 from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List, Literal
-from urllib.parse import quote as urlquote
 
 import requests
-from api_session import APISession
+from api_session import APISession, escape_path
 from requests.exceptions import HTTPError
 
 from magento.exceptions import MagentoException, MagentoAssertionError
@@ -78,10 +77,6 @@ def raise_for_response(response: requests.Response):
                 )
 
     response.raise_for_status()
-
-
-def escape_path(x: Union[int, str]):
-    return urlquote(str(x), safe="")
 
 
 class Magento(APISession):
@@ -244,7 +239,7 @@ class Magento(APISession):
     # ==========
 
     def get_categories(self, query: Query = None, path_prefix: Optional[str] = None, limit=-1, **kwargs) \
-            -> Iterable[Category]:
+        -> Iterable[Category]:
         """
         Yield all categories.
 
@@ -328,7 +323,7 @@ class Magento(APISession):
         )
 
     def move_category(self, category_id: PathId, parent_id: int, *, after_id: Union[int, None] = None, **kwargs) \
-            -> bool:
+        -> bool:
         """
         Move a category under a new parent.
 
