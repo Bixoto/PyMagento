@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* Fix the type hints of `order_id` in `get_order`, `hold_order`, `unhold_order`
+
 ## 2.0.0 (2024/08/26)
 
 * Add `add_product_website_link` and `remove_product_website_link`

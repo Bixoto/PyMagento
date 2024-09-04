@@ -607,7 +607,7 @@ class Magento(APISession):
 
         return self.get_paginated("/V1/orders/items", query=query, limit=limit, **kwargs)
 
-    def get_order(self, order_id: str, *,
+    def get_order(self, order_id: str | int, *,
                   none_on_404=False,
                   none_on_empty=False,
                   **kwargs) -> Order:
@@ -628,7 +628,7 @@ class Magento(APISession):
             return order
         return None
 
-    def hold_order(self, order_id: str, **kwargs):
+    def hold_order(self, order_id: str | int, **kwargs):
         """
         Hold an order. This is the opposite of ``unhold_order``.
 
@@ -636,7 +636,7 @@ class Magento(APISession):
         """
         return self.post_json_api(f"/V1/orders/{escape_path(order_id)}/hold", **kwargs)
 
-    def unhold_order(self, order_id: str, **kwargs):
+    def unhold_order(self, order_id: str | int, **kwargs):
         """
         Un-hold an order. This is the opposite of ``hold_order``.
 
