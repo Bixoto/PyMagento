@@ -652,6 +652,8 @@ class Magento(APISession):
         """
         Change the status of an order, and optionally set its ``ext_order_id``. This is a convenient wrapper around
         ``save_order``.
+        Note it does not check if orders are on hold before, and may result in invalid states where an order has a state
+        'holded' and a status that's not 'holded'.
 
         :param order: order payload
         :param status: new status
