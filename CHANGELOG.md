@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+* Add `get_orders_by_increment_ids`
 * Fix the docstring of `delete_source_items_by_source_code`
 
 ## 2.0.1 (2024/09/23)

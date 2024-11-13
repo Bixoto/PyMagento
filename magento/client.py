@@ -239,7 +239,7 @@ class Magento(APISession):
     # ==========
 
     def get_categories(self, query: Query = None, path_prefix: Optional[str] = None, limit=-1, **kwargs) \
-        -> Iterable[Category]:
+            -> Iterable[Category]:
         """
         Yield all categories.
 
@@ -323,7 +323,7 @@ class Magento(APISession):
         )
 
     def move_category(self, category_id: PathId, parent_id: int, *, after_id: Union[int, None] = None, **kwargs) \
-        -> bool:
+            -> bool:
         """
         Move a category under a new parent.
 
@@ -588,6 +588,18 @@ class Magento(APISession):
         """Return a list of the last orders (default: 10)."""
         query = make_search_query([], sort_orders=[("increment_id", "DESC")])
         return list(self.get_orders(query=query, limit=limit))
+
+    def get_orders_by_increment_ids(self, increment_ids: Iterable[str]) -> dict[str, Order]:
+        """
+        Get multiple orders from an iterable of increment IDs. Return a dict of increment ID -> order.
+        """
+        query = make_search_query([
+            [("increment_id", ",".join(increment_ids), "in")]
+        ])
+        return {
+            order["increment_id"]: order
+            for order in self.get_orders(query=query)
+        }
 
     def get_order_item(self, order_item_id: int, **kwargs) -> MagentoEntity:
         """Return a single order item."""
