@@ -63,8 +63,9 @@ Copyright 2020-2024 [Bixoto](https://bixoto.com/). See the [`LICENSE`](./LICENSE
 
 ## Other projects
 
-* [MyMagento](https://github.com/TDKorn/my-magento): new project started in 2022; MyMagento didn’t exist when we started PyMagento.
-  This is a more high-level API that can be a good fit if you’re not familiar with Magento’s API.
+* [MyMagento](https://github.com/TDKorn/my-magento): new project started in 2022 but [not actively maintained](https://github.com/TDKorn/my-magento/issues/12#issuecomment-2121701930) as of May 2024.
+  MyMagento didn’t exist when we started PyMagento. This is a more high-level API that can be a good fit if you’re not familiar with Magento’s API.
+  See also [OneSila’s fork](https://github.com/OneSila/OneSilaMagento2Api).
 * [PyMagento-REST](https://pypi.org/project/PyMagento-REST/) (abandoned)
 * [bialecki/pymagento](https://github.com/bialecki/pymagento): Magento 1.x only (abandoned)
 * [python-magento](https://github.com/bernieke/python-magento): Magento 1.x only (abandoned)
