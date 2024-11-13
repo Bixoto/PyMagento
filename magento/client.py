@@ -1199,7 +1199,7 @@ class Magento(APISession):
                          *,
                          skus: Optional[Iterable[str]] = None,
                          query: Query = None, limit=-1,
-                         **kwargs) -> Iterable[MagentoEntity]:
+                         **kwargs) -> Iterable[SourceItem]:
         """
         Return a generator of all source items.
 
