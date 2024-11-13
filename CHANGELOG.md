@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## 2.1.0 (unreleased)
+
+* Define `SourceItem` as a `TypedDict`
+
 ## 2.0.2 (2024/11/13)
 
 * Add `get_orders_by_increment_ids`
