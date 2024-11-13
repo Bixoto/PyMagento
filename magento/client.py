@@ -589,7 +589,7 @@ class Magento(APISession):
         query = make_search_query([], sort_orders=[("increment_id", "DESC")])
         return list(self.get_orders(query=query, limit=limit))
 
-    def get_orders_by_increment_ids(self, increment_ids: Iterable[str]) -> dict[str, Order]:
+    def get_orders_by_increment_ids(self, increment_ids: Iterable[str]) -> Dict[str, Order]:
         """
         Get multiple orders from an iterable of increment IDs. Return a dict of increment ID -> order.
         """
