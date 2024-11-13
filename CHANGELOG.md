@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## Unreleased
+## 2.0.2 (2024/11/13)
 
 * Add `get_orders_by_increment_ids`
 * Fix the docstring of `delete_source_items_by_source_code`
