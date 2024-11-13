@@ -1251,11 +1251,11 @@ class Magento(APISession):
         """
         Delete all source items that have the given ``source_code``.
 
-        :return: requests.Response object if there are default source items, None otherwise.
+        :return: requests.Response object if there are source items, None otherwise.
         """
-        default_source_items = list(self.get_source_items(source_code=source_code, **kwargs))
-        if default_source_items:
-            return self.delete_source_items(default_source_items, **kwargs)
+        source_items = list(self.get_source_items(source_code=source_code, **kwargs))
+        if source_items:
+            return self.delete_source_items(source_items, **kwargs)
 
     # Taxes
     # =====

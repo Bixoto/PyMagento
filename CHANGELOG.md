@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* Fix the docstring of `delete_source_items_by_source_code`
+
 ## 2.0.1 (2024/09/23)
 
 * Fix the type hints of `order_id` in `get_order`, `hold_order`, `unhold_order`
