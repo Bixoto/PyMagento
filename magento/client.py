@@ -108,7 +108,8 @@ class Magento(APISession):
 
         :param token: API integration token
         :param base_url: base URL of the Magento instance
-        :param scope: API scope. Default on ``PYMAGENTO_SCOPE`` if set, or ``"all"``
+        :param scope: API scope. Default on ``PYMAGENTO_SCOPE`` if set, or ``"all"``. Note this scope is mostly useless,
+            see https://github.com/magento/magento2/issues/15461#issuecomment-1157935732.
         :param batch_page_size: if set, override the default page size used for batch queries.
         :param logger: optional logger.
         :param read_only:
