@@ -1,6 +1,4 @@
-"""
-Custom attributes utilities.
-"""
+"""Custom attributes utilities."""
 from collections import OrderedDict
 from typing import Callable, Optional, cast, Dict, Union, Sequence, List, Tuple, Iterable, \
     OrderedDict as OrderedDictType, overload, TypeVar
@@ -22,8 +20,7 @@ def get_custom_attribute(item: JSONDict, attribute_code: str) -> Union[None, str
 
 
 def get_custom_attribute(item, attribute_code, coerce_as=None):
-    """
-    Get a custom attribute from an item given its code.
+    """Get a custom attribute from an item given its code.
 
     For example:
         >>> get_custom_attribute(..., "my_custom_attribute")
@@ -57,16 +54,12 @@ def get_custom_attribute(item, attribute_code, coerce_as=None):
 
 
 def get_boolean_custom_attribute(item: JSONDict, attribute_code: str) -> Optional[bool]:
-    """
-    Equivalent of ``get_custom_attribute(item, attribute_code, coerce_as=bool)`` with proper typing.
-    """
+    """Equivalent of ``get_custom_attribute(item, attribute_code, coerce_as=bool)`` with proper typing."""
     return cast(Optional[bool], get_custom_attribute(item, attribute_code, coerce_as=bool))
 
 
 def get_custom_attributes_dict(item: JSONDict) -> OrderedDictType[str, Union[Sequence[str], str]]:
-    """
-    Get all custom attributes from an item as an ordered dict of code->value.
-    """
+    """Get all custom attributes from an item as an ordered dict of code->value."""
     d = OrderedDict()
     for attribute in item.get("custom_attributes", []):
         d[attribute["attribute_code"]] = attribute["value"]
@@ -75,9 +68,7 @@ def get_custom_attributes_dict(item: JSONDict) -> OrderedDictType[str, Union[Seq
 
 
 def serialize_attribute_value(value: Union[str, int, float, bool, None], force_none=False):
-    """
-    Serialize a value to be stored in a Magento attribute.
-    """
+    """Serialize a value to be stored in a Magento attribute."""
     if isinstance(value, bool):
         return "1" if value else "0"
     elif value is None:
@@ -89,8 +80,7 @@ def serialize_attribute_value(value: Union[str, int, float, bool, None], force_n
 
 def set_custom_attribute(item: JSONDict, attribute_code: str, attribute_value: Union[str, int, float, bool, None],
                          *, force_none=False):
-    """
-    Set a custom attribute in an item dict.
+    """Set a custom attribute in an item dict.
 
     For example:
         >>> set_custom_attribute({}, "my_custom_attribute", 42)
@@ -108,8 +98,7 @@ def set_custom_attribute(item: JSONDict, attribute_code: str, attribute_value: U
 
 def set_custom_attributes(item: JSONDict, attributes: Iterable[Tuple[str, Union[str, int, float, bool, None]]],
                           *, force_none=False):
-    """
-    Set custom attributes in an item dict.
+    """Set custom attributes in an item dict.
     Like ``set_custom_attribute`` but with an iterable of attributes.
 
     :param item: item dict. It’s modified in-place.
@@ -140,14 +129,10 @@ def set_custom_attributes(item: JSONDict, attributes: Iterable[Tuple[str, Union[
 
 
 def delete_custom_attribute(item: JSONDict, attribute_code: str):
-    """
-    Delete a custom attribute by forcing its value to ``None``.
-    """
+    """Delete a custom attribute by forcing its value to ``None``."""
     return delete_custom_attributes(item, [attribute_code])
 
 
 def delete_custom_attributes(item: JSONDict, attributes: Iterable[str]):
-    """
-    Delete custom attributes by forcing their value to ``None``.
-    """
+    """Delete custom attributes by forcing their value to ``None``."""
     return set_custom_attributes(item, ((attribute, None) for attribute in attributes), force_none=True)

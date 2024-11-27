@@ -8,7 +8,7 @@ homepage = "https://github.com/Bixoto/PyMagento"
 include = ["magento/py.typed"]
 readme = "README.md"
 packages = [
-    {include = "magento"},
+    { include = "magento" },
 ]
 classifiers = [
     'License :: OSI Approved :: MIT License',
@@ -25,8 +25,8 @@ python = "^3.8"
 api-session = "^1.4.2"
 # https://github.com/readthedocs/readthedocs.org/issues/4912
 # https://github.com/jacopok/mlgw_bns/commit/50e82ad2e218873d1b3a8732b6cbeb5f692dd14c
-Sphinx = {version="^4.4.0", optional=true}
-sphinx-rtd-theme = {version="^1.0.0", optional=true}
+Sphinx = { version = "^4.4.0", optional = true }
+sphinx-rtd-theme = { version = "^1.0.0", optional = true }
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1"
@@ -52,7 +52,21 @@ exclude_lines = [
 [tool.ruff]
 line-length = 120
 [tool.ruff.lint]
+select = [
+    "D", # docstrings
+]
 ignore = [
+    "D100", # "Missing docstring in public module"
+    "D105", # "Missing docstring in magic method"
+    "D107", # "Missing docstring in `__init__`"
+    "D204", # "1 blank line required after class docstring"
+    "D205", # "1 blank line required between summary line and description",
+    "D208", # "Docstring is over-indented" (examples)
+    "D400", # "First line should end with a period" (false-positives)
+    "D412", # "No blank lines allowed between a section header and its content"
+    "D413", # "Missing blank line after last section"
+    "D415", # "First line should end with a period, question mark, or exclamation point" (false-positives)
+
     "E402", # "Module level import not at top of file"
     "E501", # line too long
     "F401", # "unused" imports

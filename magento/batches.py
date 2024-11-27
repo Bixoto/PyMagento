@@ -10,9 +10,7 @@ BATCH_SIZE = 500
 
 
 class BatchSaver:
-    """
-    Base class to create context managers for asynchronous batches.
-    """
+    """Base class to create context managers for asynchronous batches."""
 
     def __init__(self, client: Magento, api_path: str, batch_size=BATCH_SIZE):
         self.client = client
@@ -24,8 +22,7 @@ class BatchSaver:
         self._sent_items = 0
 
     def add_item(self, item_data: MagentoEntity):
-        """
-        Add an item to the current batch. If it makes the batch large enough, it’s sent to the API and a new empty
+        """Add an item to the current batch. If it makes the batch large enough, it’s sent to the API and a new empty
         batch is created.
         """
         self._batch.append(item_data)
@@ -33,9 +30,7 @@ class BatchSaver:
             self.send_batch()
 
     def send_batch(self):
-        """
-        Send the current pending batch (if any) and return the response from the Magento API.
-        """
+        """Send the current pending batch (if any) and return the response from the Magento API."""
         if not self._batch:
             return None
 
@@ -49,8 +44,7 @@ class BatchSaver:
         return self.client.put_json_api(self.path, json=self._batch, async_bulk=True)
 
     def finalize(self):
-        """
-        Send the last pending batch (if any). This doesn’t need to be called when the object is used as a context
+        """Send the last pending batch (if any). This doesn’t need to be called when the object is used as a context
         manager.
 
         :return: a dictionary with the total number of batches and items
@@ -69,8 +63,7 @@ class BatchSaver:
 
 
 class ProductBatchSaver(BatchSaver):
-    """
-    Context manager to add products to an asynchronous batch job.
+    """Context manager to add products to an asynchronous batch job.
 
         >>> with ProductBatchSaver() as p:
         ...     for product_data in ...:
@@ -88,8 +81,7 @@ T = TypeVar('T')
 
 
 class BatchGetter(Generic[T]):
-    """
-    Base class to create generators of Magento items that can be retrieved from the API using queries.
+    """Base class to create generators of Magento items that can be retrieved from the API using queries.
     This retrieves items in batches but can be iterated on like any iterator.
     """
 
@@ -122,8 +114,7 @@ class BatchGetter(Generic[T]):
 
 
 class ProductBatchGetter(BatchGetter[dict]):
-    """
-    Get a bunch of products from an iterable of SKUs:
+    """Get a bunch of products from an iterable of SKUs:
 
         >>> products = ProductBatchGetter(Magento(), ["sku1", "sku2", ...])
         >>> for product in products:

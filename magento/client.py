@@ -57,9 +57,7 @@ DEFAULT_SCOPE = "all"
 
 
 def raise_for_response(response: requests.Response):
-    """
-    Equivalent of `requests.Response#raise_for_status` with some Magento specifics.
-    """
+    """Equivalent of `requests.Response#raise_for_status` with some Magento specifics."""
     if response.ok:
         return
 
@@ -81,9 +79,7 @@ def raise_for_response(response: requests.Response):
 
 
 class Magento(APISession):
-    """
-    Client for the Magento API.
-    """
+    """Client for the Magento API."""
     PAGE_SIZE = 1000
     """
     Default batch size for paginated requests.
@@ -101,8 +97,7 @@ class Magento(APISession):
                  *,
                  batch_page_size: Optional[int] = None,
                  **kwargs):
-        """
-        Create a Magento client instance. All arguments are optional and fall back on environment variables named
+        """Create a Magento client instance. All arguments are optional and fall back on environment variables named
         ``PYMAGENTO_ + argument.upper()`` (``PYMAGENTO_TOKEN``, ``PYMAGENTO_BASE_URL``, etc.).
         The ``token`` and ``base_url`` **must** be given either as arguments or environment variables.
 
@@ -145,8 +140,7 @@ class Magento(APISession):
     # =========
 
     def get_apple_pay_auth(self, **kwargs) -> MagentoEntity:
-        """
-        Returns details required to be able to submit a payment with Apple Pay.
+        """Return details required to be able to submit a payment with Apple Pay.
 
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/applepayauth/#operation/GetV1ApplepayAuth
         """
@@ -156,6 +150,7 @@ class Magento(APISession):
     # ==========
 
     def save_attribute(self, attribute: MagentoEntity, *, with_defaults=True, **kwargs) -> MagentoEntity:
+        """Save an attribute."""
         if with_defaults:
             base = DEFAULT_ATTRIBUTE_DICT.copy()
             base.update(attribute)
@@ -181,8 +176,7 @@ class Magento(APISession):
 
     def assign_attribute_set_attribute(self, attribute_set_id: int, attribute_group_id: int, attribute_code: str,
                                        sort_order: int = 0, **kwargs):
-        """
-        Assign an attribute to an attribute set.
+        """Assign an attribute to an attribute set.
 
         :param attribute_set_id: ID of the attribute set.
         :param attribute_group_id: ID of the attribute group. It must be in the attribute set.
@@ -199,6 +193,7 @@ class Magento(APISession):
         }, **kwargs)
 
     def remove_attribute_set_attribute(self, attribute_set_id: int, attribute_code: str, **kwargs):
+        """Remove an attribute from an attribute set."""
         path = f"/V1/products/attribute-sets/{escape_path(attribute_set_id)}/attributes/{escape_path(attribute_code)}"
         return self.delete_json_api(path, **kwargs)
 
@@ -206,22 +201,18 @@ class Magento(APISession):
     # ===============
 
     def get_bulk_operations(self, *, query: Query = None, limit=-1, **kwargs):
-        """Lists the bulk operation items."""
+        """List the bulk operation items."""
         return self.get_paginated("/V1/bulk", query=query, limit=limit, **kwargs)
 
     def get_bulk_status(self, bulk_uuid: str, none_on_404=False, **kwargs) -> MagentoEntity:
-        """
-        Get the status of an async/bulk operation.
-        """
+        """Get the status of an async/bulk operation."""
         return self.get_json_api(f"/V1/bulk/{escape_path(bulk_uuid)}/status",
                                  none_on_404=none_on_404,
                                  none_on_empty=False,
                                  **kwargs)
 
     def get_bulk_detailed_status(self, bulk_uuid: str, **kwargs) -> MagentoEntity:
-        """
-        Get the detailed status of an async/bulk operation.
-        """
+        """Get the detailed status of an async/bulk operation."""
         return self.get_json_api(f"/V1/bulk/{escape_path(bulk_uuid)}/detailed-status", **kwargs)
 
     def get_bulk_operation_status_count(self, bulk_uuid: str, status: int, **kwargs) -> int:
@@ -244,8 +235,7 @@ class Magento(APISession):
 
     def get_categories(self, query: Query = None, path_prefix: Optional[str] = None, limit=-1, **kwargs) \
             -> Iterator[Category]:
-        """
-        Yield all categories.
+        """Yield all categories.
 
         :param path_prefix: optional path prefix for the categories.
           Example: ``"1/2"`` for all categories whose path is ``"1/2/..."``, including ``"1/2"`` itself.
@@ -267,14 +257,11 @@ class Magento(APISession):
         return self.get_paginated("/V1/categories/list", query=query, limit=limit, **kwargs)
 
     def get_category(self, category_id: PathId, **kwargs) -> Optional[Category]:
-        """
-        Return a category given its id.
-        """
+        """Return a category given its id."""
         return self.get_json_api(f"/V1/categories/{category_id}", **kwargs)
 
     def get_category_by_name(self, name: str, *, assert_one=False, **kwargs) -> Optional[Category]:
-        """
-        Return the first category with the given name.
+        """Return the first category with the given name.
 
         :param name: exact name of the category
         :param assert_one: if True, assert that either none or exactly one category matches this name
@@ -292,8 +279,7 @@ class Magento(APISession):
         return None
 
     def update_category(self, category_id: PathId, category_data: Category, **kwargs) -> Category:
-        """
-        Update a category.
+        """Update a category.
 
         :param category_id:
         :param category_data: (partial) category data to update
@@ -304,23 +290,18 @@ class Magento(APISession):
                                                 **kwargs))
 
     def create_category(self, category: Category, **kwargs) -> MagentoEntity:
-        """
-        Create a new category and return it.
-        """
+        """Create a new category and return it."""
         return self.post_json_api("/V1/categories", json={"category": category}, **kwargs)
 
     def remove_category(self, category_id: PathId, **kwargs):
-        """
-        Remove a category.
+        """Remove a category.
 
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/categoriescategoryId/#operation/DeleteV1CategoriesCategoryId
         """
         return self.delete_json_api(f"/V1/categories/{escape_path(category_id)}", **kwargs)
 
     def get_child_categories(self, category_id: int, **kwargs):
-        """
-        Yield categories whose parent ID is the given ``category_id``.
-        """
+        """Yield categories whose parent ID is the given ``category_id``."""
         return self.get_categories(
             query=make_field_value_query("parent_id", category_id),
             **kwargs,
@@ -328,8 +309,7 @@ class Magento(APISession):
 
     def move_category(self, category_id: PathId, parent_id: int, *, after_id: Union[int, None] = None, **kwargs) \
             -> bool:
-        """
-        Move a category under a new parent.
+        """Move a category under a new parent.
 
         :param category_id: ID of the category to move
         :param parent_id: ID of the new parent of the category
@@ -348,8 +328,7 @@ class Magento(APISession):
     # -----------------
 
     def get_category_products(self, category_id: PathId, **kwargs) -> List[MagentoEntity]:
-        """
-        Get products assigned to a category.
+        """Get products assigned to a category.
 
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/categoriescategoryIdproducts#operation/GetV1CategoriesCategoryIdProducts
 
@@ -360,8 +339,7 @@ class Magento(APISession):
         return self.get_json_api(f"/V1/categories/{escape_path(category_id)}/products", **kwargs)
 
     def add_product_to_category(self, category_id: PathId, product_link: MagentoEntity, **kwargs):
-        """
-        Assign a product to a category.
+        """Assign a product to a category.
 
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/categoriescategoryIdproducts/#operation/PostV1CategoriesCategoryIdProducts
 
@@ -373,8 +351,7 @@ class Magento(APISession):
                                   **kwargs)
 
     def remove_product_from_category(self, category_id: PathId, sku: Sku, **kwargs):
-        """
-        Remove a product from a category.
+        """Remove a product from a category.
 
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/categoriescategoryIdproductssku/#operation/DeleteV1CategoriesCategoryIdProductsSku
 
@@ -407,16 +384,14 @@ class Magento(APISession):
     # =========
 
     def get_countries(self, **kwargs) -> List[MagentoEntity]:
-        """
-        Get all countries and regions information for the store.
+        """Get all countries and regions information for the store.
 
         https://adobe-commerce.redoc.ly/2.4.7-admin/tag/directorycountries
         """
         return self.get_json_api("/V1/directory/countries", **kwargs)
 
     def get_country(self, country_id: int, **kwargs) -> MagentoEntity:
-        """
-        Get information about a single country or region for the store.
+        """Get information about a single country or region for the store.
 
         https://adobe-commerce.redoc.ly/2.4.7-admin/tag/directorycountriescountryId
         """
@@ -470,8 +445,7 @@ class Magento(APISession):
                      none_on_404=False,
                      none_on_empty=False,
                      **kwargs) -> Customer:
-        """
-        Return a single customer.
+        """Return a single customer.
 
         :param customer_id: either a customer ID or the string `"me"`.
         :param none_on_404:
@@ -487,8 +461,7 @@ class Magento(APISession):
         return self.get_customer("me", **kwargs)
 
     def activate_current_customer(self, confirmation_key: str, **kwargs) -> Customer:
-        """
-        Activate a customer account using a key that was sent in a confirmation email.
+        """Activate a customer account using a key that was sent in a confirmation email.
 
         https://adobe-commerce.redoc.ly/2.4.7-admin/tag/customersmeactivate/
 
@@ -500,8 +473,7 @@ class Magento(APISession):
                                  **kwargs)
 
     def change_current_customer_password(self, current_password: str, new_password: str, **kwargs) -> bool:
-        """
-        Change customer password.
+        """Change customer password.
 
         https://adobe-commerce.redoc.ly/2.4.7-admin/tag/customersmepassword#operation/PutV1CustomersMePassword
         """
@@ -520,8 +492,7 @@ class Magento(APISession):
     # ========
 
     def create_order_invoice(self, order_id: PathId, payload: Optional[dict] = None, notify=True, **kwargs):
-        """
-        Create an invoice for an order.
+        """Create an invoice for an order.
 
         See:
         * https://devdocs.magento.com/guides/v2.4/rest/tutorials/orders/order-create-invoice.html
@@ -574,8 +545,7 @@ class Magento(APISession):
                    query: Query = None,
                    retry=0,
                    **kwargs) -> Iterator[Order]:
-        """
-        Return a generator of all orders with this status up to the limit.
+        """Return a generator of all orders with this status up to the limit.
 
         :param status: order status, e.g. "awaiting_shipping". This overrides ``query``.
         :param status_condition_type: condition type to use for the status. Default is "eq".
@@ -596,9 +566,7 @@ class Magento(APISession):
         return list(self.get_orders(query=query, limit=limit))
 
     def get_orders_by_increment_ids(self, increment_ids: Iterable[str]) -> Dict[str, Order]:
-        """
-        Get multiple orders from an iterable of increment IDs. Return a dict of increment ID -> order.
-        """
+        """Get multiple orders from an iterable of increment IDs. Return a dict of increment ID -> order."""
         query = make_search_query([
             [("increment_id", ",".join(increment_ids), "in")]
         ])
@@ -612,8 +580,7 @@ class Magento(APISession):
         return self.get_json_api(f"/V1/orders/items/{escape_path(order_item_id)}", **kwargs)
 
     def get_orders_items(self, *, sku: Optional[str] = None, query: Query = None, limit=-1, **kwargs):
-        """
-        Return orders items.
+        """Return orders items.
 
         :param sku: filter orders items on SKU. This is a shortcut for ``query=make_field_value_query("sku", sku)``.
         :param query: optional query. This take precedence over ``sku``.
@@ -629,34 +596,28 @@ class Magento(APISession):
                   none_on_404=False,
                   none_on_empty=False,
                   **kwargs) -> Order:
-        """
-        Get an order given its entity id.
-        """
+        """Get an order given its entity id."""
         return self.get_json_api(f"/V1/orders/{order_id}",
                                  none_on_404=none_on_404,
                                  none_on_empty=none_on_empty,
                                  **kwargs)
 
     def get_order_by_increment_id(self, increment_id: str, **kwargs) -> Optional[Order]:
-        """
-        Get an order given its increment id. Return ``None`` if the order doesn’t exist.
-        """
+        """Get an order given its increment id. Return ``None`` if the order doesn’t exist."""
         query = make_field_value_query("increment_id", increment_id)
         for order in self.get_orders(query=query, limit=1, **kwargs):
             return order
         return None
 
     def hold_order(self, order_id: Union[str, int], **kwargs):
-        """
-        Hold an order. This is the opposite of ``unhold_order``.
+        """Hold an order. This is the opposite of ``unhold_order``.
 
         :param order_id: order id (not increment id)
         """
         return self.post_json_api(f"/V1/orders/{escape_path(order_id)}/hold", **kwargs)
 
     def unhold_order(self, order_id: Union[str, int], **kwargs):
-        """
-        Un-hold an order. This is the opposite of ``hold_order``.
+        """Un-hold an order. This is the opposite of ``hold_order``.
 
         :param order_id: order id (not increment id)
         """
@@ -667,8 +628,7 @@ class Magento(APISession):
         return self.post_api("/V1/orders", json={"entity": order}, **kwargs)
 
     def set_order_status(self, order: Order, status: str, *, external_order_id: Optional[str] = None, **kwargs):
-        """
-        Change the status of an order, and optionally set its ``ext_order_id``. This is a convenient wrapper around
+        """Change the status of an order, and optionally set its ``ext_order_id``. This is a convenient wrapper around
         ``save_order``.
         Note it does not check if orders are on hold before, and may result in invalid states where an order has a state
         'holded' and a status that's not 'holded'.
@@ -702,15 +662,12 @@ class Magento(APISession):
     # -----------
 
     def get_base_prices(self, skus: Sequence[Sku], **kwargs) -> List[MagentoEntity]:
-        """
-        Get base prices for a sequence of SKUs.
-        """
+        """Get base prices for a sequence of SKUs."""
         return self.post_json_api("/V1/products/base-prices-information",
                                   json={"skus": skus}, bypass_read_only=True, **kwargs)
 
     def save_base_prices(self, prices: Sequence[MagentoEntity], **kwargs):
-        """
-        Save base prices.
+        """Save base prices.
 
         Example:
 
@@ -725,15 +682,12 @@ class Magento(APISession):
     # --------------
 
     def get_special_prices(self, skus: Sequence[Sku], **kwargs) -> List[MagentoEntity]:
-        """
-        Get special prices for a sequence of SKUs.
-        """
+        """Get special prices for a sequence of SKUs."""
         return self.post_json_api("/V1/products/special-price-information",
                                   json={"skus": skus}, bypass_read_only=True, **kwargs)
 
     def save_special_prices(self, special_prices: Sequence[MagentoEntity], **kwargs):
-        """
-        Save a sequence of special prices.
+        """Save a sequence of special prices.
 
         Example:
             >>> price_from = "2022-01-01 00:00:00"
@@ -748,15 +702,11 @@ class Magento(APISession):
         return self.post_json_api("/V1/products/special-price", json={"prices": special_prices}, **kwargs)
 
     def delete_special_prices(self, special_prices: Sequence[MagentoEntity], **kwargs):
-        """
-        Delete a sequence of special prices.
-        """
+        """Delete a sequence of special prices."""
         return self.post_json_api("/V1/products/special-price-delete", json={"prices": special_prices}, **kwargs)
 
     def delete_special_prices_by_sku(self, skus: Sequence[Sku], **kwargs):
-        """
-        Equivalent of ``delete_special_prices(get_special_prices(skus))``.
-        """
+        """Equivalent of ``delete_special_prices(get_special_prices(skus))``."""
         special_prices = self.get_special_prices(skus, **kwargs)
         return self.delete_special_prices(special_prices, **kwargs)
 
@@ -764,8 +714,7 @@ class Magento(APISession):
     # ========
 
     def get_products(self, limit=-1, query: Query = None, retry=0, **kwargs):
-        """
-        Return a generator of all products.
+        """Return a generator of all products.
 
         :param limit: -1 for unlimited.
         :param query:
@@ -780,8 +729,7 @@ class Magento(APISession):
         return self.get_json_api("/V1/product/types", **kwargs)
 
     def get_product(self, sku: Sku, **kwargs) -> Optional[Product]:
-        """
-        Get a single product. Return ``None`` if it doesn’t exist.
+        """Get a single product. Return ``None`` if it doesn’t exist.
 
         :param sku: SKU of the product
         :return:
@@ -789,8 +737,7 @@ class Magento(APISession):
         return self.get_json_api(f"/V1/products/{escape_path(sku)}", none_on_404=True, **kwargs)
 
     def get_product_by_id(self, product_id: int, **kwargs) -> Optional[Product]:
-        """
-        Get a product given its id. Return ``None`` if the product doesn’t exist.
+        """Get a product given its id. Return ``None`` if the product doesn’t exist.
 
         :param product_id: ID of the product
         :return:
@@ -801,8 +748,7 @@ class Magento(APISession):
         return None
 
     def get_product_by_query(self, query: Query, *, expect_one=True, **kwargs) -> Optional[Product]:
-        """
-        Get a product with a custom query. Return ``None`` if the query doesn’t return match any product, and raise
+        """Get a product with a custom query. Return ``None`` if the query doesn’t return match any product, and raise
         an exception if it returns more than one, unless ``expect_one`` is set to ``False``.
 
         :param query:
@@ -822,8 +768,7 @@ class Magento(APISession):
         raise MagentoAssertionError("Got more than one product for query %r" % query)
 
     def get_product_medias(self, sku: Sku, **kwargs) -> Sequence[MediaEntry]:
-        """
-        Get the list of gallery entries associated with the given product.
+        """Get the list of gallery entries associated with the given product.
 
         :param sku: SKU of the product.
         :return:
@@ -831,8 +776,7 @@ class Magento(APISession):
         return self.get_json_api(f"/V1/products/{escape_path(sku)}/media", **kwargs)
 
     def get_product_media(self, sku: Sku, media_id: PathId, **kwargs) -> MediaEntry:
-        """
-        Return a gallery entry.
+        """Return a gallery entry.
 
         :param sku: SKU of the product.
         :param media_id:
@@ -841,14 +785,11 @@ class Magento(APISession):
         return self.get_json_api(f"/V1/products/{escape_path(sku)}/media/{media_id}", **kwargs)
 
     def save_product_media(self, sku: Sku, media_entry: MediaEntry, **kwargs):
-        """
-        Save a product media.
-        """
+        """Save a product media."""
         return self.post_json_api(f"/V1/products/{escape_path(sku)}/media", json={"entry": media_entry}, **kwargs)
 
     def delete_product_media(self, sku: Sku, media_id: PathId, **kwargs):
-        """
-        Delete a media associated with a product.
+        """Delete a media associated with a product.
 
         :param sku: SKU of the product
         :param media_id:
@@ -857,8 +798,7 @@ class Magento(APISession):
         return self.delete_json_api(f"/V1/products/{escape_path(sku)}/media/{media_id}", **kwargs)
 
     def save_product(self, product, *, save_options: Optional[bool] = None, log_response=True, **kwargs) -> Product:
-        """
-        Save a product.
+        """Save a product.
 
         :param product: product to save (can be partial).
         :param save_options: set the `saveOptions` attribute.
@@ -877,8 +817,7 @@ class Magento(APISession):
         return cast(Product, resp.json())
 
     def update_product(self, sku: Sku, product: Product, *, save_options: Optional[bool] = None, **kwargs) -> Product:
-        """
-        Update a product.
+        """Update a product.
 
         Example:
             >>> Magento().update_product("SK1234", {"name": "My New Name"})
@@ -899,8 +838,7 @@ class Magento(APISession):
         return cast(Product, self.put_json_api(f"/V1/products/{escape_path(sku)}", json=payload, **kwargs))
 
     def delete_product(self, sku: Sku, skip_missing=False, throw=True, **kwargs) -> bool:
-        """
-        Delete a product given its SKU.
+        """Delete a product given its SKU.
 
         :param sku:
         :param skip_missing: if true, don’t raise if the product is missing, and return False.
@@ -920,8 +858,7 @@ class Magento(APISession):
         return cast(bool, response.json())
 
     def async_update_products(self, product_updates: Iterable[Product], **kwargs):
-        """
-        Update multiple products using the async bulk API.
+        """Update multiple products using the async bulk API.
 
         Example:
             >>> Magento().async_update_products([{"sku": "SK123", "name": "Abc"}, {"sku": "SK4", "name": "Def"}])
@@ -942,8 +879,7 @@ class Magento(APISession):
                                  **kwargs)
 
     def update_product_stock_item(self, sku: Sku, stock_item_id: int, stock_item: dict, **kwargs) -> int:
-        """
-        Update the stock item of a product.
+        """Update the stock item of a product.
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/productsproductSkustockItemsitemId/#operation/PutV1ProductsProductSkuStockItemsItemId
 
         :param sku: SKU of the product
@@ -958,9 +894,8 @@ class Magento(APISession):
 
     def update_product_stock_item_quantity(self, sku: Sku, stock_item_id: int, quantity: int,
                                            is_in_stock: Optional[bool] = None, **kwargs):
-        """
-        Update the stock item of a product to set its quantity. This is a simplified version of
-        ``update_product_stock_item``.
+        """Update the stock item of a product to set its quantity.
+        This is a simplified version of ``update_product_stock_item``.
 
         :param sku: SKU of the product
         :param stock_item_id:
@@ -984,8 +919,7 @@ class Magento(APISession):
                                  **kwargs)
 
     def link_child_product(self, parent_sku: Sku, child_sku: Sku, **kwargs) -> requests.Response:
-        """
-        Link two products, one as the parent of the other.
+        """Link two products, one as the parent of the other.
 
         :param parent_sku: SKU of the parent product
         :param child_sku: SKU of the child product
@@ -995,8 +929,7 @@ class Magento(APISession):
                                   json={"childSku": child_sku}, **kwargs)
 
     def unlink_child_product(self, parent_sku: Sku, child_sku: Sku, **kwargs) -> requests.Response:
-        """
-        Opposite of link_child_product().
+        """Opposite of link_child_product().
 
         :param parent_sku: SKU of the parent product
         :param child_sku: SKU of the child product
@@ -1006,8 +939,7 @@ class Magento(APISession):
             **kwargs)
 
     def save_configurable_product_option(self, sku: Sku, option: MagentoEntity, **kwargs) -> int:
-        """
-        Save a configurable product option.
+        """Save a configurable product option.
 
         :param sku: SKU of the product
         :param option: option to save
@@ -1039,9 +971,7 @@ class Magento(APISession):
                                        none_on_404=False,
                                        none_on_empty=False,
                                        **kwargs) -> Sequence[Dict[str, str]]:
-        """
-        Get all options for a products attribute.
-        """
+        """Get all options for a products attribute."""
         response = self.get_json_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options",
                                      none_on_404=none_on_404,
                                      none_on_empty=none_on_empty,
@@ -1049,8 +979,7 @@ class Magento(APISession):
         return cast(Sequence[Dict[str, str]], response)
 
     def add_products_attribute_option(self, attribute_code: str, option: Dict[str, str], **kwargs) -> str:
-        """
-        Add an option to a products attribute.
+        """Add an option to a products attribute.
 
         https://magento.redoc.ly/2.3.6-admin/#operation/catalogProductAttributeOptionManagementV1AddPost
 
@@ -1069,8 +998,7 @@ class Magento(APISession):
         return ret
 
     def delete_products_attribute_option(self, attribute_code: str, option_id: PathId, **kwargs) -> bool:
-        """
-        Remove an option to a products attribute.
+        """Remove an option to a products attribute.
 
         :param attribute_code:
         :param option_id:
@@ -1083,9 +1011,7 @@ class Magento(APISession):
     # -------
 
     def get_manufacturers(self, **kwargs):
-        """
-        Shortcut for `.get_products_attribute_options("manufacturer")`.
-        """
+        """Shortcut for `.get_products_attribute_options("manufacturer")`."""
         return self.get_products_attribute_options("manufacturer", **kwargs)
 
     # Sales Rules
@@ -1103,9 +1029,7 @@ class Magento(APISession):
         return self.get_paginated("/V1/shipments", query=query, limit=limit, **kwargs)
 
     def ship_order(self, order_id: PathId, payload: MagentoEntity, **kwargs):
-        """
-        Ship an order.
-        """
+        """Ship an order."""
         return self.post_api(f"/V1/order/{order_id}/ship", json=payload, **kwargs)
 
     def get_order_shipments(self, order_id: Union[int, str], **kwargs):
@@ -1138,8 +1062,7 @@ class Magento(APISession):
         return self.get_json_api("/V1/store/websites", **kwargs)
 
     def get_current_store_group_id(self, *, skip_store_groups=False, scope: Optional[str] = None, **kwargs) -> int:
-        """
-        Get the current store group id for the current scope. This is not part of Magento API.
+        """Get the current store group id for the current scope. This is not part of Magento API.
 
         :param skip_store_groups: if True, assume the current scope is not already a store group.
         :param scope: Override the client's scope
@@ -1166,9 +1089,7 @@ class Magento(APISession):
         raise RuntimeError("Can't determine the store group id of scope %r" % scope)
 
     def get_root_category_id(self, **kwargs) -> int:
-        """
-        Get the root category id of the current scope. This is not part of Magento API.
-        """
+        """Get the root category id of the current scope. This is not part of Magento API."""
         store_group_root_category_id: Dict[int, int] = {}
 
         store_groups = list(self.get_store_groups(**kwargs))
@@ -1187,24 +1108,21 @@ class Magento(APISession):
     # =======
 
     def get_sources(self, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
-        """
-        Get all sources.
+        """Get all sources.
 
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/inventorysources#operation/GetV1InventorySources
         """
         return self.get_paginated("/V1/inventory/sources", query=query, limit=limit, **kwargs)
 
     def get_source(self, source_code: str, **kwargs) -> Optional[MagentoEntity]:
-        """
-        Get a single source, or `None` if it doesn’t exist.
+        """Get a single source, or `None` if it doesn’t exist.
 
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/inventorysourcessourceCode#operation/GetV1InventorySourcesSourceCode
         """
         return self.get_json_api(f"/V1/inventory/sources/{escape_path(source_code)}", **kwargs)
 
     def save_source(self, source: MagentoEntity, **kwargs):
-        """
-        Save a source.
+        """Save a source.
 
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/inventorysources/#operation/PostV1InventorySources
         """
@@ -1218,8 +1136,7 @@ class Magento(APISession):
                          skus: Optional[Iterable[str]] = None,
                          query: Query = None, limit=-1,
                          **kwargs) -> Iterator[SourceItem]:
-        """
-        Return a generator of all source items.
+        """Return a generator of all source items.
 
         :param source_code: optional source_code to filter on. This takes precedence over the query parameter.
         :param sku: optional SKU to filter on. This takes precedence over the query and the skus parameter.
@@ -1242,8 +1159,7 @@ class Magento(APISession):
         return self.get_paginated("/V1/inventory/source-items", query=query, limit=limit, **kwargs)
 
     def save_source_items(self, source_items: Sequence[SourceItem | SourceItemIn], **kwargs):
-        """
-        Save a sequence of source-items. Return None if the sequence is empty.
+        """Save a sequence of source-items. Return None if the sequence is empty.
 
         :param source_items:
         :return:
@@ -1253,8 +1169,8 @@ class Magento(APISession):
         return self.post_json_api("/V1/inventory/source-items", json={"sourceItems": source_items}, **kwargs)
 
     def delete_source_items(self, source_items: Iterable[SourceItem | SourceItemIn], **kwargs):
-        """
-        Delete a sequence of source-items. Only the SKU and the source_code are used.
+        """Delete a sequence of source-items. Only the SKU and the source_code are used.
+
         Note: Magento returns an error if this is called with empty source_items.
 
         :param source_items:
@@ -1266,8 +1182,7 @@ class Magento(APISession):
         return self.post_json_api("/V1/inventory/source-items-delete", json=payload, **kwargs)
 
     def delete_source_items_by_source_code(self, source_code: str, **kwargs):
-        """
-        Delete all source items that have the given ``source_code``.
+        """Delete all source items that have the given ``source_code``.
 
         :return: requests.Response object if there are source items, None otherwise.
         """
@@ -1304,8 +1219,7 @@ class Magento(APISession):
     # ----------
 
     def get_categories_under_root(self, root_category_id: Optional[int] = None, include_root=False, **kwargs):
-        """
-        Like get_categories(), but get only categories under a root id.
+        """Like get_categories(), but get only categories under a root id.
 
         :param root_category_id: optional root category to use.
           If not provided, defaults to the store’s root category id.
@@ -1334,9 +1248,7 @@ class Magento(APISession):
         return self.get_product(sku, **kwargs) is not None
 
     def sku_was_bought(self, sku: str, **kwargs):
-        """
-        Test if there exists at least one order with the given SKU.
-        """
+        """Test if there exists at least one order with the given SKU."""
         for _ in self.get_orders_items(sku=sku, limit=1, **kwargs):
             return True
         return False
@@ -1350,8 +1262,7 @@ class Magento(APISession):
                     retry=0,
                     scope: Optional[str] = None,
                     **kwargs):
-        """
-        Equivalent of .request() that prefixes the path with the base API URL.
+        """Equivalent of .request() that prefixes the path with the base API URL.
 
         :param method: HTTP method
         :param path: API path. This must start with "/V1/"
@@ -1394,8 +1305,7 @@ class Magento(APISession):
 
     def get_paginated(self, path: str, *, query: Query = None, limit=-1, retry=0, page_size: Optional[int] = None,
                       **kwargs):
-        """
-        Get a paginated API path.
+        """Get a paginated API path.
 
         :param path:
         :param query:

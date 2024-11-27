@@ -21,8 +21,8 @@ def is_order_cash_on_delivery(order: Order):
 
 
 def get_order_shipping_address(order: Order) -> Dict[str, Any]:
-    """
-    Return the first shipping address of an order.
+    """Return the first shipping address of an order.
+
     Note the returned dict is a reference, so if you modify it, it modifies the order.
     Make a copy if you want to modify the address without affecting the order.
     """

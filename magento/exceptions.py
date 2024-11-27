@@ -8,6 +8,7 @@ __all__ = ('build_exception_text', 'MagentoException', 'MagentoAssertionError')
 
 
 def build_exception_text(message: str, parameters: Optional[Union[Dict[str, str], List[str]]]):
+    """Build the text of an exception given a response payload from Magento."""
     if not parameters:
         return message
 
@@ -29,6 +30,8 @@ def build_exception_text(message: str, parameters: Optional[Union[Dict[str, str]
 
 
 class MagentoException(Exception):
+    """An exception returned by Magento."""
+
     def __init__(self, message,
                  parameters: Optional[Union[Dict[str, str], List[str]]] = None,
                  trace: Optional[str] = None,
@@ -43,8 +46,7 @@ class MagentoException(Exception):
 
 
 class MagentoAssertionError(AssertionError):
-    """
-    Exception raised by ``Magento#get_product_by_query`` when the query returns more than one product.
+    """Exception raised by ``Magento#get_product_by_query`` when the query returns more than one product.
 
     This exception doesn’t inherit from ``MagentoException`` because it’s not a Magento error per se.
     """
