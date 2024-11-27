@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## 2.1.0 (unreleased)
+## 2.1.0 (2024/11/27)
 
 * Define `SourceItem` as a `TypedDict`
 * Clarify the return type of paginated methods: `Iterator` instead of `Iterable`
