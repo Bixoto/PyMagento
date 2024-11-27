@@ -36,6 +36,7 @@ pytest = "^7.4"
 pytest-mock = "^3.11"
 pytest-cov = "^4.1"
 pytest-mypy-testing = "^0.1.1"
+ruff = "^0.8.0"
 
 [tool.poetry.extras]
 docs = ["Sphinx", "sphinx-rtd-theme"]
@@ -50,7 +51,7 @@ exclude_lines = [
 
 [tool.ruff]
 line-length = 120
-ignore-init-module-imports = true
+[tool.ruff.lint]
 ignore = [
     "E402", # "Module level import not at top of file"
     "E501", # line too long

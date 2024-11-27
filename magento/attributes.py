@@ -38,7 +38,7 @@ def get_custom_attribute(item, attribute_code, coerce_as=None):
       This is useful to circumvent Magento's limitation where all attribute values are strings.
     :return: attribute value or None.
     """
-    if coerce_as == bool:
+    if coerce_as is bool:
         # "0" -> False / "1" -> True
         def coerce_as(s: str):
             return bool(int(s))
