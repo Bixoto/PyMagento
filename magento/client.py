@@ -1040,12 +1040,14 @@ class Magento(APISession):
     # =====
 
     def get_stock_source_links(self, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
+        """Get stock source links."""
         return self.get_paginated("/V1/inventory/stock-source-links", query=query, limit=limit, **kwargs)
 
     # Stores
     # ======
 
     def get_store_configs(self, store_codes: Optional[List[str]] = None, **kwargs) -> Iterable[MagentoEntity]:
+        """Get store configs."""
         params: Dict[str, List[str]] = {}
         if store_codes is not None:
             params = {"storeCodes": store_codes}
@@ -1053,12 +1055,15 @@ class Magento(APISession):
         return self.get_json_api("/V1/store/storeConfigs", params=params, **kwargs)
 
     def get_store_groups(self, **kwargs) -> Iterable[MagentoEntity]:
+        """Get store groups."""
         return self.get_json_api("/V1/store/storeGroups", **kwargs)
 
     def get_store_views(self, **kwargs) -> Iterable[MagentoEntity]:
+        """Get store views."""
         return self.get_json_api("/V1/store/storeViews", **kwargs)
 
     def get_websites(self, **kwargs) -> Iterable[MagentoEntity]:
+        """Get websites."""
         return self.get_json_api("/V1/store/websites", **kwargs)
 
     def get_current_store_group_id(self, *, skip_store_groups=False, scope: Optional[str] = None, **kwargs) -> int:

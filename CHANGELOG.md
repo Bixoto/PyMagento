@@ -4,6 +4,7 @@
 
 * Define `SourceItem` as a `TypedDict`
 * Clarify the return type of paginated methods: `Iterator` instead of `Iterable`
+* Add missing docstrings
 
 ## 2.0.2 (2024/11/13)
 

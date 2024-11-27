@@ -74,6 +74,7 @@ class ProductBatchSaver(BatchSaver):
         super().__init__(client, '/V1/products/bySku', batch_size=batch_size)
 
     def save_product(self, product_data: dict):
+        """Add a product to the batch."""
         self.add_item({"product": product_data})
 
 

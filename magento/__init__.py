@@ -1,3 +1,5 @@
+"""Client and utilities to work with the Magento 2 REST API."""
+
 from datetime import datetime
 
 from magento.attributes import (
@@ -20,6 +22,7 @@ from magento.types import (
     Sku,
 )
 from magento.version import __version__
+
 
 ROOT_CATEGORY_ID = 1
 
