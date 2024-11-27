@@ -3,6 +3,7 @@
 ## 2.1.0 (unreleased)
 
 * Define `SourceItem` as a `TypedDict`
+* Clarify the return type of paginated methods: `Iterator` instead of `Iterable`
 
 ## 2.0.2 (2024/11/13)
 
