@@ -797,8 +797,9 @@ class Magento(APISession):
         """
         return self.delete_json_api(f"/V1/products/{escape_path(sku)}/media/{media_id}", **kwargs)
 
-    def save_product(self, product, *, save_options: Optional[bool] = None, log_response=True, **kwargs) -> Product:
-        """Save a product.
+    def save_product(self, product: Product, *, save_options: Optional[bool] = None, log_response=True,
+                     **kwargs) -> Product:
+        """Save a new product. To update a product, use `update_product`.
 
         :param product: product to save (can be partial).
         :param save_options: set the `saveOptions` attribute.
