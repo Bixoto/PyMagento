@@ -1163,7 +1163,7 @@ class Magento(APISession):
 
         return self.get_paginated("/V1/inventory/source-items", query=query, limit=limit, **kwargs)
 
-    def save_source_items(self, source_items: Sequence[SourceItem | SourceItemIn], **kwargs):
+    def save_source_items(self, source_items: Sequence[Union[SourceItem, SourceItemIn]], **kwargs):
         """Save a sequence of source-items. Return None if the sequence is empty.
 
         :param source_items:
@@ -1173,7 +1173,7 @@ class Magento(APISession):
             return None
         return self.post_json_api("/V1/inventory/source-items", json={"sourceItems": source_items}, **kwargs)
 
-    def delete_source_items(self, source_items: Iterable[SourceItem | SourceItemIn], **kwargs):
+    def delete_source_items(self, source_items: Iterable[Union[SourceItem, SourceItemIn]], **kwargs):
         """Delete a sequence of source-items. Only the SKU and the source_code are used.
 
         Note: Magento returns an error if this is called with empty source_items.
