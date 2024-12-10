@@ -5,7 +5,7 @@ from os import environ
 from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List, Literal
 
 import requests
-from api_session import APISession, escape_path
+from api_session import APISession, escape_path, JSONDict
 from requests.exceptions import HTTPError
 
 from magento.exceptions import MagentoException, MagentoAssertionError
@@ -701,7 +701,7 @@ class Magento(APISession):
         """
         return self.post_json_api("/V1/products/special-price", json={"prices": special_prices}, **kwargs)
 
-    def delete_special_prices(self, special_prices: Sequence[MagentoEntity], **kwargs):
+    def delete_special_prices(self, special_prices: Sequence[MagentoEntity], **kwargs) -> List[JSONDict]:
         """Delete a sequence of special prices."""
         return self.post_json_api("/V1/products/special-price-delete", json={"prices": special_prices}, **kwargs)
 

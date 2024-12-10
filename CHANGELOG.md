@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-* `save_special_prices`: document the return value
+* `save_special_prices`: add a type hint and document the return value
+* `delete_special_prices`: add a type hint for the return value
 
 ## 2.1.0 (2024/11/27)
 
