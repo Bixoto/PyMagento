@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* `save_special_prices`: document the return value
+
 ## 2.1.0 (2024/11/27)
 
 * Define `SourceItem` as a `TypedDict`

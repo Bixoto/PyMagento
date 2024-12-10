@@ -686,7 +686,7 @@ class Magento(APISession):
         return self.post_json_api("/V1/products/special-price-information",
                                   json={"skus": skus}, bypass_read_only=True, **kwargs)
 
-    def save_special_prices(self, special_prices: Sequence[MagentoEntity], **kwargs):
+    def save_special_prices(self, special_prices: Sequence[MagentoEntity], **kwargs) -> List[JSONDict]:
         """Save a sequence of special prices.
 
         Example:
@@ -697,7 +697,7 @@ class Magento(APISession):
             >>> self.save_special_prices([special_price])
 
         :param special_prices: Special prices to save.
-        :return:
+        :return: a list of errors (if any)
         """
         return self.post_json_api("/V1/products/special-price", json={"prices": special_prices}, **kwargs)
 
