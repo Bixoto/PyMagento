@@ -1078,7 +1078,7 @@ class Magento(APISession):
         """Get store configs."""
         params: Dict[str, List[str]] = {}
         if store_codes is not None:
-            params = {"storeCodes": store_codes}
+            params = {"storeCodes[]": store_codes}
 
         return self.get_json_api("/V1/store/storeConfigs", params=params, **kwargs)
 

@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* `get_store_configs`: fix the `store_codes` filter
+
 ## 2.2.2 (2025/01/09)
 
 * Fix an issue in the `store_id` filter added in the previous release when the store ID is `0`
