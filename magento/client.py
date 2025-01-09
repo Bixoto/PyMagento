@@ -673,7 +673,7 @@ class Magento(APISession):
         prices = self.post_json_api("/V1/products/base-prices-information",
                                     json={"skus": skus}, bypass_read_only=True, **kwargs)
 
-        if store_id:
+        if store_id is not None:
             prices = [price for price in prices
                       if price["store_id"] == store_id]
 
@@ -706,7 +706,7 @@ class Magento(APISession):
         """
         special_prices = self.post_json_api("/V1/products/special-price-information",
                                             json={"skus": skus}, bypass_read_only=True, **kwargs)
-        if store_id:
+        if store_id is not None:
             special_prices = [special_price for special_price in special_prices
                               if special_price["store_id"] == store_id]
 
