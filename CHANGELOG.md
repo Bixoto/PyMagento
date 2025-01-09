@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## 2.2.2 (2025/01/09)
+
+* Fix an issue in the `store_id` filter added in the previous release when the store ID is `0`
+
 ## 2.2.1 (2025/01/09)
 
 * `get_special_prices`, `delete_special_prices_by_sku`, and `get_base_prices`: allow to filter by `store_id`
