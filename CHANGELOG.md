@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* `get_special_prices` and `delete_special_prices_by_sku`: allow to filter by `store_id`
+
 ## 2.2.0 (2025/01/09)
 
 * `save_special_prices`: add a type hint and document the return value

@@ -681,10 +681,23 @@ class Magento(APISession):
     # Special Prices
     # --------------
 
-    def get_special_prices(self, skus: Sequence[Sku], **kwargs) -> List[MagentoEntity]:
-        """Get special prices for a sequence of SKUs."""
-        return self.post_json_api("/V1/products/special-price-information",
-                                  json={"skus": skus}, bypass_read_only=True, **kwargs)
+    def get_special_prices(self, skus: Sequence[Sku], *, store_id: Union[int, None] = None,
+                           **kwargs) -> List[MagentoEntity]:
+        """Get special prices for a sequence of SKUs.
+
+        :param skus:
+        :param store_id: Filter by store ID.
+          This is done on the response as Magento doesn’t support this filter in the REST API.
+        :param kwargs:
+        :return:
+        """
+        special_prices = self.post_json_api("/V1/products/special-price-information",
+                                            json={"skus": skus}, bypass_read_only=True, **kwargs)
+        if store_id:
+            special_prices = [special_price for special_price in special_prices
+                              if special_price["store_id"] == store_id]
+
+        return special_prices
 
     def save_special_prices(self, special_prices: Sequence[MagentoEntity], **kwargs) -> List[JSONDict]:
         """Save a sequence of special prices.
@@ -705,9 +718,10 @@ class Magento(APISession):
         """Delete a sequence of special prices."""
         return self.post_json_api("/V1/products/special-price-delete", json={"prices": special_prices}, **kwargs)
 
-    def delete_special_prices_by_sku(self, skus: Sequence[Sku], **kwargs):
+    def delete_special_prices_by_sku(self, skus: Sequence[Sku], *, store_id: Union[int, None] = None,
+                                     **kwargs):
         """Equivalent of ``delete_special_prices(get_special_prices(skus))``."""
-        special_prices = self.get_special_prices(skus, **kwargs)
+        special_prices = self.get_special_prices(skus, store_id=store_id, **kwargs)
         return self.delete_special_prices(special_prices, **kwargs)
 
     # Products
