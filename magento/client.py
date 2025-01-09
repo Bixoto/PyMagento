@@ -1098,6 +1098,7 @@ class Magento(APISession):
         """Get the root category id of the current scope. This is not part of Magento API."""
         store_group_root_category_id: Dict[int, int] = {}
 
+        # We first iterate over store groups because it's faster (fewer API calls) than calling `get_current_store_group_id`.
         store_groups = list(self.get_store_groups(**kwargs))
         for store_group in store_groups:
             root_category_id: int = store_group["root_category_id"]
