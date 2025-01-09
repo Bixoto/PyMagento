@@ -9,6 +9,7 @@ else:
     from typing_extensions import NotRequired
 
 __all__ = (
+    'BasePrice',
     'Category',
     'Customer',
     'MagentoEntity',
@@ -50,3 +51,10 @@ class SourceItem(TypedDict):
     source_code: str
     quantity: int
     status: int
+
+
+class BasePrice(TypedDict):
+    """Base price dict."""
+    price: int | float
+    store_id: int
+    sku: Sku

@@ -11,7 +11,7 @@ from requests.exceptions import HTTPError
 from magento.exceptions import MagentoException, MagentoAssertionError
 from magento.queries import Query, make_search_query, make_field_value_query
 from magento.types import Product, SourceItem, Sku, Category, MediaEntry, MagentoEntity, Order, PathId, Customer, \
-    SourceItemIn
+    SourceItemIn, BasePrice
 from magento.version import __version__
 
 __all__ = (
@@ -661,12 +661,12 @@ class Magento(APISession):
     # Base Prices
     # -----------
 
-    def get_base_prices(self, skus: Sequence[Sku], **kwargs) -> List[MagentoEntity]:
+    def get_base_prices(self, skus: Sequence[Sku], **kwargs) -> List[BasePrice]:
         """Get base prices for a sequence of SKUs."""
         return self.post_json_api("/V1/products/base-prices-information",
                                   json={"skus": skus}, bypass_read_only=True, **kwargs)
 
-    def save_base_prices(self, prices: Sequence[MagentoEntity], **kwargs):
+    def save_base_prices(self, prices: Sequence[BasePrice], **kwargs):
         """Save base prices.
 
         Example:

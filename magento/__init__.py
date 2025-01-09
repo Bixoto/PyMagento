@@ -13,6 +13,7 @@ from magento.order_helpers import is_order_on_hold, is_order_cash_on_delivery, g
 from magento.queries import Query, make_field_value_query, make_search_query
 from magento.types import (
     MagentoEntity,
+    BasePrice,
     Customer,
     Order,
     Product,
