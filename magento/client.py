@@ -661,10 +661,23 @@ class Magento(APISession):
     # Base Prices
     # -----------
 
-    def get_base_prices(self, skus: Sequence[Sku], **kwargs) -> List[BasePrice]:
-        """Get base prices for a sequence of SKUs."""
-        return self.post_json_api("/V1/products/base-prices-information",
-                                  json={"skus": skus}, bypass_read_only=True, **kwargs)
+    def get_base_prices(self, skus: Sequence[Sku], *, store_id: Union[int, None] = None, **kwargs) -> List[BasePrice]:
+        """Get base prices for a sequence of SKUs.
+
+        :param skus:
+        :param store_id: Filter by store ID.
+          This is done on the response as Magento doesn’t support this filter in the REST API.
+        :param kwargs:
+        :return:
+        """
+        prices = self.post_json_api("/V1/products/base-prices-information",
+                                    json={"skus": skus}, bypass_read_only=True, **kwargs)
+
+        if store_id:
+            prices = [price for price in prices
+                      if price["store_id"] == store_id]
+
+        return prices
 
     def save_base_prices(self, prices: Sequence[BasePrice], **kwargs):
         """Save base prices.
@@ -674,7 +687,7 @@ class Magento(APISession):
             >>> self.save_base_prices([{"price": 3.14, "sku": "W1033", "store_id": 0}])
 
         :param prices: base prices to save.
-        :return: `requests.Response` object
+        :return:
         """
         return self.post_json_api("/V1/products/base-prices", json={"prices": prices}, **kwargs)
 

@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-* `get_special_prices` and `delete_special_prices_by_sku`: allow to filter by `store_id`
+* `get_special_prices`, `delete_special_prices_by_sku`, and `get_base_prices`: allow to filter by `store_id`
+* `save_base_prices`: fix outdated documentation on the return type
 
 ## 2.2.0 (2025/01/09)
 
