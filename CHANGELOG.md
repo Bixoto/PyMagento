@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## Unreleased
+## 2.2.0 (2025/01/09)
 
 * `save_special_prices`: add a type hint and document the return value
 * `delete_special_prices`: add a type hint for the return value
