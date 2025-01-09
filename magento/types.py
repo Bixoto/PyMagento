@@ -53,6 +53,9 @@ class SourceItem(TypedDict):
     status: int
 
 
+# Prices
+# ======
+
 class BasePrice(TypedDict):
     """Base price dict."""
     price: Union[int, float]

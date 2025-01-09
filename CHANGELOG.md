@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## Unreleased
+## 2.2.1 (2025/01/09)
 
 * `get_special_prices`, `delete_special_prices_by_sku`, and `get_base_prices`: allow to filter by `store_id`
 * `save_base_prices`: fix outdated documentation on the return type
