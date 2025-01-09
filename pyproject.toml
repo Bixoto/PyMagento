@@ -31,11 +31,11 @@ typing-extensions = { version = "*", python = "<3.11" }
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1"
-coverage = "^7.2"
-types-requests = "^2.31"
+coverage = "^7.6"
+types-requests = "*"
 pytest = "^8"
 pytest-mock = "^3.11"
-pytest-cov = "^5.0"
+pytest-cov = "^5.0" # v6 requires Python 3.9
 pytest-mypy-testing = "^0.1.1"
 ruff = "^0.8.0"
 
