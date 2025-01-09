@@ -11,7 +11,7 @@ Features:
 * Lightweight: entities are returned as plain dictionaries; there is no custom `Order` or `Product` class
 * Easy to extend: subclass `magento.Magento` and add your own methods
 * Transparent pagination: functions that make paginated queries return lazy iterables (generators)
-* Fully typed: all functions have type hints if necessary
+* Fully typed: all functions have type hints
 * Production-ready: at Bixoto, we use PyMagento in production since 2020
 * Python 3.8+ support
 * MIT license
