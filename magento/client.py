@@ -1259,6 +1259,22 @@ class Magento(APISession):
             return True
         return False
 
+    def skus_were_bought(self, skus: list[str]):
+        """Equivalent of ``sku_was_bought`` for multiple SKUs. Return a dict of {SKU -> bought?}.
+
+        Note that if some of the SKUs were bought a lot of times it’s more efficient to call ``sku_was_bought`` on each SKU.
+        """
+        q = make_field_value_query("sku", ",".join(skus), "in")
+
+        bought_skus_dict: dict[str, bool] = {sku: False for sku in skus}
+        for order_item in self.get_orders_items(query=q):
+            bought_skus_dict[order_item["sku"]] = True
+
+            if all(bought_skus_dict.values()):
+                break
+
+        return bought_skus_dict
+
     # Internals
     # =========
 

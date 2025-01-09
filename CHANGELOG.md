@@ -4,7 +4,8 @@
 
 * `save_special_prices`: add a type hint and document the return value
 * `delete_special_prices`: add a type hint for the return value
-* Add the `TypedDict` `BasePrice`
+* Add the `TypedDict` `BasePrice` for `get_base_prices` and `save_base_prices`
+* Add the `skus_were_bought` helper
 
 ## 2.1.0 (2024/11/27)
 
