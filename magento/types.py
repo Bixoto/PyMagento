@@ -55,6 +55,6 @@ class SourceItem(TypedDict):
 
 class BasePrice(TypedDict):
     """Base price dict."""
-    price: int | float
+    price: Union[int, float]
     store_id: int
     sku: Sku
