@@ -758,7 +758,13 @@ class Magento(APISession):
     def get_product(self, sku: Sku, *,
                     none_on_404=True,
                     **kwargs) -> Optional[Product]:
-        """Get a single product by SKU. Return ``None`` if it doesn’t exist.
+        """
+        Get a single product by SKU. Return ``None`` if it doesn’t exist.
+
+        :param sku: SKU of the product.
+        :param none_on_404:
+        :param kwargs:
+        :return:
         """
         return self.get_json_api(f"/V1/products/{escape_path(sku)}",
                                  none_on_404=none_on_404,
