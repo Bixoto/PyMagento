@@ -1279,16 +1279,13 @@ class Magento(APISession):
 
     def sku_exists(self, sku: str, **kwargs):
         """Test if a SKU exists in Magento."""
-        # Get a single field; we don't need the whole product
-        params = kwargs.pop("params", {})
-        params.setdefault("fields", "id")
-
+        # Query a single field to reduce the payload size
         # Update this if you find a more efficient way of doing it
-        return self.get_product(sku, params=params, **kwargs) is not None
+        return self.get_product(sku, fields="id", **kwargs) is not None
 
     def sku_was_bought(self, sku: str, **kwargs):
         """Test if there exists at least one order with the given SKU."""
-        for _ in self.get_orders_items(sku=sku, limit=1, **kwargs):
+        for _ in self.get_orders_items(sku=sku, limit=1, fields="sku", **kwargs):
             return True
         return False
 
@@ -1300,7 +1297,7 @@ class Magento(APISession):
         q = make_field_value_query("sku", ",".join(skus), "in")
 
         bought_skus_dict: Dict[str, bool] = {sku: False for sku in skus}
-        for order_item in self.get_orders_items(query=q):
+        for order_item in self.get_orders_items(query=q, fields="sku"):
             bought_skus_dict[order_item["sku"]] = True
 
             if all(bought_skus_dict.values()):
@@ -1316,6 +1313,7 @@ class Magento(APISession):
                     throw=False,
                     retry=0,
                     scope: Optional[str] = None,
+                    fields: Optional[str] = None,
                     **kwargs):
         """Equivalent of .request() that prefixes the path with the base API URL.
 
@@ -1328,6 +1326,7 @@ class Magento(APISession):
         :param retry: if non-zero, retry the request that many times if there is an error, sleeping 10s between
             each request.
         :param scope: overrides the client's scope for this request
+        :param fields: overrides the `params["fields"]`
         :param kwargs: keyword arguments passed to ``.request()``
         :return:
         """
@@ -1346,6 +1345,10 @@ class Magento(APISession):
 
         full_path += path
 
+        if fields is not None:
+            kwargs.setdefault("params", {})
+            kwargs["params"]["fields"] = fields
+
         if self.logger:
             self.logger.debug("%s %s" % (method, full_path))
         r = super().request_api(method, full_path, *args, throw=False, **kwargs)
@@ -1359,6 +1362,7 @@ class Magento(APISession):
         return r
 
     def get_paginated(self, path: str, *, query: Query = None, limit=-1, retry=0, page_size: Optional[int] = None,
+                      fields: Optional[dict] = None,
                       **kwargs):
         """Get a paginated API path.
 
@@ -1367,6 +1371,7 @@ class Magento(APISession):
         :param limit: -1 for no limit
         :param retry:
         :param page_size: default is `self.PAGE_SIZE`
+        :param fields: fields to retrieve for each item. Don't wrap them in `items[]`
         :return:
         """
         if limit == 0:
@@ -1385,6 +1390,9 @@ class Magento(APISession):
 
         query["searchCriteria[pageSize]"] = page_size
 
+        if isinstance(fields, str):
+            fields = f"items[{fields}],total_count"
+
         current_page = 1
         count = 0
 
@@ -1396,6 +1404,7 @@ class Magento(APISession):
                                     none_on_404=False,
                                     none_on_empty=False,
                                     retry=retry,
+                                    fields=fields,
                                     **kwargs)
             items: list = res.get("items", [])
             if not items:
