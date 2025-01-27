@@ -1,8 +1,12 @@
 # PyMagento Changelog
 
-## Unreleased
+## 2.3.0 (2025/01/27)
 
 * `get_store_configs`: fix the `store_codes` filter
+* Add an optional `fields` parameter to `request_api` and `get_paginated` as an alias for `params={"fields": ...}`
+  to filter the response fields
+    * Use it to largely reduce the network usage of `sku_exists`, `sku_was_bought`, `skus_were_bought`
+* `get_product`: allow to pass `none_on_404=False` to throw if the product doesn't exist
 
 ## 2.2.2 (2025/01/09)
 
