@@ -44,22 +44,22 @@
 * Remove the functions deprecated since 1.11.2 and before: `set_product_stock_item`, `delete_default_source_items`,
   `VISIBILITY_BOTH`
 * Some functions that were previously returning a `requests.Response` object now return the JSON-parsed payload:
-  * `add_product_to_category`
-  * `assign_attribute_set_attribute`
-  * `delete_attribute`
-  * `delete_product_media`
-  * `delete_source_items`
-  * `delete_special_prices`
-  * `hold_order`
-  * `link_child_product`
-  * `remove_category`
-  * `remove_attribute_set_attribute`
-  * `remove_product_from_category`
-  * `save_base_prices`
-  * `save_configurable_product_option`
-  * `save_special_prices`
-  * `unlink_child_product`
-  * `unhold_order`
+    * `add_product_to_category`
+    * `assign_attribute_set_attribute`
+    * `delete_attribute`
+    * `delete_product_media`
+    * `delete_source_items`
+    * `delete_special_prices`
+    * `hold_order`
+    * `link_child_product`
+    * `remove_category`
+    * `remove_attribute_set_attribute`
+    * `remove_product_from_category`
+    * `save_base_prices`
+    * `save_configurable_product_option`
+    * `save_special_prices`
+    * `unlink_child_product`
+    * `unhold_order`
 
   This means they raise in case of error response instead of silently ignoring it.
 
@@ -115,18 +115,18 @@
 ## 1.10.2 (2024/02/14)
 
 * Implement more methods:
-  * `get_apple_pay_auth`
-  * `get_bulk_operations`, `get_bulk_detailed_status`, `get_bulk_operation_status_count`
-  * `update_product_stock_item`
+    * `get_apple_pay_auth`
+    * `get_bulk_operations`, `get_bulk_detailed_status`, `get_bulk_operation_status_count`
+    * `update_product_stock_item`
 * Add `update_product_stock_item_quantity` and deprecate `set_product_stock_item`
 * Allow to override the `page_size` in `get_paginated` and all methods that use it
 
 ## 1.10.1 (2024/02/07)
 
 * Implement more methods:
-  * `get_cms_block`, `delete_cms_block`
-  * `create_coupon`, `update_coupon`, `get_coupon`, `delete_coupon`, `delete_coupons`, `delete_coupons_by_codes`
-  * `delete_customer_address`
+    * `get_cms_block`, `delete_cms_block`
+    * `create_coupon`, `update_coupon`, `get_coupon`, `delete_coupon`, `delete_coupons`, `delete_coupons_by_codes`
+    * `delete_customer_address`
 * Add helpers `sku_exists`, `sku_was_bought`, `get_categories_under_root`
 * `remove_product_from_category`: fix for SKUs that contain slashes
 * Improve some type hints on attributes methods

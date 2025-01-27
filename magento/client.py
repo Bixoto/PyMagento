@@ -716,8 +716,8 @@ class Magento(APISession):
         """Save a sequence of special prices.
 
         Example:
-            >>> price_from = "2022-01-01 00:00:00"
-            >>> price_to = "2022-01-31 23:59:59"
+            >>> price_from = "2025-01-01 00:00:00"
+            >>> price_to = "2025-01-31 23:59:59"
             >>> special_price = {"store_id": 0, "sku": "W1033", "price": 2.99, \
                                  "price_from": price_from, "price_to": price_to}
             >>> self.save_special_prices([special_price])
