@@ -1278,8 +1278,12 @@ class Magento(APISession):
 
     def sku_exists(self, sku: str, **kwargs):
         """Test if a SKU exists in Magento."""
+        # Get a single field; we don't need the whole product
+        params = kwargs.pop("params", {})
+        params.setdefault("fields", "id")
+
         # Update this if you find a more efficient way of doing it
-        return self.get_product(sku, **kwargs) is not None
+        return self.get_product(sku, params=params, **kwargs) is not None
 
     def sku_was_bought(self, sku: str, **kwargs):
         """Test if there exists at least one order with the given SKU."""
