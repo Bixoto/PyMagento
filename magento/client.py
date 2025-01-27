@@ -755,13 +755,14 @@ class Magento(APISession):
         """Get available product types."""
         return self.get_json_api("/V1/product/types", **kwargs)
 
-    def get_product(self, sku: Sku, **kwargs) -> Optional[Product]:
-        """Get a single product. Return ``None`` if it doesn’t exist.
-
-        :param sku: SKU of the product
-        :return:
+    def get_product(self, sku: Sku, *,
+                    none_on_404=True,
+                    **kwargs) -> Optional[Product]:
+        """Get a single product by SKU. Return ``None`` if it doesn’t exist.
         """
-        return self.get_json_api(f"/V1/products/{escape_path(sku)}", none_on_404=True, **kwargs)
+        return self.get_json_api(f"/V1/products/{escape_path(sku)}",
+                                 none_on_404=none_on_404,
+                                 **kwargs)
 
     def get_product_by_id(self, product_id: int, **kwargs) -> Optional[Product]:
         """Get a product given its id. Return ``None`` if the product doesn’t exist.
