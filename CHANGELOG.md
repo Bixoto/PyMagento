@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* `save_base_prices`: add a type hint on the return value
+
 ## 2.3.0 (2025/01/27)
 
 * `get_store_configs`: fix the `store_codes` filter

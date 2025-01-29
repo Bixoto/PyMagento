@@ -679,7 +679,7 @@ class Magento(APISession):
 
         return prices
 
-    def save_base_prices(self, prices: Sequence[BasePrice], **kwargs):
+    def save_base_prices(self, prices: Sequence[BasePrice], **kwargs) -> List[JSONDict]:
         """Save base prices.
 
         Example:
@@ -687,7 +687,7 @@ class Magento(APISession):
             >>> self.save_base_prices([{"price": 3.14, "sku": "W1033", "store_id": 0}])
 
         :param prices: base prices to save.
-        :return:
+        :return: a list of errors (if any)
         """
         return self.post_json_api("/V1/products/base-prices", json={"prices": prices}, **kwargs)
 
