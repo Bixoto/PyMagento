@@ -11,7 +11,7 @@ def make_search_query(filter_groups: Sequence[Sequence[Tuple[str, Any, Optional[
                       *,
                       sort_orders: Optional[Sequence[Tuple[str, str]]] = None,
                       page_size: Optional[int] = None,
-                      current_page: Optional[int] = None) -> dict[str, Any]:
+                      current_page: Optional[int] = None) -> Dict[str, Any]:
     """Build a search query.
 
     Documentation: https://devdocs.magento.com/guides/v2.4/rest/performing-searches.html
@@ -63,7 +63,7 @@ def make_field_value_query(field: str, value: Any,
                            page_size: Optional[int] = None,
                            current_page: Optional[int] = None,
                            *,
-                           sort_orders: Optional[Sequence[Tuple[str, str]]] = None) -> dict[str, Any]:
+                           sort_orders: Optional[Sequence[Tuple[str, str]]] = None) -> Dict[str, Any]:
     """Create a query params dictionary for Magento. This is a simplified version of ``make_search_query``.
 
     :param field:

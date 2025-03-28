@@ -1,4 +1,4 @@
-from typing import List, Callable, Iterable, TypeVar, Generic, Optional, Any
+from typing import List, Callable, Iterable, TypeVar, Generic, Optional, Any, Dict
 
 from api_session import JSONDict
 
@@ -43,7 +43,7 @@ class BatchSaver:
     def _put_batch(self) -> JSONDict:  # pragma: nocover
         return self.client.put_json_api(self.path, json=self._batch, async_bulk=True)
 
-    def finalize(self) -> dict[str, int]:
+    def finalize(self) -> Dict[str, int]:
         """Send the last pending batch (if any). This doesn’t need to be called when the object is used as a context
         manager.
 
