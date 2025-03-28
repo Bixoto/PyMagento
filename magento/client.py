@@ -92,8 +92,8 @@ class Magento(APISession):
                  base_url: Optional[str] = None,
                  scope: Optional[str] = None,
                  logger: Optional[Logger] = None,
-                 read_only=False,
-                 user_agent=None,
+                 read_only: bool = False,
+                 user_agent: Optional[str] = None,
                  *,
                  batch_page_size: Optional[int] = None,
                  **kwargs):
@@ -149,7 +149,7 @@ class Magento(APISession):
     # Attributes
     # ==========
 
-    def save_attribute(self, attribute: MagentoEntity, *, with_defaults=True, **kwargs) -> MagentoEntity:
+    def save_attribute(self, attribute: MagentoEntity, *, with_defaults: bool = True, **kwargs) -> MagentoEntity:
         """Save an attribute."""
         if with_defaults:
             base = DEFAULT_ATTRIBUTE_DICT.copy()
@@ -165,7 +165,7 @@ class Magento(APISession):
     # Attribute Sets
     # ==============
 
-    def get_attribute_sets(self, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
+    def get_attribute_sets(self, query: Query = None, limit: int = -1, **kwargs) -> Iterator[MagentoEntity]:
         """Get all attribute sets (generator)."""
         return self.get_paginated("/V1/eav/attribute-sets/list", query=query, limit=limit, **kwargs)
 
@@ -200,11 +200,11 @@ class Magento(APISession):
     # Bulk Operations
     # ===============
 
-    def get_bulk_operations(self, *, query: Query = None, limit=-1, **kwargs):
+    def get_bulk_operations(self, *, query: Query = None, limit: int = -1, **kwargs):
         """List the bulk operation items."""
         return self.get_paginated("/V1/bulk", query=query, limit=limit, **kwargs)
 
-    def get_bulk_status(self, bulk_uuid: str, none_on_404=False, **kwargs) -> MagentoEntity:
+    def get_bulk_status(self, bulk_uuid: str, none_on_404: bool = False, **kwargs) -> MagentoEntity:
         """Get the status of an async/bulk operation."""
         return self.get_json_api(f"/V1/bulk/{escape_path(bulk_uuid)}/status",
                                  none_on_404=none_on_404,
@@ -226,14 +226,14 @@ class Magento(APISession):
         """Get a cart."""
         return self.get_json_api(f"/V1/carts/{escape_path(cart_id)}", **kwargs)
 
-    def get_carts(self, *, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
+    def get_carts(self, *, query: Query = None, limit: int = -1, **kwargs) -> Iterator[MagentoEntity]:
         """Get all carts (generator)."""
         return self.get_paginated("/V1/carts/search", query=query, limit=limit, **kwargs)
 
     # Categories
     # ==========
 
-    def get_categories(self, query: Query = None, path_prefix: Optional[str] = None, limit=-1, **kwargs) \
+    def get_categories(self, query: Query = None, path_prefix: Optional[str] = None, limit: int = -1, **kwargs) \
             -> Iterator[Category]:
         """Yield all categories.
 
@@ -260,7 +260,7 @@ class Magento(APISession):
         """Return a category given its id."""
         return self.get_json_api(f"/V1/categories/{category_id}", **kwargs)
 
-    def get_category_by_name(self, name: str, *, assert_one=False, **kwargs) -> Optional[Category]:
+    def get_category_by_name(self, name: str, *, assert_one: bool = False, **kwargs) -> Optional[Category]:
         """Return the first category with the given name.
 
         :param name: exact name of the category
@@ -307,7 +307,7 @@ class Magento(APISession):
             **kwargs,
         )
 
-    def move_category(self, category_id: PathId, parent_id: int, *, after_id: Union[int, None] = None, **kwargs) \
+    def move_category(self, category_id: PathId, parent_id: int, *, after_id: Optional[int] = None, **kwargs) \
             -> bool:
         """Move a category under a new parent.
 
@@ -364,11 +364,11 @@ class Magento(APISession):
     # CMS
     # ===
 
-    def get_cms_pages(self, *, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
+    def get_cms_pages(self, *, query: Query = None, limit: int = -1, **kwargs) -> Iterator[MagentoEntity]:
         """Get all CMS pages (generator)."""
         return self.get_paginated("/V1/cmsPage/search", query=query, limit=limit, **kwargs)
 
-    def get_cms_blocks(self, *, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
+    def get_cms_blocks(self, *, query: Query = None, limit: int = -1, **kwargs) -> Iterator[MagentoEntity]:
         """Get all CMS blocks (generator)."""
         return self.get_paginated("/V1/cmsBlock/search", query=query, limit=limit, **kwargs)
 
@@ -408,7 +408,7 @@ class Magento(APISession):
         """Update a coupon."""
         return self.put_json_api(f"/V1/coupons/{escape_path(coupon_id)}", json={"coupon": coupon}, **kwargs)
 
-    def get_coupons(self, *, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
+    def get_coupons(self, *, query: Query = None, limit: int = -1, **kwargs) -> Iterator[MagentoEntity]:
         """Get all coupons (generator)."""
         return self.get_paginated("/V1/coupons/search", query=query, limit=limit, **kwargs)
 
@@ -420,14 +420,14 @@ class Magento(APISession):
         """Delete a coupon by ID."""
         return self.delete_json_api(f"/V1/coupons/{escape_path(coupon_id)}", **kwargs)
 
-    def delete_coupons(self, coupon_ids: Iterable[int], *, ignore_invalid_coupons=True, **kwargs):
+    def delete_coupons(self, coupon_ids: Iterable[int], *, ignore_invalid_coupons: bool = True, **kwargs):
         """Delete multiple coupons by ID."""
         return self.post_json_api("/V1/coupons/deleteByIds", json={
             "ids": list(coupon_ids),
             "ignoreInvalidCoupons": ignore_invalid_coupons,
         }, **kwargs)
 
-    def delete_coupons_by_codes(self, coupon_codes: Iterable[str], *, ignore_invalid_coupons=True, **kwargs):
+    def delete_coupons_by_codes(self, coupon_codes: Iterable[str], *, ignore_invalid_coupons: bool = True, **kwargs):
         """Delete multiple coupons by code."""
         return self.post_json_api("/V1/coupons/deleteByIds", json={
             "codes": list(coupon_codes),
@@ -437,13 +437,13 @@ class Magento(APISession):
     # Customers
     # =========
 
-    def get_customers(self, *, query: Query = None, limit=-1, **kwargs) -> Iterator[Customer]:
+    def get_customers(self, *, query: Query = None, limit: int = -1, **kwargs) -> Iterator[Customer]:
         """Get all customers (generator)."""
         return self.get_paginated("/V1/customers/search", query=query, limit=limit, **kwargs)
 
     def get_customer(self, customer_id: Union[int, Literal["me"]], *,
-                     none_on_404=False,
-                     none_on_empty=False,
+                     none_on_404: bool = False,
+                     none_on_empty: bool = False,
                      **kwargs) -> Customer:
         """Return a single customer.
 
@@ -484,14 +484,14 @@ class Magento(APISession):
     # Customer groups
     # ---------------
 
-    def get_customer_groups(self, *, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
+    def get_customer_groups(self, *, query: Query = None, limit: int = -1, **kwargs) -> Iterator[MagentoEntity]:
         """Get all customer groups (generator)."""
         return self.get_paginated("/V1/customerGroups/search", query=query, limit=limit, **kwargs)
 
     # Invoices
     # ========
 
-    def create_order_invoice(self, order_id: PathId, payload: Optional[dict] = None, notify=True, **kwargs):
+    def create_order_invoice(self, order_id: PathId, payload: Optional[dict] = None, notify: bool = True, **kwargs):
         """Create an invoice for an order.
 
         See:
@@ -511,8 +511,8 @@ class Magento(APISession):
         return self.post_json_api(f"/V1/order/{escape_path(order_id)}/invoice", json=payload, **kwargs)
 
     def get_invoice(self, invoice_id: int, *,
-                    none_on_404=False,
-                    none_on_empty=False,
+                    none_on_404: bool = False,
+                    none_on_empty: bool = False,
                     **kwargs) -> MagentoEntity:
         """Get an invoice by ID."""
         return self.get_json_api(f"/V1/invoices/{escape_path(invoice_id)}",
@@ -527,7 +527,7 @@ class Magento(APISession):
             return invoice
         return None
 
-    def get_invoices(self, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
+    def get_invoices(self, query: Query = None, limit: int = -1, **kwargs) -> Iterator[MagentoEntity]:
         """Get all invoices (generator)."""
         return self.get_paginated("/V1/invoices", query=query, limit=limit, **kwargs)
 
@@ -541,7 +541,7 @@ class Magento(APISession):
     def get_orders(self, *,
                    status: Optional[str] = None,
                    status_condition_type: Optional[str] = None,
-                   limit=-1,
+                   limit: int = -1,
                    query: Query = None,
                    retry=0,
                    **kwargs) -> Iterator[Order]:
@@ -579,7 +579,7 @@ class Magento(APISession):
         """Return a single order item."""
         return self.get_json_api(f"/V1/orders/items/{escape_path(order_item_id)}", **kwargs)
 
-    def get_orders_items(self, *, sku: Optional[str] = None, query: Query = None, limit=-1, **kwargs):
+    def get_orders_items(self, *, sku: Optional[str] = None, query: Query = None, limit: int = -1, **kwargs):
         """Return orders items.
 
         :param sku: filter orders items on SKU. This is a shortcut for ``query=make_field_value_query("sku", sku)``.
@@ -593,8 +593,8 @@ class Magento(APISession):
         return self.get_paginated("/V1/orders/items", query=query, limit=limit, **kwargs)
 
     def get_order(self, order_id: Union[str, int], *,
-                  none_on_404=False,
-                  none_on_empty=False,
+                  none_on_404: bool = False,
+                  none_on_empty: bool = False,
                   **kwargs) -> Order:
         """Get an order given its entity id."""
         return self.get_json_api(f"/V1/orders/{order_id}",
@@ -651,7 +651,7 @@ class Magento(APISession):
     # Credit Memos
     # ============
 
-    def get_credit_memos(self, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
+    def get_credit_memos(self, query: Query = None, limit: int = -1, **kwargs) -> Iterator[MagentoEntity]:
         """Get all credit memos (generator)."""
         return self.get_paginated("/V1/creditmemos", query=query, limit=limit, **kwargs)
 
@@ -740,7 +740,7 @@ class Magento(APISession):
     # Products
     # ========
 
-    def get_products(self, limit=-1, query: Query = None, retry=0, **kwargs):
+    def get_products(self, limit: int = -1, query: Query = None, retry: int = 0, **kwargs):
         """Return a generator of all products.
 
         :param limit: -1 for unlimited.
@@ -780,7 +780,7 @@ class Magento(APISession):
             return product
         return None
 
-    def get_product_by_query(self, query: Query, *, expect_one=True, **kwargs) -> Optional[Product]:
+    def get_product_by_query(self, query: Query, *, expect_one: bool = True, **kwargs) -> Optional[Product]:
         """Get a product with a custom query. Return ``None`` if the query doesn’t return match any product, and raise
         an exception if it returns more than one, unless ``expect_one`` is set to ``False``.
 
@@ -830,7 +830,7 @@ class Magento(APISession):
         """
         return self.delete_json_api(f"/V1/products/{escape_path(sku)}/media/{media_id}", **kwargs)
 
-    def save_product(self, product: Product, *, save_options: Optional[bool] = None, log_response=True,
+    def save_product(self, product: Product, *, save_options: Optional[bool] = None, log_response: bool = True,
                      **kwargs) -> Product:
         """Save a new product. To update a product, use `update_product`.
 
@@ -871,7 +871,7 @@ class Magento(APISession):
 
         return cast(Product, self.put_json_api(f"/V1/products/{escape_path(sku)}", json=payload, **kwargs))
 
-    def delete_product(self, sku: Sku, skip_missing=False, throw=True, **kwargs) -> bool:
+    def delete_product(self, sku: Sku, skip_missing: bool = False, throw: bool = True, **kwargs) -> bool:
         """Delete a product given its SKU.
 
         :param sku:
@@ -905,7 +905,8 @@ class Magento(APISession):
         payload = [{"product": product_update} for product_update in product_updates]
         return self.put_json_api("/V1/products/bySku", json=payload, async_bulk=True, **kwargs)
 
-    def get_product_stock_item(self, sku: Sku, *, none_on_404=False, none_on_empty=False, **kwargs) -> MagentoEntity:
+    def get_product_stock_item(self, sku: Sku, *, none_on_404: bool = False, none_on_empty: bool = False,
+                               **kwargs) -> MagentoEntity:
         """Get the stock item for an SKU."""
         return self.get_json_api(f"/V1/stockItems/{escape_path(sku)}",
                                  none_on_404=none_on_404,
@@ -945,7 +946,8 @@ class Magento(APISession):
             "is_in_stock": is_in_stock,
         }, **kwargs)
 
-    def get_product_stock_status(self, sku: Sku, none_on_404=False, none_on_empty=False, **kwargs) -> MagentoEntity:
+    def get_product_stock_status(self, sku: Sku, none_on_404: bool = False, none_on_empty: bool = False,
+                                 **kwargs) -> MagentoEntity:
         """Get stock status for an SKU."""
         return self.get_json_api(f"/V1/stockStatuses/{escape_path(sku)}",
                                  none_on_404=none_on_404,
@@ -1002,8 +1004,8 @@ class Magento(APISession):
     # --------------------------
 
     def get_products_attribute_options(self, attribute_code: str, *,
-                                       none_on_404=False,
-                                       none_on_empty=False,
+                                       none_on_404: bool = False,
+                                       none_on_empty: bool = False,
                                        **kwargs) -> Sequence[Dict[str, str]]:
         """Get all options for a products attribute."""
         response = self.get_json_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options",
@@ -1051,14 +1053,14 @@ class Magento(APISession):
     # Sales Rules
     # ===========
 
-    def get_sales_rules(self, *, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
+    def get_sales_rules(self, *, query: Query = None, limit: int = -1, **kwargs) -> Iterator[MagentoEntity]:
         """Get all sales rules (generator)."""
         return self.get_paginated("/V1/salesRules/search", query=query, limit=limit, **kwargs)
 
     # Shipments
     # =========
 
-    def get_shipments(self, *, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
+    def get_shipments(self, *, query: Query = None, limit: int = -1, **kwargs) -> Iterator[MagentoEntity]:
         """Return shipments (generator)."""
         return self.get_paginated("/V1/shipments", query=query, limit=limit, **kwargs)
 
@@ -1073,7 +1075,7 @@ class Magento(APISession):
     # Stock
     # =====
 
-    def get_stock_source_links(self, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
+    def get_stock_source_links(self, query: Query = None, limit: int = -1, **kwargs) -> Iterator[MagentoEntity]:
         """Get stock source links."""
         return self.get_paginated("/V1/inventory/stock-source-links", query=query, limit=limit, **kwargs)
 
@@ -1100,7 +1102,8 @@ class Magento(APISession):
         """Get websites."""
         return self.get_json_api("/V1/store/websites", **kwargs)
 
-    def get_current_store_group_id(self, *, skip_store_groups=False, scope: Optional[str] = None, **kwargs) -> int:
+    def get_current_store_group_id(self, *, skip_store_groups: bool = False, scope: Optional[str] = None,
+                                   **kwargs) -> int:
         """Get the current store group id for the current scope. This is not part of Magento API.
 
         :param skip_store_groups: if True, assume the current scope is not already a store group.
@@ -1147,7 +1150,7 @@ class Magento(APISession):
     # Sources
     # =======
 
-    def get_sources(self, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
+    def get_sources(self, query: Query = None, limit: int = -1, **kwargs) -> Iterator[MagentoEntity]:
         """Get all sources.
 
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/inventorysources#operation/GetV1InventorySources
@@ -1174,7 +1177,7 @@ class Magento(APISession):
     def get_source_items(self, source_code: Optional[str] = None, sku: Optional[str] = None,
                          *,
                          skus: Optional[Iterable[str]] = None,
-                         query: Query = None, limit=-1,
+                         query: Query = None, limit: int = -1,
                          **kwargs) -> Iterator[SourceItem]:
         """Return a generator of all source items.
 
@@ -1233,22 +1236,22 @@ class Magento(APISession):
     # Taxes
     # =====
 
-    def get_tax_classes(self, *, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
+    def get_tax_classes(self, *, query: Query = None, limit: int = -1, **kwargs) -> Iterator[MagentoEntity]:
         """Get all tax classes (generator)."""
         return self.get_paginated("/V1/taxClasses/search", query=query, limit=limit, **kwargs)
 
-    def get_tax_rates(self, *, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
+    def get_tax_rates(self, *, query: Query = None, limit: int = -1, **kwargs) -> Iterator[MagentoEntity]:
         """Get all tax rates (generator)."""
         return self.get_paginated("/V1/taxRates/search", query=query, limit=limit, **kwargs)
 
-    def get_tax_rules(self, *, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
+    def get_tax_rules(self, *, query: Query = None, limit: int = -1, **kwargs) -> Iterator[MagentoEntity]:
         """Get all tax rules (generator)."""
         return self.get_paginated("/V1/taxRules/search", query=query, limit=limit, **kwargs)
 
     # Modules
     # =======
 
-    def get_modules(self, query: Query = None, limit=-1, **kwargs) -> Iterator[MagentoEntity]:
+    def get_modules(self, query: Query = None, limit: int = -1, **kwargs) -> Iterator[MagentoEntity]:
         """Get all enabled modules (generator)."""
         return self.get_paginated("/V1/modules", query=query, limit=limit, **kwargs)
 
@@ -1258,7 +1261,7 @@ class Magento(APISession):
     # Categories
     # ----------
 
-    def get_categories_under_root(self, root_category_id: Optional[int] = None, include_root=False, **kwargs):
+    def get_categories_under_root(self, root_category_id: Optional[int] = None, include_root: bool = False, **kwargs):
         """Like get_categories(), but get only categories under a root id.
 
         :param root_category_id: optional root category to use.
@@ -1366,7 +1369,8 @@ class Magento(APISession):
             raise_for_response(r)
         return r
 
-    def get_paginated(self, path: str, *, query: Query = None, limit=-1, retry=0, page_size: Optional[int] = None,
+    def get_paginated(self, path: str, *, query: Query = None, limit: int = -1, retry: int = 0,
+                      page_size: Optional[int] = None,
                       fields: Optional[dict] = None,
                       **kwargs):
         """Get a paginated API path.

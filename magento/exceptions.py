@@ -7,7 +7,7 @@ RE_PARAM = re.compile(r"%([A-Za-z0-9]+)")
 __all__ = ('build_exception_text', 'MagentoException', 'MagentoAssertionError')
 
 
-def build_exception_text(message: str, parameters: Optional[Union[Dict[str, str], List[str]]]):
+def build_exception_text(message: str, parameters: Optional[Union[Dict[str, str], List[str]]]) -> str:
     """Build the text of an exception given a response payload from Magento."""
     if not parameters:
         return message
@@ -32,7 +32,7 @@ def build_exception_text(message: str, parameters: Optional[Union[Dict[str, str]
 class MagentoException(Exception):
     """An exception returned by Magento."""
 
-    def __init__(self, message,
+    def __init__(self, message: str,
                  parameters: Optional[Union[Dict[str, str], List[str]]] = None,
                  trace: Optional[str] = None,
                  response: Optional[requests.Response] = None):

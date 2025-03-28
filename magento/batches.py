@@ -1,4 +1,4 @@
-from typing import List, Callable, Iterable, TypeVar, Generic
+from typing import List, Callable, Iterable, TypeVar, Generic, Optional, Any
 
 from api_session import JSONDict
 
@@ -12,7 +12,7 @@ BATCH_SIZE = 500
 class BatchSaver:
     """Base class to create context managers for asynchronous batches."""
 
-    def __init__(self, client: Magento, api_path: str, batch_size=BATCH_SIZE):
+    def __init__(self, client: Magento, api_path: str, batch_size: int = BATCH_SIZE):
         self.client = client
         self.path = api_path
         self.batch_size = batch_size
@@ -21,7 +21,7 @@ class BatchSaver:
         self._sent_batches = 0
         self._sent_items = 0
 
-    def add_item(self, item_data: MagentoEntity):
+    def add_item(self, item_data: MagentoEntity) -> None:
         """Add an item to the current batch. If it makes the batch large enough, it’s sent to the API and a new empty
         batch is created.
         """
@@ -29,7 +29,7 @@ class BatchSaver:
         if len(self._batch) >= self.batch_size:
             self.send_batch()
 
-    def send_batch(self):
+    def send_batch(self) -> Optional[JSONDict]:
         """Send the current pending batch (if any) and return the response from the Magento API."""
         if not self._batch:
             return None
@@ -43,7 +43,7 @@ class BatchSaver:
     def _put_batch(self) -> JSONDict:  # pragma: nocover
         return self.client.put_json_api(self.path, json=self._batch, async_bulk=True)
 
-    def finalize(self):
+    def finalize(self) -> dict[str, int]:
         """Send the last pending batch (if any). This doesn’t need to be called when the object is used as a context
         manager.
 
@@ -58,7 +58,7 @@ class BatchSaver:
     def __enter__(self):
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         self.finalize()
 
 
@@ -73,7 +73,7 @@ class ProductBatchSaver(BatchSaver):
     def __init__(self, client: Magento, batch_size=BATCH_SIZE):
         super().__init__(client, '/V1/products/bySku', batch_size=batch_size)
 
-    def save_product(self, product_data: dict):
+    def save_product(self, product_data: dict) -> None:
         """Add a product to the batch."""
         self.add_item({"product": product_data})
 
@@ -86,7 +86,7 @@ class BatchGetter(Generic[T]):
     This retrieves items in batches but can be iterated on like any iterator.
     """
 
-    def __init__(self, getter: Callable[..., Iterable[T]], key_field: str, keys: Iterable, batch_size=50):
+    def __init__(self, getter: Callable[..., Iterable[T]], key_field: str, keys: Iterable[Any], batch_size=50):
         self.batch_size = batch_size
         self.getter = getter
         self.key_field = key_field

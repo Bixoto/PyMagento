@@ -5,6 +5,8 @@ from typing import Callable, Optional, cast, Dict, Union, Sequence, List, Tuple,
 
 from api_session import JSONDict
 
+from .types import MagentoEntity
+
 T = TypeVar('T')
 
 
@@ -19,7 +21,7 @@ def get_custom_attribute(item: JSONDict, attribute_code: str) -> Union[None, str
     ...
 
 
-def get_custom_attribute(item, attribute_code, coerce_as=None):
+def get_custom_attribute(item: MagentoEntity, attribute_code: str, coerce_as=None):
     """Get a custom attribute from an item given its code.
 
     For example:
@@ -37,7 +39,7 @@ def get_custom_attribute(item, attribute_code, coerce_as=None):
     """
     if coerce_as is bool:
         # "0" -> False / "1" -> True
-        def coerce_as(s: str):
+        def coerce_as(s: str) -> bool:
             return bool(int(s))
 
     for attribute in item.get("custom_attributes", []):
@@ -67,7 +69,7 @@ def get_custom_attributes_dict(item: JSONDict) -> OrderedDictType[str, Union[Seq
     return d
 
 
-def serialize_attribute_value(value: Union[str, int, float, bool, None], force_none=False):
+def serialize_attribute_value(value: Union[str, int, float, bool, None], force_none: bool = False) -> Optional[str]:
     """Serialize a value to be stored in a Magento attribute."""
     if isinstance(value, bool):
         return "1" if value else "0"
@@ -78,8 +80,8 @@ def serialize_attribute_value(value: Union[str, int, float, bool, None], force_n
     return str(value)
 
 
-def set_custom_attribute(item: JSONDict, attribute_code: str, attribute_value: Union[str, int, float, bool, None],
-                         *, force_none=False):
+def set_custom_attribute(item: MagentoEntity, attribute_code: str, attribute_value: Union[str, int, float, bool, None],
+                         *, force_none: bool = False) -> MagentoEntity:
     """Set a custom attribute in an item dict.
 
     For example:
@@ -96,8 +98,8 @@ def set_custom_attribute(item: JSONDict, attribute_code: str, attribute_value: U
     return set_custom_attributes(item, [(attribute_code, attribute_value)], force_none=force_none)
 
 
-def set_custom_attributes(item: JSONDict, attributes: Iterable[Tuple[str, Union[str, int, float, bool, None]]],
-                          *, force_none=False):
+def set_custom_attributes(item: MagentoEntity, attributes: Iterable[Tuple[str, Union[str, int, float, bool, None]]],
+                          *, force_none: bool = False) -> MagentoEntity:
     """Set custom attributes in an item dict.
     Like ``set_custom_attribute`` but with an iterable of attributes.
 
@@ -128,11 +130,11 @@ def set_custom_attributes(item: JSONDict, attributes: Iterable[Tuple[str, Union[
     return item
 
 
-def delete_custom_attribute(item: JSONDict, attribute_code: str):
+def delete_custom_attribute(item: MagentoEntity, attribute_code: str) -> MagentoEntity:
     """Delete a custom attribute by forcing its value to ``None``."""
     return delete_custom_attributes(item, [attribute_code])
 
 
-def delete_custom_attributes(item: JSONDict, attributes: Iterable[str]):
+def delete_custom_attributes(item: MagentoEntity, attributes: Iterable[str]) -> MagentoEntity:
     """Delete custom attributes by forcing their value to ``None``."""
     return set_custom_attributes(item, ((attribute, None) for attribute in attributes), force_none=True)

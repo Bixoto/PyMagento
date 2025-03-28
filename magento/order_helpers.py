@@ -9,12 +9,12 @@ __all__ = (
 )
 
 
-def is_order_on_hold(order: Order):
+def is_order_on_hold(order: Order) -> bool:
     """Test if an order is on hold."""
     return order["status"] == "holded" or "hold_before_state" in order
 
 
-def is_order_cash_on_delivery(order: Order):
+def is_order_cash_on_delivery(order: Order) -> bool:
     """Test if an order is paid with 'cash-on-delivery'."""
     # From Magento\OfflinePayments\Model\Cashondelivery::PAYMENT_METHOD_CASHONDELIVERY_CODE
     return order["payment"]["method"] == 'cashondelivery'
