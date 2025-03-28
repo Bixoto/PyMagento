@@ -108,7 +108,7 @@ def set_custom_attributes(item: MagentoEntity, attributes: Iterable[Tuple[str, U
     :param force_none: see ``set_custom_attribute`` for usage.
     :return: the modified item dict.
     """
-    item_custom_attributes: List[Dict[str, str]] = item.get("custom_attributes", [])
+    item_custom_attributes: List[Dict[str, Optional[str]]] = item.get("custom_attributes", [])
 
     attributes_index = {attribute["attribute_code"]: index for index, attribute in enumerate(item_custom_attributes)}
 
