@@ -2,7 +2,7 @@ import time
 from json.decoder import JSONDecodeError
 from logging import Logger
 from os import environ
-from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List, Literal
+from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List, Literal, Any
 
 import requests
 from api_session import APISession, escape_path, JSONDict
@@ -1372,7 +1372,7 @@ class Magento(APISession):
     def get_paginated(self, path: str, *, query: Query = None, limit: int = -1, retry: int = 0,
                       page_size: Optional[int] = None,
                       fields: Optional[dict] = None,
-                      **kwargs):
+                      **kwargs) -> Iterator[Any]:
         """Get a paginated API path.
 
         :param path:
@@ -1415,7 +1415,7 @@ class Magento(APISession):
                                     retry=retry,
                                     fields=fields,
                                     **kwargs)
-            items: list = res.get("items", [])
+            items: list[Any] = res.get("items", [])
             if not items:
                 break
 

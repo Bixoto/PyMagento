@@ -17,7 +17,9 @@ def is_order_on_hold(order: Order) -> bool:
 def is_order_cash_on_delivery(order: Order) -> bool:
     """Test if an order is paid with 'cash-on-delivery'."""
     # From Magento\OfflinePayments\Model\Cashondelivery::PAYMENT_METHOD_CASHONDELIVERY_CODE
-    return order["payment"]["method"] == 'cashondelivery'
+    # For some reason Mypy is too dumb to see this as boolean
+    b: bool = order["payment"]["method"] == 'cashondelivery'
+    return b
 
 
 def get_order_shipping_address(order: Order) -> Dict[str, Any]:
@@ -26,4 +28,5 @@ def get_order_shipping_address(order: Order) -> Dict[str, Any]:
     Note the returned dict is a reference, so if you modify it, it modifies the order.
     Make a copy if you want to modify the address without affecting the order.
     """
-    return order["extension_attributes"]["shipping_assignments"][0]["shipping"]["address"]
+    address: Dict[str, Any] = order["extension_attributes"]["shipping_assignments"][0]["shipping"]["address"]
+    return address

@@ -1,10 +1,10 @@
-from typing import List, Callable, Iterable, TypeVar, Generic, Optional, Any, Dict
+from typing import List, Callable, Iterable, TypeVar, Generic, Optional, Any, Dict, Self, Iterator
 
 from api_session import JSONDict
 
 from .client import Magento
 from .queries import make_field_value_query
-from .types import MagentoEntity
+from .types import MagentoEntity, Product
 
 BATCH_SIZE = 500
 
@@ -41,7 +41,8 @@ class BatchSaver:
         return resp
 
     def _put_batch(self) -> JSONDict:  # pragma: nocover
-        return self.client.put_json_api(self.path, json=self._batch, async_bulk=True)
+        res: JSONDict = self.client.put_json_api(self.path, json=self._batch, async_bulk=True)
+        return res
 
     def finalize(self) -> Dict[str, int]:
         """Send the last pending batch (if any). This doesn’t need to be called when the object is used as a context
@@ -55,10 +56,10 @@ class BatchSaver:
             "sent_items": self._sent_items,
         }
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         self.finalize()
 
 
@@ -70,10 +71,10 @@ class ProductBatchSaver(BatchSaver):
         ...         p.save_product(product_data)
     """
 
-    def __init__(self, client: Magento, batch_size=BATCH_SIZE):
+    def __init__(self, client: Magento, batch_size: int = BATCH_SIZE):
         super().__init__(client, '/V1/products/bySku', batch_size=batch_size)
 
-    def save_product(self, product_data: dict) -> None:
+    def save_product(self, product_data: MagentoEntity) -> None:
         """Add a product to the batch."""
         self.add_item({"product": product_data})
 
@@ -86,7 +87,7 @@ class BatchGetter(Generic[T]):
     This retrieves items in batches but can be iterated on like any iterator.
     """
 
-    def __init__(self, getter: Callable[..., Iterable[T]], key_field: str, keys: Iterable[Any], batch_size=50):
+    def __init__(self, getter: Callable[..., Iterable[T]], key_field: str, keys: Iterable[Any], batch_size: int = 50):
         self.batch_size = batch_size
         self.getter = getter
         self.key_field = key_field
@@ -103,7 +104,7 @@ class BatchGetter(Generic[T]):
 
         self._batch = []
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[T]:
         for key in self.keys:
             self._batch.append(str(key))
             if len(self._batch) < self.batch_size:
@@ -114,7 +115,7 @@ class BatchGetter(Generic[T]):
         yield from self._get_batch()
 
 
-class ProductBatchGetter(BatchGetter[dict]):
+class ProductBatchGetter(BatchGetter[Product]):
     """Get a bunch of products from an iterable of SKUs:
 
         >>> products = ProductBatchGetter(Magento(), ["sku1", "sku2", ...])

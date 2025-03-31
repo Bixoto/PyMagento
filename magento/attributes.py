@@ -1,7 +1,7 @@
 """Custom attributes utilities."""
 from collections import OrderedDict
 from typing import Callable, Optional, cast, Dict, Union, Sequence, List, Tuple, Iterable, \
-    OrderedDict as OrderedDictType, overload, TypeVar
+    OrderedDict as OrderedDictType, overload, TypeVar, Any
 
 from api_session import JSONDict
 
@@ -21,7 +21,8 @@ def get_custom_attribute(item: JSONDict, attribute_code: str) -> Union[None, str
     ...
 
 
-def get_custom_attribute(item: MagentoEntity, attribute_code: str, coerce_as=None):
+def get_custom_attribute(item: MagentoEntity, attribute_code: str, coerce_as: Callable[[str], Any] | None = None) \
+        -> Any:
     """Get a custom attribute from an item given its code.
 
     For example:
