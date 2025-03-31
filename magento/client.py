@@ -1415,7 +1415,7 @@ class Magento(APISession):
                                     retry=retry,
                                     fields=fields,
                                     **kwargs)
-            items: list[Any] = res.get("items", [])
+            items: List[Any] = res.get("items", [])
             if not items:
                 break
 
