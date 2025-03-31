@@ -1,4 +1,5 @@
-from typing import List, Callable, Iterable, TypeVar, Generic, Optional, Any, Dict, Self, Iterator
+from typing import List, Callable, Iterable, TypeVar, Generic, Optional, Any, Dict, Iterator
+from typing_extensions import Self
 
 from api_session import JSONDict
 
