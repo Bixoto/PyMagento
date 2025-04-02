@@ -1,8 +1,8 @@
 # PyMagento Changelog
 
-## Unreleased
+## 2.4.0 (2025/04/02)
 
-* Add the typed dict `ShippingAddress`
+* `get_order_shipping_address` now returns the typed dict `ShippingAddress`
 * Remove the wrong return type hints of `link_child_product` and `unlink_child_product`
 * Add more typing hints
 
