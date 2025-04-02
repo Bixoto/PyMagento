@@ -1389,7 +1389,7 @@ class Magento(APISession):
 
     def get_paginated(self, path: str, *, query: Query = None, limit: int = -1, retry: int = 0,
                       page_size: Optional[int] = None,
-                      fields: Optional[dict[str, Any]] = None,
+                      fields: Optional[Dict[str, Any]] = None,
                       **kwargs: Any) -> Iterator[MagentoEntity]:
         """Get a paginated API path.
 
