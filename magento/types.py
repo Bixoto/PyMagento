@@ -78,8 +78,9 @@ class ShippingAddress(TypedDict):
     street: List[str]
     city: str
     postcode: str
-    region: str
+    region: NotRequired[str]
     region_code: str
     region_id: int
     country_id: str
     telephone: str
+    company: NotRequired[str]
