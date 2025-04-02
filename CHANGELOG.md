@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-* `save_base_prices`: add a type hint on the return value
+* Add the typed dict `ShippingAddress`
+* Add more typing hints
 
 ## 2.3.0 (2025/01/27)
 

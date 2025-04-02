@@ -20,6 +20,7 @@ from magento.types import (
     Category,
     MediaEntry,
     SourceItem,
+    ShippingAddress,
     Sku,
 )
 from magento.version import __version__

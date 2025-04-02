@@ -1,5 +1,5 @@
 import sys
-from typing import Union, TypedDict
+from typing import Union, TypedDict, Literal, List
 
 from api_session import JSONDict
 
@@ -17,6 +17,7 @@ __all__ = (
     'Order',
     'PathId',
     'Product',
+    'ShippingAddress',
     'Sku',
     'SourceItem',
     'SourceItemIn',
@@ -61,3 +62,24 @@ class BasePrice(TypedDict):
     price: Union[int, float]
     store_id: int
     sku: Sku
+
+
+# Orders
+# ======
+
+class ShippingAddress(TypedDict):
+    """Shipping address dict."""
+    address_type: Literal["shipping"]
+    entity_id: int
+    parent_id: int
+    firstname: str
+    lastname: str
+    email: str
+    street: List[str]
+    city: str
+    postcode: str
+    region: str
+    region_code: str
+    region_id: int
+    country_id: str
+    telephone: str
