@@ -3,6 +3,7 @@
 ## Unreleased
 
 * Add the typed dict `ShippingAddress`
+* Remove the wrong return type hints of `link_child_product` and `unlink_child_product`
 * Add more typing hints
 
 ## 2.3.0 (2025/01/27)
