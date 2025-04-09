@@ -1,9 +1,10 @@
 # PyMagento Changelog
 
-## Unreleased
+## 2.4.1 (2025/04/09)
 
 * Explicitly export attributes under `magento`
   to fix the error `Module "magento" does not explicitly export attribute ...` when using Mypy in strict mode
+* Add more typing hints
 
 ## 2.4.0 (2025/04/02)
 
