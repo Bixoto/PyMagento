@@ -15,14 +15,14 @@ files = [
 
 [[package]]
 name = "api-session"
-version = "1.4.2"
+version = "1.4.3"
 description = "requests.Session to work with JSON APIs"
 optional = false
 python-versions = "<4.0,>=3.8"
 groups = ["main"]
 files = [
-    {file = "api_session-1.4.2-py3-none-any.whl", hash = "sha256:650cfcba61dd58aee3b70c386cc9ac87d82580b15591d0c2741c80d929fe7ba6"},
-    {file = "api_session-1.4.2.tar.gz", hash = "sha256:1fbbd497b247c8d405ba3fb606be9a4ba28ad46ece347b120a50cbaf167d901c"},
+    {file = "api_session-1.4.3-py3-none-any.whl", hash = "sha256:bdec1aeaa215f28eac65151b8d235f0f2e0bd115ac4354b53f91fca59118e131"},
+    {file = "api_session-1.4.3.tar.gz", hash = "sha256:1aef8ecb093347f3e4b134e9b4925fafd4de6bfa1991e6f84a321589002b9fb8"},
 ]
 
 [package.dependencies]
@@ -1006,4 +1006,4 @@ docs = ["Sphinx", "sphinx-rtd-theme"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.8"
-content-hash = "2a2138ab85e07f2faa1de924d9b9c1c17a51e559a62bc89f89ba348a1d125f30"
+content-hash = "588639a7d4fed6b3f2d0cd31a7d5cfdb4f86d0e8ba85764ce99853e10afe8a1f"
