@@ -162,7 +162,7 @@ class Magento(APISession):
                                        **kwargs)
         return attribute
 
-    def delete_attribute(self, attribute_code: str, **kwargs: Any):
+    def delete_attribute(self, attribute_code: str, **kwargs: Any) -> bool:
         """Delete an attribute."""
         return self.delete_json_api(f"/V1/products/attributes/{escape_path(attribute_code)}", **kwargs)
 
@@ -574,7 +574,7 @@ class Magento(APISession):
 
         return self.get_paginated("/V1/orders", query=query, limit=limit, retry=retry, **kwargs)
 
-    def get_last_orders(self, limit=10) -> List[Order]:
+    def get_last_orders(self, limit: int = 10) -> List[Order]:
         """Return a list of the last orders (default: 10)."""
         query = make_search_query([], sort_orders=[("increment_id", "DESC")])
         return list(self.get_orders(query=query, limit=limit))
@@ -771,7 +771,7 @@ class Magento(APISession):
         return self.get_json_api("/V1/product/types", **kwargs)
 
     def get_product(self, sku: Sku, *,
-                    none_on_404=True,
+                    none_on_404: bool = True,
                     **kwargs: Any) -> Optional[Product]:
         """Get a single product by SKU. Return ``None`` if it doesn’t exist.
 
@@ -1334,10 +1334,10 @@ class Magento(APISession):
     # Internals
     # =========
 
-    def request_api(self, method: str, path: str, *args,
-                    async_bulk=False,
-                    throw=False,
-                    retry=0,
+    def request_api(self, method: str, path: str, *args: Any,
+                    async_bulk: bool = False,
+                    throw: bool = False,
+                    retry: int = 0,
                     scope: Optional[str] = None,
                     fields: Optional[str] = None,
                     **kwargs: Any):
