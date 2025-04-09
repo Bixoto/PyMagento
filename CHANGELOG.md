@@ -1,5 +1,10 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* Explicitly export attributes under `magento`
+  to fix the error `Module "magento" does not explicitly export attribute ...` when using Mypy in strict mode
+
 ## 2.4.0 (2025/04/02)
 
 * `get_order_shipping_address` now returns the typed dict `ShippingAddress`
