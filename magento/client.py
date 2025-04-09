@@ -1303,19 +1303,19 @@ class Magento(APISession):
     # Products
     # --------
 
-    def sku_exists(self, sku: str, **kwargs: Any):
+    def sku_exists(self, sku: str, **kwargs: Any) -> bool:
         """Test if a SKU exists in Magento."""
         # Query a single field to reduce the payload size
         # Update this if you find a more efficient way of doing it
         return self.get_product(sku, fields="id", **kwargs) is not None
 
-    def sku_was_bought(self, sku: str, **kwargs: Any):
+    def sku_was_bought(self, sku: str, **kwargs: Any) -> bool:
         """Test if there exists at least one order with the given SKU."""
         for _ in self.get_orders_items(sku=sku, limit=1, fields="sku", **kwargs):
             return True
         return False
 
-    def skus_were_bought(self, skus: List[str]):
+    def skus_were_bought(self, skus: List[str]) -> Dict[str, bool]:
         """Equivalent of ``sku_was_bought`` for multiple SKUs. Return a dict of {SKU -> bought?}.
 
         Note that if some of the SKUs were bought a lot of times it’s more efficient to call ``sku_was_bought`` on each SKU.
@@ -1334,13 +1334,13 @@ class Magento(APISession):
     # Internals
     # =========
 
-    def request_api(self, method: str, path: str, *args: Any,
+    def request_api(self, method: str, path: str, *args: Any,  # type: ignore[override]
                     async_bulk: bool = False,
                     throw: bool = False,
                     retry: int = 0,
                     scope: Optional[str] = None,
                     fields: Optional[str] = None,
-                    **kwargs: Any):
+                    **kwargs: Any) -> requests.Response:
         """Equivalent of .request() that prefixes the path with the base API URL.
 
         :param method: HTTP method
