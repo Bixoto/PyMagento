@@ -1110,9 +1110,25 @@ class Magento(APISession):
         shipments: Iterator[MagentoEntity] = self.get_paginated("/V1/shipments", query=query, limit=limit, **kwargs)
         return shipments
 
-    def ship_order(self, order_id: PathId, payload: MagentoEntity, **kwargs: Any):
-        """Ship an order."""
-        return self.post_api(f"/V1/order/{order_id}/ship", json=payload, **kwargs)
+    def ship_order(self, order_id: PathId, payload: MagentoEntity, **kwargs: Any) -> str:
+        """Ship an order.
+
+        Return the shipment ID as a string.
+        """
+        response = self.post_api(f"/V1/order/{order_id}/ship", json=payload, throw=True,
+                                 **kwargs)
+        # The documentation says this is an int, but in practice it’s an int as string
+        body: str | dict[str, str] = response.json()
+
+        if isinstance(body, dict):
+            raise MagentoException(
+                message=body["message"],
+                parameters=body.get("parameters"),
+                trace=body.get("trace"),
+                response=response,
+            )
+
+        return body
 
     def get_order_shipments(self, order_id: Union[int, str], **kwargs: Any):
         """Get shipments for the given order id."""

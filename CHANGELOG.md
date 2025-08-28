@@ -1,16 +1,21 @@
 # PyMagento Changelog
 
+## 2.5.0 (2025/08/28)
+
+* Breaking: `ship_order` now returns the shipment ID or raises in case of error, instead of returning the raw response
+* Add more type hints
+
 ## 2.4.1 (2025/04/09)
 
 * Explicitly export attributes under `magento`
   to fix the error `Module "magento" does not explicitly export attribute ...` when using Mypy in strict mode
-* Add more typing hints
+* Add more type hints
 
 ## 2.4.0 (2025/04/02)
 
 * `get_order_shipping_address` now returns the typed dict `ShippingAddress`
 * Remove the wrong return type hints of `link_child_product` and `unlink_child_product`
-* Add more typing hints
+* Add more type hints
 
 ## 2.3.0 (2025/01/27)
 
