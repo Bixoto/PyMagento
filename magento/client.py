@@ -164,7 +164,8 @@ class Magento(APISession):
 
     def delete_attribute(self, attribute_code: str, **kwargs: Any) -> bool:
         """Delete an attribute."""
-        return self.delete_json_api(f"/V1/products/attributes/{escape_path(attribute_code)}", **kwargs)
+        ok: bool = self.delete_json_api(f"/V1/products/attributes/{escape_path(attribute_code)}", **kwargs)
+        return ok
 
     # Attribute Sets
     # ==============
@@ -175,12 +176,16 @@ class Magento(APISession):
 
     def get_attribute_set_attributes(self, attribute_set_id: int, **kwargs: Any) -> List[MagentoEntity]:
         """Get all attributes for the given attribute set id."""
-        return self.get_json_api(f"/V1/products/attribute-sets/{escape_path(attribute_set_id)}/attributes",
-                                 **kwargs)
+        attributes: List[MagentoEntity] = self.get_json_api(
+            f"/V1/products/attribute-sets/{escape_path(attribute_set_id)}/attributes",
+            **kwargs)
+        return attributes
 
     def assign_attribute_set_attribute(self, attribute_set_id: int, attribute_group_id: int, attribute_code: str,
-                                       sort_order: int = 0, **kwargs: Any):
+                                       sort_order: int = 0, **kwargs: Any) -> int:
         """Assign an attribute to an attribute set.
+
+        https://adobe-commerce.redoc.ly/2.4.8-admin/tag/productsattribute-setsattributes#operation/PostV1ProductsAttributesetsAttributes
 
         :param attribute_set_id: ID of the attribute set.
         :param attribute_group_id: ID of the attribute group. It must be in the attribute set.
@@ -189,23 +194,28 @@ class Magento(APISession):
         :param kwargs:
         :return:
         """
-        return self.post_json_api("/V1/products/attribute-sets/attributes", json={
+        res: int = self.post_json_api("/V1/products/attribute-sets/attributes", json={
             "attributeCode": attribute_code,
             "attributeGroupId": attribute_group_id,
             "attributeSetId": attribute_set_id,
             "sortOrder": sort_order,
         }, **kwargs)
+        return res
 
-    def remove_attribute_set_attribute(self, attribute_set_id: int, attribute_code: str, **kwargs: Any):
+    def remove_attribute_set_attribute(self, attribute_set_id: int, attribute_code: str, **kwargs: Any) -> bool:
         """Remove an attribute from an attribute set."""
         path = f"/V1/products/attribute-sets/{escape_path(attribute_set_id)}/attributes/{escape_path(attribute_code)}"
-        return self.delete_json_api(path, **kwargs)
+        ok: bool = self.delete_json_api(path, **kwargs)
+        return ok
 
     # Bulk Operations
     # ===============
 
-    def get_bulk_operations(self, *, query: Query = None, limit: int = -1, **kwargs: Any):
-        """List the bulk operation items."""
+    def get_bulk_operations(self, *, query: Query = None, limit: int = -1, **kwargs: Any) -> Iterator[MagentoEntity]:
+        """List the bulk operation items.
+
+        https://adobe-commerce.redoc.ly/2.4.8-admin/tag/bulk#operation/GetV1Bulk
+        """
         return self.get_paginated("/V1/bulk", query=query, limit=limit, **kwargs)
 
     def get_bulk_status(self, bulk_uuid: str, none_on_404: bool = False, **kwargs: Any) -> MagentoEntity:
@@ -299,18 +309,20 @@ class Magento(APISession):
                                                **kwargs)
         return category
 
-    def create_category(self, category: Category, **kwargs: Any) -> MagentoEntity:
+    def create_category(self, category: Category, **kwargs: Any) -> Category:
         """Create a new category and return it."""
-        return self.post_json_api("/V1/categories", json={"category": category}, **kwargs)
+        category = self.post_json_api("/V1/categories", json={"category": category}, **kwargs)
+        return category
 
-    def remove_category(self, category_id: PathId, **kwargs: Any):
+    def remove_category(self, category_id: PathId, **kwargs: Any) -> bool:
         """Remove a category.
 
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/categoriescategoryId/#operation/DeleteV1CategoriesCategoryId
         """
-        return self.delete_json_api(f"/V1/categories/{escape_path(category_id)}", **kwargs)
+        ok: bool = self.delete_json_api(f"/V1/categories/{escape_path(category_id)}", **kwargs)
+        return ok
 
-    def get_child_categories(self, category_id: int, **kwargs: Any):
+    def get_child_categories(self, category_id: int, **kwargs: Any) -> Iterator[Category]:
         """Yield categories whose parent ID is the given ``category_id``."""
         return self.get_categories(
             query=make_field_value_query("parent_id", category_id),
@@ -332,7 +344,8 @@ class Magento(APISession):
         if after_id is not None:
             params["afterId"] = after_id
 
-        return self.put_json_api(f"/V1/categories/{escape_path(category_id)}/move", json=params, **kwargs)
+        ok: bool = self.put_json_api(f"/V1/categories/{escape_path(category_id)}/move", json=params, **kwargs)
+        return ok
 
     # Category products
     # -----------------
@@ -350,7 +363,7 @@ class Magento(APISession):
                                                           **kwargs)
         return products
 
-    def add_product_to_category(self, category_id: PathId, product_link: MagentoEntity, **kwargs: Any):
+    def add_product_to_category(self, category_id: PathId, product_link: MagentoEntity, **kwargs: Any) -> bool:
         """Assign a product to a category.
 
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/categoriescategoryIdproducts/#operation/PostV1CategoriesCategoryIdProducts
@@ -358,11 +371,12 @@ class Magento(APISession):
         :param category_id: ID of the category
         :param product_link: product link. See the Adobe Commerce documentation for the format.
         """
-        return self.post_json_api(f"/V1/categories/{escape_path(category_id)}/products",
-                                  json={"productLink": product_link},
-                                  **kwargs)
+        ok: bool = self.post_json_api(f"/V1/categories/{escape_path(category_id)}/products",
+                                      json={"productLink": product_link},
+                                      **kwargs)
+        return ok
 
-    def remove_product_from_category(self, category_id: PathId, sku: Sku, **kwargs: Any):
+    def remove_product_from_category(self, category_id: PathId, sku: Sku, **kwargs: Any) -> bool:
         """Remove a product from a category.
 
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/categoriescategoryIdproductssku/#operation/DeleteV1CategoriesCategoryIdProductsSku
@@ -370,8 +384,9 @@ class Magento(APISession):
         :param category_id: ID of the category
         :param sku: SKU of the product
         """
-        return self.delete_json_api(f"/V1/categories/{escape_path(category_id)}/products/{escape_path(sku)}",
-                                    **kwargs)
+        ok: bool = self.delete_json_api(f"/V1/categories/{escape_path(category_id)}/products/{escape_path(sku)}",
+                                        **kwargs)
+        return ok
 
     # CMS
     # ===
@@ -386,11 +401,13 @@ class Magento(APISession):
 
     def get_cms_block(self, block_id: str, **kwargs: Any) -> MagentoEntity:
         """Get a single CMS block."""
-        return self.get_json_api(f"/V1/cmsBlock/{escape_path(block_id)}", **kwargs)
+        block: MagentoEntity = self.get_json_api(f"/V1/cmsBlock/{escape_path(block_id)}", **kwargs)
+        return block
 
     def delete_cms_block(self, block_id: str, **kwargs: Any) -> bool:
         """Delete a CMS block by ID."""
-        return self.delete_json_api(f"/V1/cmsBlock/{escape_path(block_id)}", **kwargs)
+        ok: bool = self.delete_json_api(f"/V1/cmsBlock/{escape_path(block_id)}", **kwargs)
+        return ok
 
     # Countries
     # =========
@@ -400,37 +417,45 @@ class Magento(APISession):
 
         https://adobe-commerce.redoc.ly/2.4.7-admin/tag/directorycountries
         """
-        return self.get_json_api("/V1/directory/countries", **kwargs)
+        countries: List[MagentoEntity] = self.get_json_api("/V1/directory/countries", **kwargs)
+        return countries
 
     def get_country(self, country_id: int, **kwargs: Any) -> MagentoEntity:
         """Get information about a single country or region for the store.
 
         https://adobe-commerce.redoc.ly/2.4.7-admin/tag/directorycountriescountryId
         """
-        return self.get_json_api(f"/V1/directory/countries/{escape_path(country_id)}", **kwargs)
+        country: MagentoEntity = self.get_json_api(f"/V1/directory/countries/{escape_path(country_id)}", **kwargs)
+        return country
 
     # Coupons
     # =======
 
     def create_coupon(self, coupon: MagentoEntity, **kwargs: Any) -> MagentoEntity:
         """Create a coupon."""
-        return self.post_json_api("/V1/coupons", json={"coupon": coupon}, **kwargs)
+        coupon = self.post_json_api("/V1/coupons", json={"coupon": coupon}, **kwargs)
+        return coupon
 
     def update_coupon(self, coupon_id: int, coupon: MagentoEntity, **kwargs: Any) -> MagentoEntity:
         """Update a coupon."""
-        return self.put_json_api(f"/V1/coupons/{escape_path(coupon_id)}", json={"coupon": coupon}, **kwargs)
+        coupon = self.put_json_api(f"/V1/coupons/{escape_path(coupon_id)}", json={"coupon": coupon}, **kwargs)
+        return coupon
 
     def get_coupons(self, *, query: Query = None, limit: int = -1, **kwargs: Any) -> Iterator[MagentoEntity]:
         """Get all coupons (generator)."""
-        return self.get_paginated("/V1/coupons/search", query=query, limit=limit, **kwargs)
+        coupons: Iterator[MagentoEntity] = self.get_paginated("/V1/coupons/search", query=query, limit=limit,
+                                                              **kwargs)
+        return coupons
 
     def get_coupon(self, coupon_id: int, **kwargs: Any) -> MagentoEntity:
         """Get a coupon by ID."""
-        return self.get_json_api(f"/V1/coupons/{escape_path(coupon_id)}", **kwargs)
+        coupon: MagentoEntity = self.get_json_api(f"/V1/coupons/{escape_path(coupon_id)}", **kwargs)
+        return coupon
 
     def delete_coupon(self, coupon_id: int, **kwargs: Any) -> bool:
         """Delete a coupon by ID."""
-        return self.delete_json_api(f"/V1/coupons/{escape_path(coupon_id)}", **kwargs)
+        ok: bool = self.delete_json_api(f"/V1/coupons/{escape_path(coupon_id)}", **kwargs)
+        return ok
 
     def delete_coupons(self, coupon_ids: Iterable[int], *, ignore_invalid_coupons: bool = True, **kwargs: Any):
         """Delete multiple coupons by ID."""
@@ -755,7 +780,7 @@ class Magento(APISession):
     # Products
     # ========
 
-    def get_products(self, limit: int = -1, query: Query = None, retry: int = 0, **kwargs: Any):
+    def get_products(self, limit: int = -1, query: Query = None, retry: int = 0, **kwargs: Any) -> Iterator[Product]:
         """Return a generator of all products.
 
         :param limit: -1 for unlimited.
@@ -1003,18 +1028,20 @@ class Magento(APISession):
     def add_product_website_link(self, sku: Sku, website_id: int, **kwargs: Any) -> bool:
         """Assign a product to a website."""
         # The API also supports PUT but does not explain the difference with POST
-        return self.post_json_api(
+        ok: bool = self.post_json_api(
             f"/V1/products/{escape_path(sku)}/websites",
             json={"productWebsiteLink": {"sku": sku, "website_id": website_id}},
             **kwargs,
         )
+        return ok
 
     def remove_product_website_link(self, sku: Sku, website_id: int, **kwargs: Any) -> bool:
         """Remove a product from a website."""
-        return self.delete_json_api(
+        ok: bool = self.delete_json_api(
             f"/V1/products/{escape_path(sku)}/websites/{escape_path(website_id)}",
             **kwargs,
         )
+        return ok
 
     # Products Attribute Options
     # --------------------------
@@ -1024,11 +1051,12 @@ class Magento(APISession):
                                        none_on_empty: bool = False,
                                        **kwargs: Any) -> Sequence[Dict[str, str]]:
         """Get all options for a products attribute."""
-        response = self.get_json_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options",
-                                     none_on_404=none_on_404,
-                                     none_on_empty=none_on_empty,
-                                     **kwargs)
-        return cast(Sequence[Dict[str, str]], response)
+        response: Sequence[Dict[str, str]] = self.get_json_api(
+            f"/V1/products/attributes/{escape_path(attribute_code)}/options",
+            none_on_404=none_on_404,
+            none_on_empty=none_on_empty,
+            **kwargs)
+        return response
 
     def add_products_attribute_option(self, attribute_code: str, option: Dict[str, str], **kwargs: Any) -> str:
         """Add an option to a products attribute.
@@ -1040,9 +1068,8 @@ class Magento(APISession):
         :return: new id
         """
         payload = {"option": option}
-        response = self.post_json_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options",
+        ret: str = self.post_json_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options",
                                       json=payload, **kwargs)
-        ret = cast(str, response)
 
         if ret.startswith("id_"):
             ret = ret[3:]
@@ -1056,8 +1083,9 @@ class Magento(APISession):
         :param option_id:
         :return: boolean
         """
-        return self.delete_json_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options/{option_id}",
-                                    **kwargs)
+        ok: bool = self.delete_json_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options/{option_id}",
+                                        **kwargs)
+        return ok
 
     # Aliases
     # -------
@@ -1071,14 +1099,16 @@ class Magento(APISession):
 
     def get_sales_rules(self, *, query: Query = None, limit: int = -1, **kwargs: Any) -> Iterator[MagentoEntity]:
         """Get all sales rules (generator)."""
-        return self.get_paginated("/V1/salesRules/search", query=query, limit=limit, **kwargs)
+        rules: Iterator[MagentoEntity] = self.get_paginated("/V1/salesRules/search", query=query, limit=limit, **kwargs)
+        return rules
 
     # Shipments
     # =========
 
     def get_shipments(self, *, query: Query = None, limit: int = -1, **kwargs: Any) -> Iterator[MagentoEntity]:
         """Return shipments (generator)."""
-        return self.get_paginated("/V1/shipments", query=query, limit=limit, **kwargs)
+        shipments: Iterator[MagentoEntity] = self.get_paginated("/V1/shipments", query=query, limit=limit, **kwargs)
+        return shipments
 
     def ship_order(self, order_id: PathId, payload: MagentoEntity, **kwargs: Any):
         """Ship an order."""
@@ -1279,7 +1309,7 @@ class Magento(APISession):
     # ----------
 
     def get_categories_under_root(self, root_category_id: Optional[int] = None, include_root: bool = False,
-                                  **kwargs: Any):
+                                  **kwargs: Any) -> Iterator[Category]:
         """Like get_categories(), but get only categories under a root id.
 
         :param root_category_id: optional root category to use.
