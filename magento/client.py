@@ -1118,7 +1118,7 @@ class Magento(APISession):
         response = self.post_api(f"/V1/order/{order_id}/ship", json=payload, throw=True,
                                  **kwargs)
         # The documentation says this is an int, but in practice it’s an int as string
-        body: str | dict[str, str] = response.json()
+        body: Union[str, dict[str, Any]] = response.json()
 
         if isinstance(body, dict):
             raise MagentoException(
