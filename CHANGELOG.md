@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## 2.7.0 (unreleased)
+## 2.7.0 (2025/09/22)
 
 ### 2.7.0a2 (2025/09/22)
 
