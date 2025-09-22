@@ -70,7 +70,7 @@ class Product(TypedDict):
     tier_prices: List[Any]
     type_id: str
     visibility: int
-    weight: float
+    weight: NotRequired[float]
 
 
 # Source items
