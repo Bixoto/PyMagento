@@ -388,7 +388,7 @@ class Magento(APISession):
                                         **kwargs)
         return ok
 
-    def async_add_products_to_categories(self, category_product_links: Iterable[dict[str, Any]], **kwargs: Any) -> Any:
+    def async_add_products_to_categories(self, category_product_links: Iterable[Dict[str, Any]], **kwargs: Any) -> Any:
         """Asynchronously add products to categories."""
         return self.post_json_api(
             "/V1/categories/byCategoryId/products",
@@ -562,7 +562,7 @@ class Magento(APISession):
     # Invoices
     # ========
 
-    def create_order_invoice(self, order_id: PathId, payload: Optional[dict[str, Any]] = None, notify: bool = True,
+    def create_order_invoice(self, order_id: PathId, payload: Optional[Dict[str, Any]] = None, notify: bool = True,
                              **kwargs: Any) -> Any:
         """Create an invoice for an order.
 

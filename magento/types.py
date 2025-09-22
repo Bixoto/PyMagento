@@ -111,4 +111,4 @@ class ErrorDict(TypedDict):
 
 class PriceUpdateResultDict(ErrorDict):
     """Response from the `products/base-prices` endpoint."""
-    extension_attributes: dict[str, Any]
+    extension_attributes: Dict[str, Any]
