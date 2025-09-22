@@ -388,6 +388,30 @@ class Magento(APISession):
                                         **kwargs)
         return ok
 
+    def async_add_products_to_categories(self, category_product_links: Iterable[dict[str, Any]], **kwargs: Any) -> Any:
+        """Asynchronously add products to categories."""
+        return self.post_json_api(
+            "/V1/categories/byCategoryId/products",
+            json=[{"productLink": category_product_link}
+                  for category_product_link in category_product_links],
+            async_bulk=True,
+            throw=True,
+            **kwargs,
+        )
+
+    def async_remove_products_from_categories(self, category_ids_skus: Iterable[tuple[int, str]], **kwargs: Any) -> Any:
+        """
+        :param category_ids_skus: Pairs of (category_id, sku).
+        """
+        return self.delete_json_api(
+            "/V1/categories/byCategoryId/products/bySku",
+            json=[{"categoryId": category_id, "sku": sku}
+                  for category_id, sku in category_ids_skus],
+            async_bulk=True,
+            throw=True,
+            **kwargs,
+        )
+
     # CMS
     # ===
 
@@ -1082,14 +1106,14 @@ class Magento(APISession):
     def get_products_attribute_options(self, attribute_code: str, *,
                                        none_on_404: bool = False,
                                        none_on_empty: bool = False,
-                                       **kwargs: Any) -> Sequence[AttributeOption]:
+                                       **kwargs: Any) -> List[AttributeOption]:
         """Get all options for a products attribute."""
-        response: Sequence[AttributeOption] = self.get_json_api(
+        options: List[AttributeOption] = self.get_json_api(
             f"/V1/products/attributes/{escape_path(attribute_code)}/options",
             none_on_404=none_on_404,
             none_on_empty=none_on_empty,
             **kwargs)
-        return response
+        return options
 
     def add_products_attribute_option(self, attribute_code: str, option: Dict[str, str], **kwargs: Any) -> str:
         """Add an option to a products attribute.
@@ -1123,7 +1147,7 @@ class Magento(APISession):
     # Aliases
     # -------
 
-    def get_manufacturers(self, **kwargs: Any) -> Any:
+    def get_manufacturers(self, **kwargs: Any) -> List[AttributeOption]:
         """Shortcut for `.get_products_attribute_options("manufacturer")`."""
         return self.get_products_attribute_options("manufacturer", **kwargs)
 
@@ -1323,12 +1347,15 @@ class Magento(APISession):
 
         Note: Magento returns an error if this is called with empty source_items.
 
+        https://adobe-commerce.redoc.ly/2.4.8-admin/tag/inventorysource-items-delete
+
         :param source_items:
         :param kwargs: keyword arguments passed to the underlying POST call.
         """
         payload = {
             "sourceItems": [{"sku": s["sku"], "source_code": s["source_code"]} for s in source_items],
         }
+        # Note the docs are not saying what's the normal return value
         return self.post_json_api("/V1/inventory/source-items-delete", json=payload, **kwargs)
 
     def delete_source_items_by_source_code(self, source_code: str, **kwargs: Any) -> Any:
