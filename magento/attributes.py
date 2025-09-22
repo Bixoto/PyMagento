@@ -63,13 +63,10 @@ def get_boolean_custom_attribute(item: Item, attribute_code: str) -> Optional[bo
     return cast(Optional[bool], get_custom_attribute(item, attribute_code, coerce_as=bool))
 
 
-def get_custom_attributes_dict(item: Item) -> OrderedDictType[str, Union[List[str], str]]:
+def get_custom_attributes_dict(item: Item) -> OrderedDictType[str, Union[List[str], str, None]]:
     """Get all custom attributes from an item as an ordered dict of code->value."""
     d = OrderedDict()
     for attribute in cast(List[CustomAttributeDict], item.get("custom_attributes", [])):
-        if attribute["value"] is None:
-            continue
-
         d[attribute["attribute_code"]] = attribute["value"]
 
     return d
