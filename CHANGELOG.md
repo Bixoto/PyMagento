@@ -1,5 +1,11 @@
 # PyMagento Changelog
 
+## 2.7.0 (unreleased)
+
+### 2.7.0a1 (2025/09/22)
+
+* Add `Product`, `CustomAttributeDict` types
+
 ## 2.6.0 (2025/09/22)
 
 * Add `async_add_products_to_categories`, `async_remove_products_from_categories`
