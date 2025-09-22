@@ -46,7 +46,10 @@ ProductLink = MagentoEntity
 class CustomAttributeDict(TypedDict):
     """A custom attribute dict, as found on products."""
     attribute_code: str
-    value: Union[str, List[str]]
+    value: Union[str, List[str], None]
+    """A string value or a list of strings. This can be ``None`` to delete a custom attribute,
+    but it will never be ``None`` in a Magento response.
+    """
 
 
 # Products
