@@ -2,6 +2,10 @@
 
 ## 2.7.0 (unreleased)
 
+### 2.7.0a2 (2025/09/22)
+
+* Adapt `magento.attributes` code to work with the new types
+
 ### 2.7.0a1 (2025/09/22)
 
 * Add `Product`, `CustomAttributeDict` types
