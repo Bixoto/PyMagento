@@ -1,9 +1,10 @@
 # PyMagento Changelog
 
-## 2.6.0 (unreleased)
+## 2.6.0 (2025/09/22)
 
 * Add `async_add_products_to_categories`, `async_remove_products_from_categories`
 * Add stricter type hints
+* Add official support for Python 3.14
 
 ## 2.5.0 (2025/08/28)
 
