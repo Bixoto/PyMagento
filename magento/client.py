@@ -400,7 +400,8 @@ class Magento(APISession):
         )
 
     def async_remove_products_from_categories(self, category_ids_skus: Iterable[tuple[int, str]], **kwargs: Any) -> Any:
-        """
+        """Asynchronously remove products from categories.
+
         :param category_ids_skus: Pairs of (category_id, sku).
         """
         return self.delete_json_api(
