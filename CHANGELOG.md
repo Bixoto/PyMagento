@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## 2.5.1 (unreleased)
+
+* Add more type hints
+
 ## 2.5.0 (2025/08/28)
 
 * Breaking: `ship_order` now returns the shipment ID or raises in case of error, instead of returning the raw response

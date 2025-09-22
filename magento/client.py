@@ -8,11 +8,11 @@ import requests
 from api_session import APISession, escape_path, JSONDict
 from requests.exceptions import HTTPError
 
-from magento.exceptions import MagentoException, MagentoAssertionError
-from magento.queries import Query, make_search_query, make_field_value_query
-from magento.types import Product, SourceItem, Sku, Category, MediaEntry, MagentoEntity, Order, PathId, Customer, \
-    SourceItemIn, BasePrice, DeleteCouponsResponseDict
-from magento.version import __version__
+from .exceptions import MagentoException, MagentoAssertionError
+from .queries import Query, make_search_query, make_field_value_query
+from .types import Product, SourceItem, Sku, Category, MediaEntry, MagentoEntity, Order, PathId, Customer, SourceItemIn, \
+    BasePrice, DeleteCouponsResponseDict, PriceUpdateResultDict
+from .version import __version__
 
 __all__ = (
     "Magento",
@@ -660,19 +660,21 @@ class Magento(APISession):
             return order
         return None
 
-    def hold_order(self, order_id: Union[str, int], **kwargs: Any) -> Any:
+    def hold_order(self, order_id: Union[str, int], **kwargs: Any) -> bool:
         """Hold an order. This is the opposite of ``unhold_order``.
 
         :param order_id: order id (not increment id)
         """
-        return self.post_json_api(f"/V1/orders/{escape_path(order_id)}/hold", **kwargs)
+        ok: bool = self.post_json_api(f"/V1/orders/{escape_path(order_id)}/hold", **kwargs)
+        return ok
 
-    def unhold_order(self, order_id: Union[str, int], **kwargs: Any) -> Any:
+    def unhold_order(self, order_id: Union[str, int], **kwargs: Any) -> bool:
         """Un-hold an order. This is the opposite of ``hold_order``.
 
         :param order_id: order id (not increment id)
         """
-        return self.post_json_api(f"/V1/orders/{escape_path(order_id)}/unhold", **kwargs)
+        ok: bool = self.post_json_api(f"/V1/orders/{escape_path(order_id)}/unhold", **kwargs)
+        return ok
 
     def save_order(self, order: Order, **kwargs: Any) -> Any:
         """Save an order."""
@@ -783,14 +785,16 @@ class Magento(APISession):
                                                     **kwargs)
         return errors
 
-    def delete_special_prices(self, special_prices: Sequence[MagentoEntity], **kwargs: Any) -> List[JSONDict]:
+    def delete_special_prices(self, special_prices: Sequence[MagentoEntity], **kwargs: Any) \
+            -> List[PriceUpdateResultDict]:
         """Delete a sequence of special prices."""
-        ret: List[JSONDict] = self.post_json_api("/V1/products/special-price-delete", json={"prices": special_prices},
-                                                 **kwargs)
+        ret: List[PriceUpdateResultDict] = self.post_json_api("/V1/products/special-price-delete",
+                                                              json={"prices": special_prices},
+                                                              **kwargs)
         return ret
 
     def delete_special_prices_by_sku(self, skus: Sequence[Sku], *, store_id: Union[int, None] = None,
-                                     **kwargs: Any) -> Any:
+                                     **kwargs: Any) -> List[PriceUpdateResultDict]:
         """Equivalent of ``delete_special_prices(get_special_prices(skus))``."""
         special_prices = self.get_special_prices(skus, store_id=store_id, **kwargs)
         return self.delete_special_prices(special_prices, **kwargs)

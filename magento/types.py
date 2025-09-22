@@ -17,6 +17,8 @@ __all__ = (
     'MediaEntry',
     'Order',
     'PathId',
+    'ErrorDict',
+    'PriceUpdateResultDict',
     'Product',
     'ShippingAddress',
     'Sku',
@@ -94,3 +96,14 @@ class DeleteCouponsResponseDict(TypedDict):
     """Response from the `coupons/deleteByIds` endpoint."""
     failed_items: list[Any]
     missing_items: list[Any]
+
+
+class ErrorDict(TypedDict):
+    """Error dict."""
+    message: str
+    parameters: list[str]
+
+
+class PriceUpdateResultDict(ErrorDict):
+    """Response from the `products/base-prices` endpoint."""
+    extension_attributes: dict[str, Any]
