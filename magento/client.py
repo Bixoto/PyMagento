@@ -11,7 +11,7 @@ from requests.exceptions import HTTPError
 from magento.exceptions import MagentoException, MagentoAssertionError
 from magento.queries import Query, make_search_query, make_field_value_query
 from magento.types import Product, SourceItem, Sku, Category, MediaEntry, MagentoEntity, Order, PathId, Customer, \
-    SourceItemIn, BasePrice
+    SourceItemIn, BasePrice, DeleteCouponsResponseDict
 from magento.version import __version__
 
 __all__ = (
@@ -457,12 +457,17 @@ class Magento(APISession):
         ok: bool = self.delete_json_api(f"/V1/coupons/{escape_path(coupon_id)}", **kwargs)
         return ok
 
-    def delete_coupons(self, coupon_ids: Iterable[int], *, ignore_invalid_coupons: bool = True, **kwargs: Any):
-        """Delete multiple coupons by ID."""
-        return self.post_json_api("/V1/coupons/deleteByIds", json={
+    def delete_coupons(self, coupon_ids: Iterable[int], *, ignore_invalid_coupons: bool = True, **kwargs: Any) \
+            -> DeleteCouponsResponseDict:
+        """Delete multiple coupons by ID.
+
+        https://adobe-commerce.redoc.ly/2.4.8-admin/tag/couponsdeleteByIds
+        """
+        resp: DeleteCouponsResponseDict = self.post_json_api("/V1/coupons/deleteByIds", json={
             "ids": list(coupon_ids),
             "ignoreInvalidCoupons": ignore_invalid_coupons,
         }, **kwargs)
+        return resp
 
     def delete_coupons_by_codes(self, coupon_codes: Iterable[str], *, ignore_invalid_coupons: bool = True,
                                 **kwargs: Any):

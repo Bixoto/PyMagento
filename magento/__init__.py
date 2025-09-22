@@ -21,6 +21,7 @@ from magento.types import (
     SourceItem,
     ShippingAddress,
     Sku,
+    DeleteCouponsResponseDict,
 )
 from magento.version import __version__
 
@@ -44,6 +45,7 @@ __all__ = [
     "ShippingAddress",
     "Sku",
     "SourceItem",
+    "DeleteCouponsResponseDict",
     "VISIBILITY_IN_CATALOG",
     "VISIBILITY_IN_CATALOG_AND_SEARCH",
     "VISIBILITY_IN_SEARCH",

@@ -1,5 +1,5 @@
 import sys
-from typing import Union, TypedDict, Literal, List
+from typing import Union, TypedDict, Literal, List, Any
 
 from api_session import JSONDict
 
@@ -12,6 +12,7 @@ __all__ = (
     'BasePrice',
     'Category',
     'Customer',
+    'DeleteCouponsResponseDict',
     'MagentoEntity',
     'MediaEntry',
     'Order',
@@ -84,3 +85,12 @@ class ShippingAddress(TypedDict):
     country_id: str
     telephone: str
     company: NotRequired[str]
+
+
+# Other types
+# ===========
+
+class DeleteCouponsResponseDict(TypedDict):
+    """Response from the `coupons/deleteByIds` endpoint."""
+    failed_items: list[Any]
+    missing_items: list[Any]
