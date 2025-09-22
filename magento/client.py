@@ -838,6 +838,7 @@ class Magento(APISession):
         :param retry:
         :return:
         """
+        # noinspection PyInvalidCast
         return cast(Iterator[Product],
                     self.get_paginated("/V1/products/", query=query, limit=limit, retry=retry, **kwargs))
 
@@ -924,7 +925,7 @@ class Magento(APISession):
         """
         return self.delete_json_api(f"/V1/products/{escape_path(sku)}/media/{media_id}", **kwargs)
 
-    def save_product(self, product: Product, *, save_options: Optional[bool] = None, log_response: bool = True,
+    def save_product(self, product: MagentoEntity, *, save_options: Optional[bool] = None, log_response: bool = True,
                      **kwargs: Any) -> Product:
         """Save a new product. To update a product, use `update_product`.
 
@@ -942,9 +943,10 @@ class Magento(APISession):
         if log_response and self.logger:
             self.logger.debug("Save product response: %s" % resp.text)
         raise_for_response(resp)
-        return cast(Product, resp.json())
+        saved_product: Product = resp.json()
+        return saved_product
 
-    def update_product(self, sku: Sku, product: Product, *, save_options: Optional[bool] = None,
+    def update_product(self, sku: Sku, product: MagentoEntity, *, save_options: Optional[bool] = None,
                        **kwargs: Any) -> Product:
         """Update a product.
 
@@ -964,7 +966,8 @@ class Magento(APISession):
         if save_options is not None:
             payload["saveOptions"] = save_options
 
-        return cast(Product, self.put_json_api(f"/V1/products/{escape_path(sku)}", json=payload, **kwargs))
+        saved_product: Product = self.put_json_api(f"/V1/products/{escape_path(sku)}", json=payload, **kwargs)
+        return saved_product
 
     def delete_product(self, sku: Sku, skip_missing: bool = False, throw: bool = True, **kwargs: Any) -> bool:
         """Delete a product given its SKU.
@@ -986,7 +989,7 @@ class Magento(APISession):
         # https://magento.redoc.ly/2.3.6-admin/tag/productssku#operation/catalogProductRepositoryV1DeleteByIdDelete
         return cast(bool, response.json())
 
-    def async_update_products(self, product_updates: Iterable[Product], **kwargs: Any) -> Any:
+    def async_update_products(self, product_updates: Iterable[MagentoEntity], **kwargs: Any) -> Any:
         """Update multiple products using the async bulk API.
 
         Example:

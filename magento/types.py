@@ -14,6 +14,7 @@ __all__ = (
     'BasePrice',
     'Category',
     'Customer',
+    'CustomAttributeDict',
     'DeleteCouponsResponseDict',
     'MagentoEntity',
     'MediaEntry',
@@ -39,7 +40,37 @@ Category = MagentoEntity
 Customer = MagentoEntity
 MediaEntry = MagentoEntity
 Order = MagentoEntity
-Product = MagentoEntity
+ProductLink = MagentoEntity
+
+
+class CustomAttributeDict(TypedDict):
+    """A custom attribute dict, as found on products."""
+    attribute_code: str
+    value: Union[str, List[str]]
+
+
+# Products
+# ========
+
+class Product(TypedDict):
+    """A product."""
+    id: int
+    sku: str
+    name: str
+    status: int
+    attribute_set_id: int
+    created_at: str
+    updated_at: str
+    custom_attributes: List[CustomAttributeDict]
+    extension_attributes: Dict[str, Any]
+    media_gallery_entries: List[MediaEntry]
+    options: List[Any]
+    price: float
+    product_links: List[ProductLink]
+    tier_prices: List[Any]
+    type_id: str
+    visibility: int
+    weight: float
 
 
 # Source items

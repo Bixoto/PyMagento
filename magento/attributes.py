@@ -5,7 +5,7 @@ from typing import Callable, Optional, cast, Dict, Union, Sequence, List, Tuple,
 
 from api_session import JSONDict
 
-from .types import MagentoEntity
+from .types import MagentoEntity, CustomAttributeDict
 
 T = TypeVar('T')
 
@@ -43,6 +43,7 @@ def get_custom_attribute(item: MagentoEntity, attribute_code: str, coerce_as: Un
         def coerce_as(s: str) -> bool:
             return bool(int(s))
 
+    attribute: CustomAttributeDict
     for attribute in item.get("custom_attributes", []):
         if attribute["attribute_code"] == attribute_code:
             value: Union[str, List[str]] = attribute["value"]
