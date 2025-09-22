@@ -5,7 +5,7 @@ from os import environ
 from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List, Literal, Any
 
 import requests
-from api_session import APISession, escape_path, JSONDict
+from api_session import APISession, escape_path
 from requests.exceptions import HTTPError
 
 from .exceptions import MagentoException, MagentoAssertionError
@@ -734,7 +734,7 @@ class Magento(APISession):
 
         return prices
 
-    def save_base_prices(self, prices: Sequence[BasePrice], **kwargs: Any) -> List[JSONDict]:
+    def save_base_prices(self, prices: Sequence[BasePrice], **kwargs: Any) -> List[PriceUpdateResultDict]:
         """Save base prices.
 
         Example:
@@ -744,7 +744,8 @@ class Magento(APISession):
         :param prices: base prices to save.
         :return: a list of errors (if any)
         """
-        saved_prices: List[JSONDict] = self.post_json_api("/V1/products/base-prices", json={"prices": prices}, **kwargs)
+        saved_prices: List[PriceUpdateResultDict] = self.post_json_api("/V1/products/base-prices",
+                                                                       json={"prices": prices}, **kwargs)
         return saved_prices
 
     # Special Prices
@@ -768,7 +769,8 @@ class Magento(APISession):
 
         return special_prices
 
-    def save_special_prices(self, special_prices: Sequence[MagentoEntity], **kwargs: Any) -> List[JSONDict]:
+    def save_special_prices(self, special_prices: Sequence[MagentoEntity], **kwargs: Any) \
+            -> List[PriceUpdateResultDict]:
         """Save a sequence of special prices.
 
         Example:
@@ -781,8 +783,9 @@ class Magento(APISession):
         :param special_prices: Special prices to save.
         :return: a list of errors (if any)
         """
-        errors: List[JSONDict] = self.post_json_api("/V1/products/special-price", json={"prices": special_prices},
-                                                    **kwargs)
+        errors: List[PriceUpdateResultDict] = self.post_json_api("/V1/products/special-price",
+                                                                 json={"prices": special_prices},
+                                                                 **kwargs)
         return errors
 
     def delete_special_prices(self, special_prices: Sequence[MagentoEntity], **kwargs: Any) \
@@ -1079,9 +1082,9 @@ class Magento(APISession):
     def get_products_attribute_options(self, attribute_code: str, *,
                                        none_on_404: bool = False,
                                        none_on_empty: bool = False,
-                                       **kwargs: Any) -> Sequence[Dict[str, str]]:
+                                       **kwargs: Any) -> Sequence[AttributeOption]:
         """Get all options for a products attribute."""
-        response: Sequence[Dict[str, str]] = self.get_json_api(
+        response: Sequence[AttributeOption] = self.get_json_api(
             f"/V1/products/attributes/{escape_path(attribute_code)}/options",
             none_on_404=none_on_404,
             none_on_empty=none_on_empty,
@@ -1233,7 +1236,8 @@ class Magento(APISession):
         """Get the root category id of the current scope. This is not part of Magento API."""
         store_group_root_category_id: Dict[int, int] = {}
 
-        # We first iterate over store groups because it's faster (fewer API calls) than calling `get_current_store_group_id`.
+        # We first iterate over store groups because it's faster (fewer API calls)
+        # than calling `get_current_store_group_id`.
         store_groups = list(self.get_store_groups(**kwargs))
         for store_group in store_groups:
             root_category_id: int = store_group["root_category_id"]
@@ -1300,6 +1304,7 @@ class Magento(APISession):
 
             query = make_search_query(filter_groups)
 
+        # noinspection PyInvalidCast
         return cast(Iterator[SourceItem],
                     self.get_paginated("/V1/inventory/source-items", query=query, limit=limit, **kwargs))
 
@@ -1404,7 +1409,8 @@ class Magento(APISession):
     def skus_were_bought(self, skus: List[str]) -> Dict[str, bool]:
         """Equivalent of ``sku_was_bought`` for multiple SKUs. Return a dict of {SKU -> bought?}.
 
-        Note that if some of the SKUs were bought a lot of times it’s more efficient to call ``sku_was_bought`` on each SKU.
+        Note that if some of the SKUs were bought a lot of times
+        it’s more efficient to call ``sku_was_bought`` on each SKU.
         """
         q = make_field_value_query("sku", ",".join(skus), "in")
 

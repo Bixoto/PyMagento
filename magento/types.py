@@ -6,9 +6,11 @@ from api_session import JSONDict
 if sys.version_info >= (3, 11):
     from typing import NotRequired
 else:
+    # noinspection PyUnreachableCode
     from typing_extensions import NotRequired
 
 __all__ = (
+    'AttributeOption',
     'BasePrice',
     'Category',
     'Customer',
@@ -28,13 +30,16 @@ __all__ = (
 
 MagentoEntity = JSONDict
 
+PathId = Union[int, str]
+Sku = str
+
+# TODO: proper types
+AttributeOption = MagentoEntity
 Category = MagentoEntity
 Customer = MagentoEntity
 MediaEntry = MagentoEntity
 Order = MagentoEntity
-PathId = Union[int, str]
 Product = MagentoEntity
-Sku = str
 
 
 # Source items
