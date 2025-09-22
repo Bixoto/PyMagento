@@ -2,7 +2,7 @@ import time
 from json.decoder import JSONDecodeError
 from logging import Logger
 from os import environ
-from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List, Literal, Any
+from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List, Literal, Any, Tuple
 
 import requests
 from api_session import APISession, escape_path
@@ -399,7 +399,7 @@ class Magento(APISession):
             **kwargs,
         )
 
-    def async_remove_products_from_categories(self, category_ids_skus: Iterable[tuple[int, str]], **kwargs: Any) -> Any:
+    def async_remove_products_from_categories(self, category_ids_skus: Iterable[Tuple[int, str]], **kwargs: Any) -> Any:
         """Asynchronously remove products from categories.
 
         :param category_ids_skus: Pairs of (category_id, sku).
