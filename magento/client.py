@@ -11,7 +11,7 @@ from requests.exceptions import HTTPError
 from .exceptions import MagentoException, MagentoAssertionError
 from .queries import Query, make_search_query, make_field_value_query
 from .types import Product, SourceItem, Sku, Category, MediaEntry, MagentoEntity, Order, PathId, Customer, SourceItemIn, \
-    BasePrice, DeleteCouponsResponseDict, PriceUpdateResultDict
+    BasePrice, DeleteCouponsResponseDict, PriceUpdateResultDict, AttributeOption
 from .version import __version__
 
 __all__ = (
