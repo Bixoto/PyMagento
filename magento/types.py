@@ -99,14 +99,14 @@ class ShippingAddress(TypedDict):
 
 class DeleteCouponsResponseDict(TypedDict):
     """Response from the `coupons/deleteByIds` endpoint."""
-    failed_items: list[Any]
-    missing_items: list[Any]
+    failed_items: List[Any]
+    missing_items: List[Any]
 
 
 class ErrorDict(TypedDict):
     """Error dict."""
     message: str
-    parameters: list[str]
+    parameters: List[str]
 
 
 class PriceUpdateResultDict(ErrorDict):
