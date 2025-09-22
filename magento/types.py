@@ -1,5 +1,5 @@
 import sys
-from typing import Union, TypedDict, Literal, List, Any
+from typing import Union, TypedDict, Literal, List, Any, Dict
 
 from api_session import JSONDict
 
