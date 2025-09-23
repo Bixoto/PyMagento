@@ -26,6 +26,7 @@ from magento.types import (
     ShippingAddress,
     Sku,
     SourceItem,
+    WithExtensionAttributesDict,
 )
 from magento.version import __version__
 
@@ -74,6 +75,7 @@ __all__ = [
     "serialize_attribute_value",
     "set_custom_attribute",
     "set_custom_attributes",
+    "WithExtensionAttributesDict",
 ]
 
 ROOT_CATEGORY_ID = 1

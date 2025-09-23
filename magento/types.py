@@ -27,6 +27,7 @@ __all__ = (
     'Sku',
     'SourceItem',
     'SourceItemIn',
+    'WithExtensionAttributesDict',
 )
 
 MagentoEntity = JSONDict
@@ -43,6 +44,11 @@ Order = MagentoEntity
 ProductLink = MagentoEntity
 
 
+class WithExtensionAttributesDict(TypedDict):
+    """A dict with an extension_attributes key."""
+    extension_attributes: Dict[str, Any]
+
+
 class CustomAttributeDict(TypedDict):
     """A custom attribute dict, as found on products."""
     attribute_code: str
@@ -55,7 +61,7 @@ class CustomAttributeDict(TypedDict):
 # Products
 # ========
 
-class Product(TypedDict):
+class Product(WithExtensionAttributesDict):
     """A product."""
     id: int
     sku: str
@@ -65,7 +71,6 @@ class Product(TypedDict):
     created_at: str
     updated_at: str
     custom_attributes: List[CustomAttributeDict]
-    extension_attributes: Dict[str, Any]
     media_gallery_entries: List[MediaEntry]
     options: List[Any]
     price: float
@@ -143,6 +148,6 @@ class ErrorDict(TypedDict):
     parameters: List[str]
 
 
-class PriceUpdateResultDict(ErrorDict):
+class PriceUpdateResultDict(ErrorDict, WithExtensionAttributesDict):
     """Response from the `products/base-prices` endpoint."""
     extension_attributes: Dict[str, Any]
