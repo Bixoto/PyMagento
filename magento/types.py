@@ -150,4 +150,4 @@ class ErrorDict(TypedDict):
 
 class PriceUpdateResultDict(ErrorDict, WithExtensionAttributesDict):
     """Response from the `products/base-prices` endpoint."""
-    extension_attributes: Dict[str, Any]
+    pass
