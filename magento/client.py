@@ -563,7 +563,7 @@ class Magento(APISession):
     # ========
 
     def create_order_invoice(self, order_id: PathId, payload: Optional[Dict[str, Any]] = None, notify: bool = True,
-                             **kwargs: Any) -> Any:
+                             **kwargs: Any) -> str:
         """Create an invoice for an order.
 
         See:
@@ -572,8 +572,8 @@ class Magento(APISession):
 
         :param order_id: Order id.
         :param payload: payload to send to the API.
-        :param notify: if True (default), notify the client. This is overridden by ``payload``.
-        :return:
+        :param notify: if True (default), notify the client. This is equivalent to ``payload={"notify": True}``.
+        :return: invoice ID, as a number in a string
         """
         if payload is None:
             payload = {}
