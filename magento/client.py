@@ -567,8 +567,8 @@ class Magento(APISession):
         """Create an invoice for an order.
 
         See:
-        * https://devdocs.magento.com/guides/v2.4/rest/tutorials/orders/order-create-invoice.html
-        * https://www.rakeshjesadiya.com/create-invoice-using-rest-api-magento-2/
+          * https://developer.adobe.com/commerce/webapi/rest/tutorials/orders/order-create-invoice/
+          * https://www.rakeshjesadiya.com/create-invoice-using-rest-api-magento-2/
 
         :param order_id: Order id.
         :param payload: payload to send to the API.
