@@ -580,7 +580,8 @@ class Magento(APISession):
 
         payload.setdefault("notify", notify)
 
-        return self.post_json_api(f"/V1/order/{escape_path(order_id)}/invoice", json=payload, **kwargs)
+        invoice_id: str = self.post_json_api(f"/V1/order/{escape_path(order_id)}/invoice", json=payload, **kwargs)
+        return invoice_id
 
     def get_invoice(self, invoice_id: int, *,
                     none_on_404: bool = False,
