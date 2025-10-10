@@ -9,6 +9,10 @@ T = TypeVar('T')
 
 Item = TypeVar('Item', bound=Union[Product, MagentoEntity])
 
+# From Magento
+CATEGORY_ENTITY_TYPE_ID = 3
+CATALOG_PRODUCT_ENTITY_TYPE_ID = 4
+
 
 @overload
 def get_custom_attribute(item: Item, attribute_code: str,

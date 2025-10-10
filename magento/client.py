@@ -8,6 +8,7 @@ import requests
 from api_session import APISession, escape_path
 from requests.exceptions import HTTPError
 
+from .attributes import CATALOG_PRODUCT_ENTITY_TYPE_ID
 from .exceptions import MagentoException, MagentoAssertionError
 from .queries import Query, make_search_query, make_field_value_query
 from .types import Product, SourceItem, Sku, Category, MediaEntry, MagentoEntity, Order, PathId, Customer, SourceItemIn, \
@@ -20,11 +21,13 @@ __all__ = (
 
 USER_AGENT = f"Bixoto/PyMagento {__version__} +git.io/JDp0h"
 
+
+
 DEFAULT_ATTRIBUTE_DICT = {
     "apply_to": [],
     "backend_type": "int",
     "custom_attributes": [],
-    "entity_type_id": "4",
+    "entity_type_id": str(CATALOG_PRODUCT_ENTITY_TYPE_ID),
     "extension_attributes": {},
     "frontend_input": "select",
     "is_comparable": False,

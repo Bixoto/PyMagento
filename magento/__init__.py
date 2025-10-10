@@ -4,6 +4,7 @@ from magento.attributes import (
     get_custom_attribute, get_boolean_custom_attribute, get_custom_attributes_dict,
     set_custom_attribute, set_custom_attributes, serialize_attribute_value,
     delete_custom_attribute, delete_custom_attributes,
+    CATEGORY_ENTITY_TYPE_ID, CATALOG_PRODUCT_ENTITY_TYPE_ID,
 )
 from magento.client import Magento
 from magento.dates import DATE_ISO_8601_FORMAT, format_datetime, parse_datetime

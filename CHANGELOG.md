@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## 2.7.1 (2025/10/10)
+
+* Expose `CATEGORY_ENTITY_TYPE_ID`, `CATALOG_PRODUCT_ENTITY_TYPE_ID`
+
 ## 2.7.0 (2025/09/22)
 
 ### 2.7.0a2 (2025/09/22)
