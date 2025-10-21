@@ -2,7 +2,7 @@ import time
 from json.decoder import JSONDecodeError
 from logging import Logger
 from os import environ
-from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List, Literal, Any, Tuple
+from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List, Literal, Any, Tuple, Set
 
 import requests
 from api_session import APISession, escape_path
@@ -20,8 +20,6 @@ __all__ = (
 )
 
 USER_AGENT = f"Bixoto/PyMagento {__version__} +git.io/JDp0h"
-
-
 
 DEFAULT_ATTRIBUTE_DICT = {
     "apply_to": [],
@@ -781,12 +779,14 @@ class Magento(APISession):
     # --------------
 
     def get_special_prices(self, skus: Sequence[Sku], *, store_id: Union[int, None] = None,
+                           deduplicate: bool = True,
                            **kwargs: Any) -> List[MagentoEntity]:
         """Get special prices for a sequence of SKUs.
 
         :param skus:
         :param store_id: Filter by store ID.
           This is done on the response as Magento doesn’t support this filter in the REST API.
+        :param deduplicate: if True (default), remove duplicated prices.
         :param kwargs:
         :return:
         """
@@ -795,6 +795,22 @@ class Magento(APISession):
         if store_id is not None:
             special_prices = [special_price for special_price in special_prices
                               if special_price["store_id"] == store_id]
+
+        if deduplicate:
+            seen: Set[Tuple[Tuple[str, Any], ...]] = set()
+
+            # For some reason special_prices can be duplicated,
+            # especially when having multiple stores with a special_price in each one
+            deduplicated_special_prices: List[MagentoEntity] = []
+
+            for special_price in special_prices:
+                ks = tuple(sorted(special_price.items()))
+                if ks not in seen:
+                    deduplicated_special_prices.append(special_price)
+
+                seen.add(ks)
+
+            special_prices = deduplicated_special_prices
 
         return special_prices
 

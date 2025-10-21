@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## 2.8.0 (unreleased)
+
+* `get_special_prices`: deduplicate prices by default
+
 ## 2.7.1 (2025/10/10)
 
 * Expose `CATEGORY_ENTITY_TYPE_ID`, `CATALOG_PRODUCT_ENTITY_TYPE_ID`
