@@ -82,7 +82,7 @@ __all__ = [
 ROOT_CATEGORY_ID = 1
 
 # Magento's visibility options
-# https://devdocs.magento.com/guides/v2.4/rest/tutorials/configurable-product/create-configurable-product.html
+# https://developer.adobe.com/commerce/webapi/rest/tutorials/configurable-product/create-configurable-product/
 VISIBILITY_IN_CATALOG_AND_SEARCH = 4
 VISIBILITY_IN_CATALOG = 2
 VISIBILITY_IN_SEARCH = 3
