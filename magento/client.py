@@ -1186,6 +1186,28 @@ class Magento(APISession):
     # Shipments
     # =========
 
+    def get_shipment(self, shipment_id: PathId, **kwargs: Any) -> Union[MagentoEntity, None]:
+        """Get a shipment."""
+        shipment: Union[MagentoEntity, None] = self.get_json_api(f"/V1/shipment/{escape_path(shipment_id)}",
+                                                                 none_on_404=True,
+                                                                 **kwargs)
+        return shipment
+
+    def get_shipment_label(self, shipment_id: PathId, **kwargs: Any) -> str:
+        """
+        Get a shipment label.
+
+        If the shipment doesn't exist or it doesn't have a label, the returned label is an empty string.
+        """
+        label: str = self.get_json_api(f"/V1/shipment/{escape_path(shipment_id)}/label", **kwargs)
+        return label
+
+    def get_shipment_comments(self, shipment_id: PathId, **kwargs: Any) -> Iterator[MagentoEntity]:
+        """Get the comments for a shipment."""
+        comments: Iterator[MagentoEntity] = self.get_paginated(f"/V1/shipment/{escape_path(shipment_id)}/comments",
+                                                               **kwargs)
+        return comments
+
     def get_shipments(self, *, query: Query = None, limit: int = -1, **kwargs: Any) -> Iterator[MagentoEntity]:
         """Return shipments (generator)."""
         shipments: Iterator[MagentoEntity] = self.get_paginated("/V1/shipments", query=query, limit=limit, **kwargs)

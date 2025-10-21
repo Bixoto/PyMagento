@@ -3,6 +3,7 @@
 ## 2.8.0 (unreleased)
 
 * `get_special_prices`: deduplicate prices by default
+* Add `get_shipment`, `get_shipment_label`, `get_shipment_comments`
 
 ## 2.7.1 (2025/10/10)
 
