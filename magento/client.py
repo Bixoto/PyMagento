@@ -389,9 +389,10 @@ class Magento(APISession):
                                         **kwargs)
         return ok
 
-    def async_add_products_to_categories(self, category_product_links: Iterable[Dict[str, Any]], **kwargs: Any) -> Any:
+    def async_add_products_to_categories(self, category_product_links: Iterable[Dict[str, Any]], **kwargs: Any) \
+            -> MagentoEntity:
         """Asynchronously add products to categories."""
-        return self.post_json_api(
+        res: MagentoEntity = self.post_json_api(
             "/V1/categories/byCategoryId/products",
             json=[{"productLink": category_product_link}
                   for category_product_link in category_product_links],
@@ -399,13 +400,15 @@ class Magento(APISession):
             throw=True,
             **kwargs,
         )
+        return res
 
-    def async_remove_products_from_categories(self, category_ids_skus: Iterable[Tuple[int, str]], **kwargs: Any) -> Any:
+    def async_remove_products_from_categories(self, category_ids_skus: Iterable[Tuple[int, str]], **kwargs: Any) \
+            -> MagentoEntity:
         """Asynchronously remove products from categories.
 
         :param category_ids_skus: Pairs of (category_id, sku).
         """
-        return self.delete_json_api(
+        res: MagentoEntity = self.delete_json_api(
             "/V1/categories/byCategoryId/products/bySku",
             json=[{"categoryId": category_id, "sku": sku}
                   for category_id, sku in category_ids_skus],
@@ -413,6 +416,7 @@ class Magento(APISession):
             throw=True,
             **kwargs,
         )
+        return res
 
     # CMS
     # ===
@@ -703,12 +707,13 @@ class Magento(APISession):
         ok: bool = self.post_json_api(f"/V1/orders/{escape_path(order_id)}/unhold", **kwargs)
         return ok
 
-    def save_order(self, order: Order, **kwargs: Any) -> Any:
+    def save_order(self, order: Order, **kwargs: Any) -> MagentoEntity:
         """Save an order."""
-        return self.post_api("/V1/orders", json={"entity": order}, **kwargs)
+        order: MagentoEntity = self.post_json_api("/V1/orders", json={"entity": order}, **kwargs)
+        return order
 
     def set_order_status(self, order: Order, status: str, *, external_order_id: Optional[str] = None,
-                         **kwargs: Any) -> Any:
+                         **kwargs: Any) -> MagentoEntity:
         """Change the status of an order, and optionally set its ``ext_order_id``. This is a convenient wrapper around
         ``save_order``.
         Note it does not check if orders are on hold before, and may result in invalid states where an order has a state
@@ -1009,19 +1014,21 @@ class Magento(APISession):
         # https://magento.redoc.ly/2.3.6-admin/tag/productssku#operation/catalogProductRepositoryV1DeleteByIdDelete
         return cast(bool, response.json())
 
-    def async_update_products(self, product_updates: Iterable[MagentoEntity], **kwargs: Any) -> Any:
+    def async_update_products(self, product_updates: Iterable[MagentoEntity], **kwargs: Any) -> MagentoEntity:
         """Update multiple products using the async bulk API.
 
         Example:
             >>> Magento().async_update_products([{"sku": "SK123", "name": "Abc"}, {"sku": "SK4", "name": "Def"}])
 
-        See https://devdocs.magento.com/guides/v2.4/rest/bulk-endpoints.html
+        See https://developer.adobe.com/commerce/webapi/rest/use-rest/bulk-endpoints/
 
         :param product_updates: sequence of product data dicts. They MUST contain an `sku` key.
         :return:
         """
         payload = [{"product": product_update} for product_update in product_updates]
-        return self.put_json_api("/V1/products/bySku", json=payload, async_bulk=True, **kwargs)
+        # https://developer.adobe.com/commerce/webapi/rest/use-rest/bulk-endpoints/#responses
+        res: MagentoEntity = self.put_json_api("/V1/products/bySku", json=payload, async_bulk=True, **kwargs)
+        return res
 
     def get_product_stock_item(self, sku: Sku, *, none_on_404: bool = False, none_on_empty: bool = False,
                                **kwargs: Any) -> MagentoEntity:
@@ -1075,25 +1082,26 @@ class Magento(APISession):
                                                **kwargs)
         return ret
 
-    def link_child_product(self, parent_sku: Sku, child_sku: Sku, **kwargs: Any) -> Any:
+    def link_child_product(self, parent_sku: Sku, child_sku: Sku, **kwargs: Any) -> bool:
         """Link two products, one as the parent of the other.
 
         :param parent_sku: SKU of the parent product
         :param child_sku: SKU of the child product
-        :return: `requests.Response` object
         """
-        return self.post_json_api(f"/V1/configurable-products/{escape_path(parent_sku)}/child",
-                                  json={"childSku": child_sku}, **kwargs)
+        ok: bool = self.post_json_api(f"/V1/configurable-products/{escape_path(parent_sku)}/child",
+                                      json={"childSku": child_sku}, **kwargs)
+        return ok
 
-    def unlink_child_product(self, parent_sku: Sku, child_sku: Sku, **kwargs: Any) -> Any:
+    def unlink_child_product(self, parent_sku: Sku, child_sku: Sku, **kwargs: Any) -> bool:
         """Opposite of link_child_product().
 
         :param parent_sku: SKU of the parent product
         :param child_sku: SKU of the child product
         """
-        return self.delete_json_api(
+        ok: bool = self.delete_json_api(
             f"/V1/configurable-products/{escape_path(parent_sku)}/children/{escape_path(child_sku)}",
             **kwargs)
+        return ok
 
     def save_configurable_product_option(self, sku: Sku, option: MagentoEntity, **kwargs: Any) -> int:
         """Save a configurable product option.
@@ -1217,6 +1225,7 @@ class Magento(APISession):
         """Ship an order.
 
         Return the shipment ID as a string.
+        Throws a `MagentoException` in case of error.
         """
         response = self.post_api(f"/V1/order/{order_id}/ship", json=payload, throw=True,
                                  **kwargs)
@@ -1233,7 +1242,7 @@ class Magento(APISession):
 
         return body
 
-    def get_order_shipments(self, order_id: Union[int, str], **kwargs: Any) -> Any:
+    def get_order_shipments(self, order_id: Union[int, str], **kwargs: Any) -> Iterator[MagentoEntity]:
         """Get shipments for the given order id."""
         return self.get_shipments(query=make_field_value_query("order_id", order_id), **kwargs)
 
@@ -1342,8 +1351,9 @@ class Magento(APISession):
     def save_source(self, source: MagentoEntity, **kwargs: Any) -> Any:
         """Save a source.
 
-        https://adobe-commerce.redoc.ly/2.4.6-admin/tag/inventorysources/#operation/PostV1InventorySources
+        https://adobe-commerce.redoc.ly/2.4.8-admin/tag/inventorysources#operation/PostV1InventorySources
         """
+        # The docs don't specify the return type
         return self.post_json_api("/V1/inventory/sources", json={"source": source}, **kwargs)
 
     # Source Items
@@ -1379,13 +1389,10 @@ class Magento(APISession):
                     self.get_paginated("/V1/inventory/source-items", query=query, limit=limit, **kwargs))
 
     def save_source_items(self, source_items: Sequence[Union[SourceItem, SourceItemIn]], **kwargs: Any) -> Any:
-        """Save a sequence of source-items. Return None if the sequence is empty.
-
-        :param source_items:
-        :return:
-        """
+        """Save a sequence of source-items. Return None if the sequence is empty."""
         if not source_items:
             return None
+        # The docs don't specify the return type
         return self.post_json_api("/V1/inventory/source-items", json={"sourceItems": source_items}, **kwargs)
 
     def delete_source_items(self, source_items: Iterable[Union[SourceItem, SourceItemIn]], **kwargs: Any) -> Any:
@@ -1401,7 +1408,7 @@ class Magento(APISession):
         payload = {
             "sourceItems": [{"sku": s["sku"], "source_code": s["source_code"]} for s in source_items],
         }
-        # Note the docs are not saying what's the normal return value
+        # The docs don't specify the return type
         return self.post_json_api("/V1/inventory/source-items-delete", json=payload, **kwargs)
 
     def delete_source_items_by_source_code(self, source_code: str, **kwargs: Any) -> Any:

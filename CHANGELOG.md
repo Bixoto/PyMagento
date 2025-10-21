@@ -2,8 +2,16 @@
 
 ## 2.8.0 (unreleased)
 
-* `get_special_prices`: deduplicate prices by default
+### Breaking changes
+
+* `save_order` and `set_order_status` now return the saved order instead of a response object
+* `get_special_prices` now deduplicates prices by default
+
+### Other changes
+
 * Add `get_shipment`, `get_shipment_label`, `get_shipment_comments`
+* More precise return type for `link_child_product`, `unlink_child_product`, `get_order_shipments`,
+  `async_add_products_to_categories`, `async_update_products`, `async_remove_products_from_categories`
 
 ## 2.7.1 (2025/10/10)
 
