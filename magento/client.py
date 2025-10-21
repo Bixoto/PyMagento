@@ -709,8 +709,8 @@ class Magento(APISession):
 
     def save_order(self, order: Order, **kwargs: Any) -> MagentoEntity:
         """Save an order."""
-        order: MagentoEntity = self.post_json_api("/V1/orders", json={"entity": order}, **kwargs)
-        return order
+        saved_order: MagentoEntity = self.post_json_api("/V1/orders", json={"entity": order}, **kwargs)
+        return saved_order
 
     def set_order_status(self, order: Order, status: str, *, external_order_id: Optional[str] = None,
                          **kwargs: Any) -> MagentoEntity:
@@ -1202,8 +1202,7 @@ class Magento(APISession):
         return shipment
 
     def get_shipment_label(self, shipment_id: PathId, **kwargs: Any) -> str:
-        """
-        Get a shipment label.
+        """Get a shipment label.
 
         If the shipment doesn't exist or it doesn't have a label, the returned label is an empty string.
         """
