@@ -1570,7 +1570,7 @@ class Magento(APISession):
                       page_size: Optional[int] = None,
                       fields: Optional[Union[Dict[str, Any], str]] = None,
                       id_pagination: bool = False,
-                      id_field: Optional[str] = None,
+                      id_field: str = "entity_id",
                       **kwargs: Any) -> Iterator[MagentoEntity]:
         """Get a paginated API path.
 
