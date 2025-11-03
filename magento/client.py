@@ -1560,7 +1560,7 @@ class Magento(APISession):
 
     def get_paginated(self, path: str, *, query: Query = None, limit: int = -1, retry: int = 0,
                       page_size: Optional[int] = None,
-                      fields: Optional[Dict[str, Any]] = None,
+                      fields: Optional[Union[Dict[str, Any], str]] = None,
                       **kwargs: Any) -> Iterator[MagentoEntity]:
         """Get a paginated API path.
 
@@ -1604,6 +1604,11 @@ class Magento(APISession):
                                     retry=retry,
                                     fields=fields,
                                     **kwargs)
+
+            # PHP serializes {} as []
+            if isinstance(res, list) and res == []:
+                res = {}
+
             items: List[Any] = res.get("items", [])
             if not items:
                 break

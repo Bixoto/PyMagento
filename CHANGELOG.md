@@ -1,5 +1,10 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* `get_paginated`: fix crash when for some reason Magento returns an empty object
+* `get_paginated`: fix typing for string `fields`
+
 ## 2.8.0 (2025/10/21)
 
 ### Breaking changes
