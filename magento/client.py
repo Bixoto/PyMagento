@@ -1569,8 +1569,8 @@ class Magento(APISession):
                       retry: int = 0,
                       page_size: Optional[int] = None,
                       fields: Optional[Union[Dict[str, Any], str]] = None,
-                      id_field: Optional[str] = None,
                       id_pagination: bool = False,
+                      id_field: Optional[str] = None,
                       **kwargs: Any) -> Iterator[MagentoEntity]:
         """Get a paginated API path.
 
@@ -1580,8 +1580,12 @@ class Magento(APISession):
         :param retry:
         :param page_size: default is `self.PAGE_SIZE`
         :param fields: fields to retrieve for each item. Don't wrap them in `items[]`
-        :param id_field:
         :param id_pagination: Enable the experimental ID-based pagination.
+          Magento’s queries can be very slow due to some poorly designed use of offsets. This circumvents the issue by
+          sorting by items by ID, and then on each query get the items with the IDs higher than the previous ones.
+          Note this is still experimental and subject to change,
+          and does not support queries with multiple filter groups for now.
+        :param id_field: ID field to use for the experimental ID-based pagination.
         :return:
         """
         if limit == 0:
@@ -1670,7 +1674,11 @@ class Magento(APISession):
                 if count >= limit > 0:
                     return
 
-                last_id = item[id_field]
+                # On products the field is named 'id', but we must filter on 'entity_id' instead ('id' doesn't work)
+                if id_field in item:
+                    last_id = item[id_field]
+                else:
+                    last_id = item["id"]
 
             if not id_pagination:
                 current_page += 1
