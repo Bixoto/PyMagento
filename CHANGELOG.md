@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## 2.10.0 (unreleased)
+## 2.10.0 (2025/11/03)
 
 ### Breaking changes
 
