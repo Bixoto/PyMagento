@@ -1,6 +1,6 @@
 import json
 from collections import ChainMap
-from typing import Dict
+from typing import Dict, Any
 from unittest import mock
 
 import pytest
@@ -110,3 +110,41 @@ def test_client_env():
         user_agent = "hello I'm a test"
         environ["PYMAGENTO_USER_AGENT"] = user_agent
         assert Magento().headers.get("user-agent") == user_agent
+
+
+def test_id_sort_pagination():
+    class FakeClient(magento.Magento):
+        def __init__(self, *args: Any, **kwargs: Any):
+            super().__init__(*args, **kwargs)
+            self.page = 0
+            self.expected_filter_index = 0
+
+        # noinspection PyMethodOverriding
+        def get_json_api(self, _path, query, **_kwargs):
+            assert isinstance(query, dict)
+            assert query[f"searchCriteria[filter_groups][0][filters][{self.expected_filter_index}][field]"] == "foo"
+            assert query[f"searchCriteria[filter_groups][0][filters][{self.expected_filter_index}][condition_type]"] \
+                   == "gt"
+
+            if self.page == 0:
+                assert query[f"searchCriteria[filter_groups][0][filters][{self.expected_filter_index}][value]"] == 0
+                self.page += 1
+                return {"items": [{"foo": 1}, {"foo": 42}], "total_count": 3}
+
+            if self.page == 1:
+                assert query[f"searchCriteria[filter_groups][0][filters][{self.expected_filter_index}][value]"] == 42
+                return {"items": [], "total_count": 3}
+
+            assert False
+
+    client = FakeClient(base_url="http://test", token="secret", scope="toto")
+
+    assert list(client.get_paginated("/path", id_field="foo", id_pagination=True, limit=3)) \
+           == [{"foo": 1}, {"foo": 42}]
+
+    # Shift by one because there is a filter
+    client.expected_filter_index = 1
+    client.page = 0
+    assert list(client.get_paginated("/path", id_field="foo", id_pagination=True, limit=3,
+                                     query=magento.make_field_value_query("bar", 0, condition_type="gt"))) \
+           == [{"foo": 1}, {"foo": 42}]

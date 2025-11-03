@@ -1563,9 +1563,14 @@ class Magento(APISession):
             raise_for_response(r)
         return r
 
-    def get_paginated(self, path: str, *, query: Query = None, limit: int = -1, retry: int = 0,
+    def get_paginated(self, path: str, *,
+                      query: Query = None,
+                      limit: int = -1,
+                      retry: int = 0,
                       page_size: Optional[int] = None,
                       fields: Optional[Union[Dict[str, Any], str]] = None,
+                      id_field: Optional[str] = None,
+                      id_pagination: bool = False,
                       **kwargs: Any) -> Iterator[MagentoEntity]:
         """Get a paginated API path.
 
@@ -1575,6 +1580,8 @@ class Magento(APISession):
         :param retry:
         :param page_size: default is `self.PAGE_SIZE`
         :param fields: fields to retrieve for each item. Don't wrap them in `items[]`
+        :param id_field:
+        :param id_pagination: Enable the experimental ID-based pagination.
         :return:
         """
         if limit == 0:
@@ -1593,15 +1600,47 @@ class Magento(APISession):
 
         query["searchCriteria[pageSize]"] = page_size
 
+        id_filter_index = 0
+
+        if id_pagination:
+            if id_field is None:
+                raise ValueError("id_sort_field must be provided when using id_sort_pagination")
+
+            # For now reject complex queries with more than one filter group
+            if "searchCriteria[filter_groups][1][filters][0][field]" in query:
+                raise ValueError("id_sort_pagination doesn't work with filter groups")
+
+            # Find the first available filter index
+            n = 0
+            while f"searchCriteria[filter_groups][0][filters][{n}][field]" in query:
+                n += 1
+
+            id_filter_index = n
+
+            # Find the first available sort index
+            n = 0
+            while f"searchCriteria[sortOrders][{n}][field]" in query:
+                n += 1
+
+            query[f"searchCriteria[sortOrders][{n}][field]"] = id_field
+            query[f"searchCriteria[sortOrders][{n}][direction]"] = "ASC"
+
         if isinstance(fields, str):
             fields = f"items[{fields}],total_count"
 
         current_page = 1
         count = 0
+        last_id = 0
 
         while True:
             page_query = query.copy()
-            page_query["searchCriteria[currentPage]"] = current_page
+
+            if id_pagination and id_field is not None:
+                page_query[f"searchCriteria[filter_groups][0][filters][{id_filter_index}][field]"] = id_field
+                page_query[f"searchCriteria[filter_groups][0][filters][{id_filter_index}][value]"] = last_id
+                page_query[f"searchCriteria[filter_groups][0][filters][{id_filter_index}][condition_type]"] = "gt"
+            else:
+                page_query["searchCriteria[currentPage]"] = current_page
 
             res = self.get_json_api(path, page_query,
                                     none_on_404=False,
@@ -1631,7 +1670,10 @@ class Magento(APISession):
                 if count >= limit > 0:
                     return
 
-            current_page += 1
+                last_id = item[id_field]
+
+            if not id_pagination:
+                current_page += 1
 
     def log_debug(self, msg: str, *args: Any, **kwargs: Any) -> None:
         """Log a message. Subclasses can implement this for debug logs."""
