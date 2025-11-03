@@ -1372,6 +1372,7 @@ class Magento(APISession):
         """
         assert kwargs.get("id_pagination", False) is False, \
             "ID-based pagination is not supported for source items as they don't have an ID"
+        kwargs["id_pagination"] = False
 
         if source_code is not None or sku is not None or skus is not None:
             filter_groups = []
