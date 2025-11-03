@@ -124,6 +124,9 @@ class Magento(APISession):
         if batch_page_size is not None:
             self.PAGE_SIZE = batch_page_size
 
+        # Redirects shouldn't happen on the API. If they do, raise a clear error so we can debug
+        self.max_redirects = 0
+
         self.scope = scope
         self.headers["Authorization"] = f"Bearer {token}"
 

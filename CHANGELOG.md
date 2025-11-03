@@ -1,5 +1,12 @@
 # PyMagento Changelog
 
+## 2.10.0 (unreleased)
+
+### Breaking changes
+
+* `.max_redirects` now defaults to `0`. The Magento API should never redirect, so it’s safer to raise an error if it
+  does.
+
 ## 2.9.0 (2025/11/03)
 
 ### Breaking changes
