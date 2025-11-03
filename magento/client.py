@@ -1370,6 +1370,9 @@ class Magento(APISession):
         :param limit: -1 for unlimited.
         :return:
         """
+        assert kwargs.get("id_pagination", False) is False, \
+            "ID-based pagination is not supported for source items as they don't have an ID"
+
         if source_code is not None or sku is not None or skus is not None:
             filter_groups = []
             if source_code:
@@ -1674,11 +1677,14 @@ class Magento(APISession):
                 if count >= limit > 0:
                     return
 
-                # On products the field is named 'id', but we must filter on 'entity_id' instead ('id' doesn't work)
-                if id_field in item:
-                    last_id = item[id_field]
-                else:
-                    last_id = item["id"]
+                if id_pagination:
+                    # On products the field is named 'id', but we must filter on 'entity_id' instead ('id' doesn't work)
+                    if id_field in item:
+                        last_id = item[id_field]
+                    elif "id" in item:
+                        last_id = item["id"]
+                    else:
+                        raise ValueError(f"id_field {id_field} not found in item {item}")
 
             if not id_pagination:
                 current_page += 1
