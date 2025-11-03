@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## Unreleased
+## 2.8.1 (2025/11/03)
 
 * `get_paginated`: fix crash when for some reason Magento returns an empty object
 * `save_product`: deprecate `log_response`
