@@ -7,6 +7,10 @@
 * `.max_redirects` now defaults to `0`. The Magento API should never redirect, so it’s safer to raise an error if it
   does.
 
+### Other changes
+
+* `get_paginated`: add experimental ID-based pagination
+
 ## 2.9.0 (2025/11/03)
 
 ### Breaking changes
