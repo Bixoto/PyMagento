@@ -1,4 +1,5 @@
 import time
+import warnings
 from json.decoder import JSONDecodeError
 from logging import Logger
 from os import environ
@@ -11,8 +12,8 @@ from requests.exceptions import HTTPError
 from .attributes import CATALOG_PRODUCT_ENTITY_TYPE_ID
 from .exceptions import MagentoException, MagentoAssertionError
 from .queries import Query, make_search_query, make_field_value_query
-from .types import Product, SourceItem, Sku, Category, MediaEntry, MagentoEntity, Order, PathId, Customer, SourceItemIn, \
-    BasePrice, DeleteCouponsResponseDict, PriceUpdateResultDict, AttributeOption
+from .types import Product, SourceItem, Sku, Category, MediaEntry, MagentoEntity, Order, PathId, Customer, \
+    SourceItemIn, BasePrice, DeleteCouponsResponseDict, PriceUpdateResultDict, AttributeOption
 from .version import __version__
 
 __all__ = (
@@ -125,6 +126,9 @@ class Magento(APISession):
 
         if batch_page_size is not None:
             self.PAGE_SIZE = batch_page_size
+
+        if logger is not None:
+            warnings.warn("The logger argument is deprecated. Make a subclass to set it.")
 
         self.scope = scope
         self.logger = logger
@@ -950,7 +954,8 @@ class Magento(APISession):
         """
         return self.delete_json_api(f"/V1/products/{escape_path(sku)}/media/{media_id}", **kwargs)
 
-    def save_product(self, product: MagentoEntity, *, save_options: Optional[bool] = None, log_response: bool = True,
+    def save_product(self, product: MagentoEntity, *, save_options: Optional[bool] = None,
+                     log_response: Optional[bool] = None,
                      **kwargs: Any) -> Product:
         """Save a new product. To update a product, use `update_product`.
 
@@ -965,8 +970,16 @@ class Magento(APISession):
 
         # throw=False so the log is printed before we raise
         resp = self.post_api("/V1/products", json=payload, throw=False, **kwargs)
-        if log_response and self.logger:
-            self.logger.debug("Save product response: %s" % resp.text)
+        if self.logger:
+            if log_response is not None:
+                warnings.warn("The log_response argument is deprecated")
+            else:
+                # Default
+                log_response = True
+
+            if log_response:
+                self.log_debug("Save product response: %s" % resp.text)
+
         raise_for_response(resp)
         saved_product: Product = resp.json()
         return saved_product
@@ -1546,8 +1559,7 @@ class Magento(APISession):
             kwargs.setdefault("params", {})
             kwargs["params"]["fields"] = fields
 
-        if self.logger:
-            self.logger.debug("%s %s" % (method, full_path))
+        self.log_debug("%s %s" % (method, full_path))
         r = super().request_api(method, full_path, *args, throw=False, **kwargs)
         while not r.ok and retry > 0:
             retry -= 1
@@ -1616,8 +1628,8 @@ class Magento(APISession):
             total_count: int = res["total_count"]
 
             for item in items:
-                if self.logger and count and count % 1000 == 0:
-                    self.logger.debug(f"loaded {count} items")
+                if count and count % 1000 == 0:
+                    self.log_debug(f"loaded {count} items")
                 yield item
                 count += 1
                 if count >= total_count:
@@ -1627,3 +1639,7 @@ class Magento(APISession):
                     return
 
             current_page += 1
+
+    def log_debug(self, msg: str, *args, **kwargs) -> None:
+        if self.logger:
+            self.logger.debug(msg, *args, **kwargs)
