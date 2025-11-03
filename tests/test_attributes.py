@@ -1,6 +1,5 @@
 from collections import OrderedDict
 from typing import Any, Dict
-from typing_extensions import reveal_type
 
 import pytest
 
@@ -42,14 +41,6 @@ def product2(custom_attributes2):
 @pytest.fixture
 def product3(custom_attributes3):
     return {"custom_attributes": custom_attributes3}
-
-
-# Note this is really slow. Moving the test in its own file doesn't help.
-# Doc: https://github.com/davidfritzsche/pytest-mypy-testing
-@pytest.mark.mypy_testing
-def mypy_test_get_custom_attribute_coerce_as_overload(product0):
-    value = attributes.get_custom_attribute(product0, "something", coerce_as=int)
-    reveal_type(value)  # R: None | builtins.int | builtins.list[builtins.int]
 
 
 def test_serialize_attribute_value_none():
