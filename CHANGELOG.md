@@ -1,5 +1,16 @@
 # PyMagento Changelog
 
+## 2.9.0
+
+### Breaking changes
+
+* Drop support for Python 3.8
+* Remove the logging implementation
+
+### Other changes
+
+* Add `make_full_path` internal
+
 ## 2.8.1 (2025/11/03)
 
 * `get_paginated`: fix crash when for some reason Magento returns an empty object

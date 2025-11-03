@@ -13,7 +13,7 @@ Features:
 * Transparent pagination: functions that make paginated queries return lazy iterables (generators)
 * Fully typed: all functions have type hints
 * Production-ready: at Bixoto, we use PyMagento in production since 2020
-* Python 3.8+ support
+* Python 3.9+ support
 * MIT license
 
 Note: PyMagento is not affiliated to nor endorsed by Adobe or the Magento team.

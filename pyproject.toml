@@ -21,12 +21,12 @@ keywords = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
-api-session = "^1.4.3"
+python = "^3.9"
+api-session = "^1.5.2"
 # https://github.com/readthedocs/readthedocs.org/issues/4912
 # https://github.com/jacopok/mlgw_bns/commit/50e82ad2e218873d1b3a8732b6cbeb5f692dd14c
-Sphinx = { version = "^4.4.0", optional = true }
-sphinx-rtd-theme = { version = "^1.0.0", optional = true }
+Sphinx = { version = "^5.0", optional = true }
+sphinx-rtd-theme = { version = "^2.0", optional = true }
 typing-extensions = { version = "*", python = "<3.11" }
 
 [tool.poetry.group.dev.dependencies]
@@ -37,7 +37,7 @@ pytest = "^8"
 pytest-mock = "^3.11"
 pytest-cov = "^5.0" # v6 requires Python 3.9
 pytest-mypy-testing = "^0.1.1"
-ruff = "^0.9"
+ruff = "^0"
 
 [tool.poetry.extras]
 docs = ["Sphinx", "sphinx-rtd-theme"]

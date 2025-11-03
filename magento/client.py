@@ -1,7 +1,6 @@
 import time
 import warnings
 from json.decoder import JSONDecodeError
-from logging import Logger
 from os import environ
 from typing import Optional, Sequence, Dict, Union, cast, Iterator, Iterable, List, Literal, Any, Tuple, Set
 
@@ -93,7 +92,6 @@ class Magento(APISession):
                  token: Optional[str] = None,
                  base_url: Optional[str] = None,
                  scope: Optional[str] = None,
-                 logger: Optional[Logger] = None,
                  read_only: bool = False,
                  user_agent: Optional[str] = None,
                  *,
@@ -108,7 +106,6 @@ class Magento(APISession):
         :param scope: API scope. Default on ``PYMAGENTO_SCOPE`` if set, or ``"all"``. Note this scope is mostly useless,
             see https://github.com/magento/magento2/issues/15461#issuecomment-1157935732.
         :param batch_page_size: if set, override the default page size used for batch queries.
-        :param logger: optional logger.
         :param read_only: if True, raise on calls that write data, such as `POST`, `PUT`, `DELETE`.
         :param user_agent: User-Agent
         """
@@ -127,11 +124,7 @@ class Magento(APISession):
         if batch_page_size is not None:
             self.PAGE_SIZE = batch_page_size
 
-        if logger is not None:
-            warnings.warn("The logger argument is deprecated. Make a subclass to set it.")
-
         self.scope = scope
-        self.logger = logger
         self.headers["Authorization"] = f"Bearer {token}"
 
     # Addresses
@@ -277,7 +270,7 @@ class Magento(APISession):
                     ("path", path_prefix, "eq"),
                 ]])
 
-        return cast(Iterator[Category], self.get_paginated("/V1/categories/list", query=query, limit=limit, **kwargs))
+        return self.get_paginated("/V1/categories/list", query=query, limit=limit, **kwargs)
 
     def get_category(self, category_id: PathId, **kwargs: Any) -> Optional[Category]:
         """Return a category given its id."""
@@ -955,33 +948,22 @@ class Magento(APISession):
         return self.delete_json_api(f"/V1/products/{escape_path(sku)}/media/{media_id}", **kwargs)
 
     def save_product(self, product: MagentoEntity, *, save_options: Optional[bool] = None,
-                     log_response: Optional[bool] = None,
                      **kwargs: Any) -> Product:
         """Save a new product. To update a product, use `update_product`.
 
         :param product: product to save (can be partial).
         :param save_options: set the `saveOptions` attribute.
-        :param log_response: log the Magento response
         :return:
         """
         payload: MagentoEntity = {"product": product}
         if save_options is not None:
             payload["saveOptions"] = save_options
 
-        # throw=False so the log is printed before we raise
-        resp = self.post_api("/V1/products", json=payload, throw=False, **kwargs)
-        if self.logger:
-            if log_response is not None:
-                warnings.warn("The log_response argument is deprecated")
-            else:
-                # Default
-                log_response = True
+        if "log_response" in kwargs:
+            warnings.warn("`log_response` has been deprecated and is now ignored", DeprecationWarning)
+            del kwargs["log_response"]
 
-            if log_response:
-                self.log_debug("Save product response: %s" % resp.text)
-
-        raise_for_response(resp)
-        saved_product: Product = resp.json()
+        saved_product: Product = self.post_json_api("/V1/products", json=payload, **kwargs)
         return saved_product
 
     def update_product(self, sku: Sku, product: MagentoEntity, *, save_options: Optional[bool] = None,
@@ -1518,6 +1500,27 @@ class Magento(APISession):
     # Internals
     # =========
 
+    def make_full_path(self, path: str,
+                       async_bulk: bool = False,
+                       scope: Optional[str] = None) -> str:
+        """Expand an API path."""
+        assert path.startswith("/V1/")
+
+        full_path = "/rest"
+
+        if scope is None:
+            scope = self.scope
+
+        if scope != "default":
+            full_path += f"/{scope}"
+
+        if async_bulk:
+            full_path += "/async/bulk"
+
+        full_path += path
+
+        return full_path
+
     def request_api(self, method: str, path: str, *args: Any,  # type: ignore[override]
                     async_bulk: bool = False,
                     throw: bool = False,
@@ -1540,20 +1543,7 @@ class Magento(APISession):
         :param kwargs: keyword arguments passed to ``.request()``
         :return:
         """
-        assert path.startswith("/V1/")
-
-        full_path = "/rest"
-
-        if scope is None:
-            scope = self.scope
-
-        if scope != "default":
-            full_path += f"/{scope}"
-
-        if async_bulk:
-            full_path += "/async/bulk"
-
-        full_path += path
+        full_path = self.make_full_path(path, async_bulk=async_bulk, scope=scope)
 
         if fields is not None:
             kwargs.setdefault("params", {})
@@ -1640,6 +1630,6 @@ class Magento(APISession):
 
             current_page += 1
 
-    def log_debug(self, msg: str, *args, **kwargs) -> None:
-        if self.logger:
-            self.logger.debug(msg, *args, **kwargs)
+    def log_debug(self, msg: str, *args: Any, **kwargs: Any) -> None:
+        """Log a message. Subclasses can implement this for debug logs."""
+        pass

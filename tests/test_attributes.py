@@ -49,7 +49,7 @@ def product3(custom_attributes3):
 @pytest.mark.mypy_testing
 def mypy_test_get_custom_attribute_coerce_as_overload(product0):
     value = attributes.get_custom_attribute(product0, "something", coerce_as=int)
-    reveal_type(value)  # R: Union[None, builtins.int, builtins.list[builtins.int]]
+    reveal_type(value)  # R: None | builtins.int | builtins.list[builtins.int]
 
 
 def test_serialize_attribute_value_none():
