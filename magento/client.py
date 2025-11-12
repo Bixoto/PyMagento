@@ -1010,7 +1010,8 @@ class Magento(APISession):
 
         # "Will returned True if deleted"
         # https://magento.redoc.ly/2.3.6-admin/tag/productssku#operation/catalogProductRepositoryV1DeleteByIdDelete
-        return cast(bool, response.json())
+        ok: bool = response.json()
+        return ok
 
     def async_update_products(self, product_updates: Iterable[MagentoEntity], **kwargs: Any) -> MagentoEntity:
         """Update multiple products using the async bulk API.
