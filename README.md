@@ -33,6 +33,7 @@ Note: PyMagento is not affiliated to nor endorsed by Adobe or the Magento team.
 ```python
 import magento
 
+# To get a token, create an integration and copy the "Access Token"
 client = magento.Magento(base_url="...", token="...", scope="all")
 
 product = client.get_product("SKU123")
