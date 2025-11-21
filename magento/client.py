@@ -1227,7 +1227,7 @@ class Magento(APISession):
         """
         response = self.post_api(f"/V1/order/{order_id}/ship", json=payload, throw=True,
                                  **kwargs)
-        # The documentation says this is an int, but in practice it’s an int as string
+        # The documentation says this key is an int, but in JSON it’s a string
         body: Union[str, Dict[str, Any]] = response.json()
 
         if isinstance(body, dict):
