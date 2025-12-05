@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## 2.11.0 (unreleased)
+
+* `ProductLink` is now a `TypedDict`
+
 ## 2.10.1 (2025/11/03)
 
 * Don’t try to retrieve the last item ID when `id_pagination` is not set

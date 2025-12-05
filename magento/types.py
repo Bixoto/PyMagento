@@ -41,7 +41,6 @@ Category = MagentoEntity
 Customer = MagentoEntity
 MediaEntry = MagentoEntity
 Order = MagentoEntity
-ProductLink = MagentoEntity
 
 
 class WithExtensionAttributesDict(TypedDict):
@@ -60,6 +59,14 @@ class CustomAttributeDict(TypedDict):
 
 # Products
 # ========
+
+class ProductLink(WithExtensionAttributesDict):
+    sku: str
+    link_type: str
+    linked_product_sku: str
+    linked_product_type: str
+    position: int
+
 
 class Product(WithExtensionAttributesDict):
     """A product."""
