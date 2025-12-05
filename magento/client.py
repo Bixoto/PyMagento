@@ -314,8 +314,8 @@ class Magento(APISession):
 
     def create_category(self, category: Union[Category, Dict[str, Any]], **kwargs: Any) -> Category:
         """Create a new category and return it."""
-        category = self.post_json_api("/V1/categories", json={"category": category}, **kwargs)
-        return category
+        created_category: Category = self.post_json_api("/V1/categories", json={"category": category}, **kwargs)
+        return created_category
 
     def remove_category(self, category_id: PathId, **kwargs: Any) -> bool:
         """Remove a category.

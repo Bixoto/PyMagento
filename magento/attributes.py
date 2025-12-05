@@ -3,7 +3,7 @@ from collections import OrderedDict
 from typing import Callable, Optional, cast, Union, List, Tuple, Iterable, OrderedDict as OrderedDictType, overload, \
     TypeVar, Any
 
-from .types import MagentoEntity, CustomAttributeDict, Product
+from .types import MagentoEntity, CustomAttributeDict, Product, Customer, Category
 
 T = TypeVar('T')
 
