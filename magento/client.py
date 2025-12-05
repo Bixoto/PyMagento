@@ -273,7 +273,8 @@ class Magento(APISession):
                     ("path", path_prefix, "eq"),
                 ]])
 
-        return self.get_paginated("/V1/categories/list", query=query, limit=limit, **kwargs)
+        # noinspection PyInvalidCast
+        return cast(Iterator[Category], self.get_paginated("/V1/categories/list", query=query, limit=limit, **kwargs))
 
     def get_category(self, category_id: PathId, **kwargs: Any) -> Optional[Category]:
         """Return a category given its id."""
@@ -512,7 +513,8 @@ class Magento(APISession):
 
     def get_customers(self, *, query: Query = None, limit: int = -1, **kwargs: Any) -> Iterator[Customer]:
         """Get all customers (generator)."""
-        return self.get_paginated("/V1/customers/search", query=query, limit=limit, **kwargs)
+        # noinspection PyInvalidCast
+        return cast(Iterator[Customer], self.get_paginated("/V1/customers/search", query=query, limit=limit, **kwargs))
 
     def get_customer(self, customer_id: Union[int, Literal["me"]], *,
                      none_on_404: bool = False,

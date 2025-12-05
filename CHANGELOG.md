@@ -5,7 +5,7 @@
 ### Breaking changes
 
 * `MediaEntry` is now named `MediaGalleryEntry`
-* `AttributeOption`, `MediaGalleryEntry` and `ProductLink` are now `TypedDict`s
+* `AttributeOption`, `Category`, `Customer`, `MediaGalleryEntry` and `ProductLink` are now `TypedDict`s
 
 ## 2.10.1 (2025/11/03)
 
