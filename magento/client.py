@@ -299,7 +299,8 @@ class Magento(APISession):
 
         return None
 
-    def update_category(self, category_id: PathId, category_data: Category, **kwargs: Any) -> Category:
+    def update_category(self, category_id: PathId, category_data: Union[Category, Dict[str, Any]],
+                        **kwargs: Any) -> Category:
         """Update a category.
 
         :param category_id:
@@ -311,7 +312,7 @@ class Magento(APISession):
                                                **kwargs)
         return category
 
-    def create_category(self, category: Category, **kwargs: Any) -> Category:
+    def create_category(self, category: Union[Category, Dict[str, Any]], **kwargs: Any) -> Category:
         """Create a new category and return it."""
         category = self.post_json_api("/V1/categories", json={"category": category}, **kwargs)
         return category
@@ -939,7 +940,7 @@ class Magento(APISession):
         entry: MediaGalleryEntry = self.get_json_api(f"/V1/products/{escape_path(sku)}/media/{media_id}", **kwargs)
         return entry
 
-    def save_product_media(self, sku: Sku, media_entry: MediaGalleryEntry, **kwargs: Any) -> Any:
+    def save_product_media(self, sku: Sku, media_entry: Union[MediaGalleryEntry, Dict[str, Any]], **kwargs: Any) -> Any:
         """Save a product media."""
         return self.post_json_api(f"/V1/products/{escape_path(sku)}/media", json={"entry": media_entry}, **kwargs)
 

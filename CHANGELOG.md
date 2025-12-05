@@ -1,5 +1,12 @@
 # PyMagento Changelog
 
+## 2.11.1 (2025/12/05)
+
+* `get_custom_attribute` and similar functions now accept the new typed dicts `Category` and `Customer` introduced in
+  the previous release
+* `update_category` and `create_category` now accept both a `Category` or a plain dict
+* `save_product_media` now accepts both a `MediaGalleryEntry` or a plain dict
+
 ## 2.11.0 (2025/12/05)
 
 ### Breaking changes

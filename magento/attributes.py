@@ -7,7 +7,7 @@ from .types import MagentoEntity, CustomAttributeDict, Product
 
 T = TypeVar('T')
 
-Item = TypeVar('Item', bound=Union[Product, MagentoEntity])
+Item = TypeVar('Item', bound=Union[Category, Customer, Product, MagentoEntity])
 
 # From Magento
 CATEGORY_ENTITY_TYPE_ID = 3
