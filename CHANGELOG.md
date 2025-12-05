@@ -2,7 +2,7 @@
 
 ## 2.11.0 (unreleased)
 
-* `ProductLink` is now a `TypedDict`
+* `AttributeOption` and `ProductLink` are now `TypedDict`s
 
 ## 2.10.1 (2025/11/03)
 

@@ -36,7 +36,6 @@ PathId = Union[int, str]
 Sku = str
 
 # TODO: proper types
-AttributeOption = MagentoEntity
 Category = MagentoEntity
 Customer = MagentoEntity
 MediaEntry = MagentoEntity
@@ -55,6 +54,21 @@ class CustomAttributeDict(TypedDict):
     """A string value or a list of strings. This can be ``None`` to delete a custom attribute,
     but it will never be ``None`` in a Magento response.
     """
+
+
+class AttributeStoreLabel(TypedDict):
+    """A store label for a select attribute."""
+    store_id: int
+    label: str
+
+
+class AttributeOption(TypedDict):
+    """Option for a select attribute."""
+    label: str
+    value: str
+    sort_order: NotRequired[int]
+    is_default: NotRequired[bool]
+    store_labels: NotRequired[List[AttributeStoreLabel]]
 
 
 # Products
