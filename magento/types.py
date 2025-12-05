@@ -10,6 +10,7 @@ else:
     from typing_extensions import NotRequired
 
 __all__ = (
+    'AttributeStoreLabel',
     'AttributeOption',
     'BasePrice',
     'Category',
@@ -17,7 +18,8 @@ __all__ = (
     'CustomAttributeDict',
     'DeleteCouponsResponseDict',
     'MagentoEntity',
-    'MediaEntry',
+    'MediaGalleryEntry',
+    'MediaGalleryEntryContent',
     'Order',
     'PathId',
     'ErrorDict',
@@ -38,7 +40,6 @@ Sku = str
 # TODO: proper types
 Category = MagentoEntity
 Customer = MagentoEntity
-MediaEntry = MagentoEntity
 Order = MagentoEntity
 
 
@@ -74,7 +75,27 @@ class AttributeOption(TypedDict):
 # Products
 # ========
 
+class MediaGalleryEntryContent(TypedDict):
+    """Content of a media gallery entry."""
+    base64_encoded_data: str
+    type: str
+    name: str
+
+
+class MediaGalleryEntry(WithExtensionAttributesDict):
+    """A media gallery entry."""
+    id: NotRequired[int]
+    media_type: str
+    label: str
+    position: int
+    disabled: bool
+    types: List[str]
+    file: str
+    content: MediaGalleryEntryContent
+
+
 class ProductLink(WithExtensionAttributesDict):
+    """A product link."""
     sku: str
     link_type: str
     linked_product_sku: str
@@ -92,7 +113,7 @@ class Product(WithExtensionAttributesDict):
     created_at: str
     updated_at: str
     custom_attributes: List[CustomAttributeDict]
-    media_gallery_entries: List[MediaEntry]
+    media_gallery_entries: List[MediaGalleryEntry]
     options: List[Any]
     price: float
     product_links: List[ProductLink]

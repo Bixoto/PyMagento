@@ -11,7 +11,7 @@ from requests.exceptions import HTTPError
 from .attributes import CATALOG_PRODUCT_ENTITY_TYPE_ID
 from .exceptions import MagentoException, MagentoAssertionError
 from .queries import Query, make_search_query, make_field_value_query
-from .types import Product, SourceItem, Sku, Category, MediaEntry, MagentoEntity, Order, PathId, Customer, \
+from .types import Product, SourceItem, Sku, Category, MediaGalleryEntry, MagentoEntity, Order, PathId, Customer, \
     SourceItemIn, BasePrice, DeleteCouponsResponseDict, PriceUpdateResultDict, AttributeOption
 from .version import __version__
 
@@ -918,26 +918,26 @@ class Magento(APISession):
             return products[0]
         raise MagentoAssertionError("Got more than one product for query %r" % query)
 
-    def get_product_medias(self, sku: Sku, **kwargs: Any) -> List[MediaEntry]:
+    def get_product_medias(self, sku: Sku, **kwargs: Any) -> List[MediaGalleryEntry]:
         """Get the list of gallery entries associated with the given product.
 
         :param sku: SKU of the product.
         :return:
         """
-        entries: List[MediaEntry] = self.get_json_api(f"/V1/products/{escape_path(sku)}/media", **kwargs)
+        entries: List[MediaGalleryEntry] = self.get_json_api(f"/V1/products/{escape_path(sku)}/media", **kwargs)
         return entries
 
-    def get_product_media(self, sku: Sku, media_id: PathId, **kwargs: Any) -> MediaEntry:
+    def get_product_media(self, sku: Sku, media_id: PathId, **kwargs: Any) -> MediaGalleryEntry:
         """Return a gallery entry.
 
         :param sku: SKU of the product.
         :param media_id:
         :return:
         """
-        entry: MediaEntry = self.get_json_api(f"/V1/products/{escape_path(sku)}/media/{media_id}", **kwargs)
+        entry: MediaGalleryEntry = self.get_json_api(f"/V1/products/{escape_path(sku)}/media/{media_id}", **kwargs)
         return entry
 
-    def save_product_media(self, sku: Sku, media_entry: MediaEntry, **kwargs: Any) -> Any:
+    def save_product_media(self, sku: Sku, media_entry: MediaGalleryEntry, **kwargs: Any) -> Any:
         """Save a product media."""
         return self.post_json_api(f"/V1/products/{escape_path(sku)}/media", json={"entry": media_entry}, **kwargs)
 
