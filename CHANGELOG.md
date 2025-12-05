@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## 2.11.1 (2025/12/05)
+## 2.11.2 (2025/12/05)
 
 * `get_custom_attribute` and similar functions now accept the new typed dicts `Category` and `Customer` introduced in
   the previous release
