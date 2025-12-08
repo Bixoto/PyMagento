@@ -12,7 +12,8 @@ from .attributes import CATALOG_PRODUCT_ENTITY_TYPE_ID
 from .exceptions import MagentoException, MagentoAssertionError
 from .queries import Query, make_search_query, make_field_value_query
 from .types import Product, SourceItem, Sku, Category, MediaGalleryEntry, MagentoEntity, Order, PathId, Customer, \
-    SourceItemIn, BasePrice, DeleteCouponsResponseDict, PriceUpdateResultDict, AttributeOption
+    SourceItemIn, BasePrice, DeleteCouponsResponseDict, PriceUpdateResultDict, AttributeOption, StockItem, Cart, \
+    OrderItem, StockStatus, Attribute, AttributeSet, CategoryProduct
 from .version import __version__
 
 __all__ = (
@@ -152,15 +153,16 @@ class Magento(APISession):
     # Attributes
     # ==========
 
-    def save_attribute(self, attribute: MagentoEntity, *, with_defaults: bool = True, **kwargs: Any) -> MagentoEntity:
+    def save_attribute(self, attribute: MagentoEntity, *, with_defaults: bool = True, **kwargs: Any) \
+            -> Attribute:
         """Save an attribute."""
         if with_defaults:
             base = DEFAULT_ATTRIBUTE_DICT.copy()
             base.update(attribute)
             attribute = base
 
-        attribute = self.post_json_api("/V1/products/attributes", json={"attribute": attribute},
-                                       **kwargs)
+        attribute: Attribute = self.post_json_api("/V1/products/attributes", json={"attribute": attribute},
+                                                  **kwargs)
         return attribute
 
     def delete_attribute(self, attribute_code: str, **kwargs: Any) -> bool:
@@ -171,13 +173,13 @@ class Magento(APISession):
     # Attribute Sets
     # ==============
 
-    def get_attribute_sets(self, query: Query = None, limit: int = -1, **kwargs: Any) -> Iterator[MagentoEntity]:
+    def get_attribute_sets(self, query: Query = None, limit: int = -1, **kwargs: Any) -> Iterator[AttributeSet]:
         """Get all attribute sets (generator)."""
         return self.get_paginated("/V1/eav/attribute-sets/list", query=query, limit=limit, **kwargs)
 
-    def get_attribute_set_attributes(self, attribute_set_id: int, **kwargs: Any) -> List[MagentoEntity]:
+    def get_attribute_set_attributes(self, attribute_set_id: int, **kwargs: Any) -> List[Attribute]:
         """Get all attributes for the given attribute set id."""
-        attributes: List[MagentoEntity] = self.get_json_api(
+        attributes: List[Attribute] = self.get_json_api(
             f"/V1/products/attribute-sets/{escape_path(attribute_set_id)}/attributes",
             **kwargs)
         return attributes
@@ -240,14 +242,14 @@ class Magento(APISession):
     # Carts
     # =====
 
-    def get_cart(self, cart_id: PathId, **kwargs: Any) -> MagentoEntity:
+    def get_cart(self, cart_id: PathId, **kwargs: Any) -> Cart:
         """Get a cart."""
-        cart: MagentoEntity = self.get_json_api(f"/V1/carts/{escape_path(cart_id)}", **kwargs)
+        cart: Cart = self.get_json_api(f"/V1/carts/{escape_path(cart_id)}", **kwargs)
         return cart
 
-    def get_carts(self, *, query: Query = None, limit: int = -1, **kwargs: Any) -> Iterator[MagentoEntity]:
+    def get_carts(self, *, query: Query = None, limit: int = -1, **kwargs: Any) -> Iterator[Cart]:
         """Get all carts (generator)."""
-        return self.get_paginated("/V1/carts/search", query=query, limit=limit, **kwargs)
+        return cast(Iterator[Cart], self.get_paginated("/V1/carts/search", query=query, limit=limit, **kwargs))
 
     # Categories
     # ==========
@@ -353,7 +355,7 @@ class Magento(APISession):
     # Category products
     # -----------------
 
-    def get_category_products(self, category_id: PathId, **kwargs: Any) -> List[MagentoEntity]:
+    def get_category_products(self, category_id: PathId, **kwargs: Any) -> List[CategoryProduct]:
         """Get products assigned to a category.
 
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/categoriescategoryIdproducts#operation/GetV1CategoriesCategoryIdProducts
@@ -362,8 +364,8 @@ class Magento(APISession):
 
             {'sku': 'MYSKU123', 'position': 2, 'category_id': '17'}
         """
-        products: List[MagentoEntity] = self.get_json_api(f"/V1/categories/{escape_path(category_id)}/products",
-                                                          **kwargs)
+        products: List[CategoryProduct] = self.get_json_api(f"/V1/categories/{escape_path(category_id)}/products",
+                                                            **kwargs)
         return products
 
     def add_product_to_category(self, category_id: PathId, product_link: MagentoEntity, **kwargs: Any) -> bool:
@@ -640,7 +642,9 @@ class Magento(APISession):
         if status is not None:
             query = make_field_value_query("status", status, condition_type=status_condition_type)
 
-        return self.get_paginated("/V1/orders", query=query, limit=limit, retry=retry, **kwargs)
+        # noinspection PyInvalidCast
+        return cast(Iterator[Order],
+                    self.get_paginated("/V1/orders", query=query, limit=limit, retry=retry, **kwargs))
 
     def get_last_orders(self, limit: int = 10) -> List[Order]:
         """Return a list of the last orders (default: 10)."""
@@ -657,13 +661,13 @@ class Magento(APISession):
             for order in self.get_orders(query=query)
         }
 
-    def get_order_item(self, order_item_id: int, **kwargs: Any) -> MagentoEntity:
+    def get_order_item(self, order_item_id: int, **kwargs: Any) -> OrderItem:
         """Return a single order item."""
-        order_item: MagentoEntity = self.get_json_api(f"/V1/orders/items/{escape_path(order_item_id)}", **kwargs)
+        order_item: OrderItem = self.get_json_api(f"/V1/orders/items/{escape_path(order_item_id)}", **kwargs)
         return order_item
 
     def get_orders_items(self, *, sku: Optional[str] = None, query: Query = None, limit: int = -1, **kwargs: Any) \
-            -> Iterator[MagentoEntity]:
+            -> Iterator[OrderItem]:
         """Return orders items.
 
         :param sku: filter orders items on SKU. This is a shortcut for ``query=make_field_value_query("sku", sku)``.
@@ -674,7 +678,9 @@ class Magento(APISession):
         if query is None and sku is not None:
             query = make_field_value_query("sku", sku)
 
-        return self.get_paginated("/V1/orders/items", query=query, limit=limit, **kwargs)
+        # noinspection PyInvalidCast
+        return cast(Iterator[OrderItem],
+                    self.get_paginated("/V1/orders/items", query=query, limit=limit, **kwargs))
 
     def get_order(self, order_id: Union[str, int], *,
                   none_on_404: bool = False,
@@ -710,13 +716,14 @@ class Magento(APISession):
         ok: bool = self.post_json_api(f"/V1/orders/{escape_path(order_id)}/unhold", **kwargs)
         return ok
 
-    def save_order(self, order: Order, **kwargs: Any) -> MagentoEntity:
+    def save_order(self, order: Union[Order, Dict[str, Any]], **kwargs: Any) -> Order:
         """Save an order."""
-        saved_order: MagentoEntity = self.post_json_api("/V1/orders", json={"entity": order}, **kwargs)
+        saved_order: Order = self.post_json_api("/V1/orders", json={"entity": order}, **kwargs)
         return saved_order
 
-    def set_order_status(self, order: Order, status: str, *, external_order_id: Optional[str] = None,
-                         **kwargs: Any) -> MagentoEntity:
+    def set_order_status(self, order: Union[Order, Dict[str, Any]], status: str, *,
+                         external_order_id: Optional[str] = None,
+                         **kwargs: Any) -> Order:
         """Change the status of an order, and optionally set its ``ext_order_id``. This is a convenient wrapper around
         ``save_order``.
         Note it does not check if orders are on hold before, and may result in invalid states where an order has a state
@@ -770,15 +777,16 @@ class Magento(APISession):
         return prices
 
     def save_base_prices(self, prices: Sequence[BasePrice], **kwargs: Any) -> List[PriceUpdateResultDict]:
+        # noinspection PyTypeChecker
         """Save base prices.
 
-        Example:
+                Example:
 
-            >>> self.save_base_prices([{"price": 3.14, "sku": "W1033", "store_id": 0}])
+                    >>> self.save_base_prices([{"price": 3.14, "sku": "W1033", "store_id": 0}])
 
-        :param prices: base prices to save.
-        :return: a list of errors (if any)
-        """
+                :param prices: base prices to save.
+                :return: a list of errors (if any)
+                """
         saved_prices: List[PriceUpdateResultDict] = self.post_json_api("/V1/products/base-prices",
                                                                        json={"prices": prices}, **kwargs)
         return saved_prices
@@ -1033,12 +1041,12 @@ class Magento(APISession):
         return res
 
     def get_product_stock_item(self, sku: Sku, *, none_on_404: bool = False, none_on_empty: bool = False,
-                               **kwargs: Any) -> MagentoEntity:
+                               **kwargs: Any) -> StockItem:
         """Get the stock item for an SKU."""
-        stock_item: MagentoEntity = self.get_json_api(f"/V1/stockItems/{escape_path(sku)}",
-                                                      none_on_404=none_on_404,
-                                                      none_on_empty=none_on_empty,
-                                                      **kwargs)
+        stock_item: StockItem = self.get_json_api(f"/V1/stockItems/{escape_path(sku)}",
+                                                  none_on_404=none_on_404,
+                                                  none_on_empty=none_on_empty,
+                                                  **kwargs)
         return stock_item
 
     def update_product_stock_item(self, sku: Sku, stock_item_id: int, stock_item: MagentoEntity, **kwargs: Any) -> int:
@@ -1076,13 +1084,13 @@ class Magento(APISession):
         }, **kwargs)
 
     def get_product_stock_status(self, sku: Sku, none_on_404: bool = False, none_on_empty: bool = False,
-                                 **kwargs: Any) -> MagentoEntity:
+                                 **kwargs: Any) -> StockStatus:
         """Get stock status for an SKU."""
-        ret: MagentoEntity = self.get_json_api(f"/V1/stockStatuses/{escape_path(sku)}",
-                                               none_on_404=none_on_404,
-                                               none_on_empty=none_on_empty,
-                                               **kwargs)
-        return ret
+        stock_status: StockStatus = self.get_json_api(f"/V1/stockStatuses/{escape_path(sku)}",
+                                                      none_on_404=none_on_404,
+                                                      none_on_empty=none_on_empty,
+                                                      **kwargs)
+        return stock_status
 
     def link_child_product(self, parent_sku: Sku, child_sku: Sku, **kwargs: Any) -> bool:
         """Link two products, one as the parent of the other.

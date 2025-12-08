@@ -10,10 +10,14 @@ else:
     from typing_extensions import NotRequired
 
 __all__ = (
+    'Attribute',
+    'AttributeSet',
     'AttributeStoreLabel',
     'AttributeOption',
     'BasePrice',
+    'Cart',
     'Category',
+    'CategoryProduct',
     'Customer',
     'CustomAttributeDict',
     'DeleteCouponsResponseDict',
@@ -21,14 +25,18 @@ __all__ = (
     'MediaGalleryEntry',
     'MediaGalleryEntryContent',
     'Order',
+    'OrderItem',
+    'OrderStatusHistory',
     'PathId',
     'ErrorDict',
     'PriceUpdateResultDict',
     'Product',
-    'ShippingAddress',
+    'Address',
     'Sku',
     'SourceItem',
     'SourceItemIn',
+    'StockItem',
+    'StockStatus',
     'WithExtensionAttributesDict',
 )
 
@@ -36,6 +44,13 @@ MagentoEntity = JSONDict
 
 PathId = Union[int, str]
 Sku = str
+
+# TODO: proper typing
+Attribute = MagentoEntity
+AttributeSet = MagentoEntity
+Cart = MagentoEntity
+StockItem = MagentoEntity
+StockStatus = MagentoEntity
 
 
 class WithExtensionAttributesDict(TypedDict):
@@ -138,6 +153,12 @@ class Category(WithExtensionAttributesDict):
     custom_attributes: List[CustomAttributeDict]
 
 
+class CategoryProduct(TypedDict):
+    sku: str
+    position: int
+    category_id: str
+
+
 # Source items
 # ============
 # See https://developer.adobe.com/commerce/webapi/rest/inventory/manage-source-items/
@@ -171,9 +192,9 @@ class BasePrice(TypedDict):
 # Orders
 # ======
 
-class ShippingAddress(TypedDict):
-    """Shipping address dict."""
-    address_type: Literal["shipping"]
+class Address(TypedDict):
+    """Billing and/or shipping address dict."""
+    address_type: Literal["billing", "shipping"]
     entity_id: int
     parent_id: int
     firstname: str
@@ -188,10 +209,237 @@ class ShippingAddress(TypedDict):
     country_id: str
     telephone: str
     company: NotRequired[str]
+    vat_id: NotRequired[str]
 
 
-# TODO: proper TypedDict
-Order = MagentoEntity
+class OrderItem(WithExtensionAttributesDict):
+    # Field based on a sample of 200k real-world order items
+
+    item_id: int
+    order_id: int
+    product_id: int
+    quote_item_id: int
+    store_id: int
+    sku: Sku
+    name: str
+    product_type: str
+    created_at: str
+    updated_at: str
+    parent_item_id: NotRequired[int]
+    parent_item: NotRequired["OrderItem"]
+    applied_rule_ids: NotRequired[str]
+
+    # Monetary amounts
+    amount_refunded: float
+    base_amount_refunded: float
+    base_discount_amount: float
+    base_discount_tax_compensation_amount: NotRequired[float]
+    base_original_price: NotRequired[float]
+    base_price: float
+    base_price_incl_tax: NotRequired[float]
+    base_row_invoiced: float
+    base_row_total: float
+    base_row_total_incl_tax: float
+    base_tax_amount: float
+    base_tax_invoiced: float
+    discount_amount: float
+    discount_invoiced: float
+    discount_tax_compensation_amount: NotRequired[float]
+    discount_tax_compensation_invoiced: NotRequired[float]
+    original_price: float
+    price: float
+    price_incl_tax: NotRequired[float]
+    row_invoiced: float
+    row_total: float
+    row_total_incl_tax: float
+    tax_amount: float
+    tax_invoiced: NotRequired[float]
+    base_discount_invoiced: NotRequired[float]
+    base_discount_tax_compensation_invoiced: NotRequired[float]
+    discount_tax_compensation_canceled: NotRequired[float]
+    tax_canceled: NotRequired[float]
+    discount_refunded: NotRequired[float]
+    tax_refunded: NotRequired[float]
+    base_discount_tax_compensation_refunded: NotRequired[float]
+    base_discount_refunded: NotRequired[float]
+    discount_tax_compensation_refunded: NotRequired[float]
+    base_tax_refunded: NotRequired[float]
+
+    discount_percent: float
+    free_shipping: int
+    is_qty_decimal: int
+    is_virtual: int
+    no_discount: int
+    tax_percent: float
+
+    locked_do_invoice: NotRequired[int]
+    locked_do_ship: NotRequired[int]
+    product_option: NotRequired[MagentoEntity]
+
+    # Quantities
+    qty_canceled: float
+    qty_invoiced: float
+    qty_ordered: float
+    qty_refunded: float
+    qty_shipped: float
+
+    # Weight
+    row_weight: float
+    weight: NotRequired[float]
+
+    # Misc
+    weee_tax_applied: NotRequired[str]
+
+
+class OrderStatusHistory(TypedDict):
+    comment: Union[str, None]
+    created_at: str
+    entity_id: int
+    entity_name: str
+    is_customer_notified: Union[str, None]
+    is_visible_on_front: int
+    parent_id: int
+    status: str
+
+
+class Order(WithExtensionAttributesDict):
+    # Field based on a sample of 100k real-world orders
+
+    billing_address_id: int
+    created_at: str
+    email_sent: NotRequired[int]
+    entity_id: int
+    increment_id: str
+    is_virtual: int
+    protect_code: str
+    quote_id: int
+    remote_ip: NotRequired[str]
+    x_forwarded_for: NotRequired[str]
+    store_id: int
+    store_name: str
+    total_item_count: int
+    total_qty_ordered: float
+    updated_at: str
+    weight: float
+
+    ext_order_id: NotRequired[str]
+
+    state: str
+    status: str
+
+    hold_before_status: NotRequired[Union[str, None]]
+    hold_before_state: NotRequired[Union[str, None]]
+
+    adjustment_negative: NotRequired[float]
+    adjustment_positive: NotRequired[float]
+    applied_rule_ids: NotRequired[str]
+    base_adjustment_negative: NotRequired[float]
+    base_adjustment_positive: NotRequired[float]
+    base_currency_code: str
+    base_discount_amount: float
+    base_discount_canceled: NotRequired[float]
+    base_discount_invoiced: NotRequired[float]
+    base_discount_refunded: NotRequired[float]
+    base_discount_tax_compensation_amount: float
+    base_discount_tax_compensation_invoiced: NotRequired[float]
+    base_discount_tax_compensation_refunded: NotRequired[float]
+    base_grand_total: float
+    base_shipping_amount: float
+    base_shipping_canceled: NotRequired[float]
+    base_shipping_discount_amount: float
+    base_shipping_discount_tax_compensation_amnt: NotRequired[float]
+    base_shipping_incl_tax: float
+    base_shipping_invoiced: NotRequired[float]
+    base_shipping_refunded: NotRequired[float]
+    base_shipping_tax_amount: float
+    base_shipping_tax_refunded: NotRequired[float]
+    base_subtotal: float
+    base_subtotal_canceled: NotRequired[float]
+    base_subtotal_incl_tax: NotRequired[float]
+    base_subtotal_invoiced: NotRequired[float]
+    base_subtotal_refunded: NotRequired[float]
+    base_subtotal_refunded: NotRequired[float]
+    base_tax_amount: float
+    base_tax_canceled: NotRequired[float]
+    base_tax_invoiced: NotRequired[float]
+    base_tax_refunded: NotRequired[float]
+    base_to_global_rate: float
+    base_to_order_rate: float
+    base_total_canceled: NotRequired[float]
+    base_total_due: float
+    base_total_invoiced: NotRequired[float]
+    base_total_invoiced_cost: NotRequired[float]
+    base_total_offline_refunded: NotRequired[float]
+    base_total_online_refunded: NotRequired[float]
+    base_total_paid: NotRequired[float]
+    base_total_refunded: NotRequired[float]
+    discount_amount: float
+    discount_canceled: NotRequired[float]
+    discount_invoiced: NotRequired[float]
+    discount_refunded: NotRequired[float]
+    discount_tax_compensation_amount: float
+    discount_tax_compensation_invoiced: NotRequired[float]
+    discount_tax_compensation_refunded: NotRequired[float]
+    global_currency_code: str
+    grand_total: float
+    order_currency_code: str
+    shipping_amount: float
+    shipping_canceled: NotRequired[float]
+    shipping_discount_amount: float
+    shipping_discount_tax_compensation_amount: float
+    shipping_incl_tax: float
+    shipping_invoiced: NotRequired[float]
+    shipping_refunded: NotRequired[float]
+    shipping_tax_amount: float
+    shipping_tax_refunded: NotRequired[float]
+    store_currency_code: str
+    store_to_base_rate: float
+    store_to_order_rate: float
+    subtotal: float
+    subtotal_canceled: NotRequired[float]
+    subtotal_incl_tax: float
+    subtotal_invoiced: NotRequired[float]
+    subtotal_refunded: NotRequired[float]
+    tax_amount: float
+    tax_canceled: NotRequired[float]
+    tax_invoiced: NotRequired[float]
+    tax_refunded: NotRequired[float]
+    total_canceled: NotRequired[float]
+    total_due: float
+    total_invoiced: NotRequired[float]
+    total_offline_refunded: NotRequired[float]
+    total_online_refunded: NotRequired[float]
+    total_paid: NotRequired[float]
+    total_refunded: NotRequired[float]
+
+    coupon_code: NotRequired[str]
+    discount_description: NotRequired[str]
+
+    # Customer information
+    customer_email: str
+    customer_firstname: NotRequired[str]
+    customer_gender: NotRequired[int]
+    customer_group_id: NotRequired[int]
+    customer_id: NotRequired[int]
+    customer_is_guest: int
+    customer_lastname: NotRequired[str]
+    customer_note_notify: int
+    customer_taxvat: NotRequired[str]
+
+    shipping_description: str
+
+    relation_parent_id: NotRequired[str]
+    original_increment_id: NotRequired[str]
+    edit_increment: NotRequired[int]
+    relation_parent_real_id: NotRequired[str]
+    relation_child_real_id: NotRequired[str]
+    relation_child_id: NotRequired[str]
+
+    # Nested objects
+    billing_address: Address
+    items: list[OrderItem]
+    payment: MagentoEntity
+    status_histories: list[OrderStatusHistory]
 
 
 # Customers
@@ -219,7 +467,7 @@ class Customer(WithExtensionAttributesDict):
     store_id: NotRequired[int]
     taxvat: NotRequired[str]
     website_id: NotRequired[int]
-    addresses: NotRequired[List[Any]]  # TODO typing
+    addresses: NotRequired[List[Address]]
     disable_auto_group_change: NotRequired[int]
     custom_attributes: List[CustomAttributeDict]
 

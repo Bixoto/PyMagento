@@ -1,5 +1,18 @@
 # PyMagento Changelog
 
+## 2.12.0 (unreleased)
+
+* Add more type aliases for `MagentoEntity`: `Attribute`, `AttributeSet`, `Cart`, `StockItem`, `StockStatus`. This does
+  not change anything for now, but enable easier transformations into typed dicts in the future.
+* Export all types from the root module
+
+### Breaking changes
+
+* `Order` is now a typed dict
+* `ShippingAddress` has been renamed as `Address`
+* `get_category_products` now returns the `CategoryProduct` typed dict
+* `get_order_item` and `get_order_items` now return the `OrderItem` typed dict
+
 ## 2.11.2 (2025/12/05)
 
 * `get_custom_attribute` and similar functions now accept the new typed dicts `Category` and `Customer` introduced in
@@ -10,6 +23,8 @@
 ## 2.11.0 (2025/12/05)
 
 ### Breaking changes
+
+These changes affect only the typing.
 
 * `MediaEntry` is now named `MediaGalleryEntry`
 * `AttributeOption`, `Category`, `Customer`, `MediaGalleryEntry` and `ProductLink` are now `TypedDict`s
@@ -93,7 +108,7 @@
 
 ## 2.4.0 (2025/04/02)
 
-* `get_order_shipping_address` now returns the typed dict `ShippingAddress`
+* `get_order_shipping_address` now returns the typed dict `Address`
 * Remove the wrong return type hints of `link_child_product` and `unlink_child_product`
 * Add more type hints
 

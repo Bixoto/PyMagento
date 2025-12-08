@@ -1,4 +1,4 @@
-from magento.types import Order, ShippingAddress
+from magento.types import Order, Address
 
 __all__ = (
     'is_order_on_hold',
@@ -20,11 +20,11 @@ def is_order_cash_on_delivery(order: Order) -> bool:
     return b
 
 
-def get_order_shipping_address(order: Order) -> ShippingAddress:
+def get_order_shipping_address(order: Order) -> Address:
     """Return the first shipping address of an order.
 
     Note the returned dict is a reference, so if you modify it, it modifies the order.
     Make a copy if you want to modify the address without affecting the order.
     """
-    address: ShippingAddress = order["extension_attributes"]["shipping_assignments"][0]["shipping"]["address"]
+    address: Address = order["extension_attributes"]["shipping_assignments"][0]["shipping"]["address"]
     return address
