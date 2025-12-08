@@ -299,7 +299,7 @@ class OrderStatusHistory(TypedDict):
     created_at: str
     entity_id: int
     entity_name: str
-    is_customer_notified: Union[str, None]
+    is_customer_notified: Union[int, None]
     is_visible_on_front: int
     parent_id: int
     status: str

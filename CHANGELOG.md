@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## 2.12.1 (2025/12/08)
+
+* Fix the typing of `OrderStatusHistory.is_customer_notified`
+
 ## 2.12.0 (2025/12/08)
 
 * Add more type aliases for `MagentoEntity`: `Attribute`, `AttributeSet`, `Cart`, `StockItem`, `StockStatus`. This does
