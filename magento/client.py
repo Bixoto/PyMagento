@@ -249,7 +249,7 @@ class Magento(APISession):
 
     def get_carts(self, *, query: Query = None, limit: int = -1, **kwargs: Any) -> Iterator[Cart]:
         """Get all carts (generator)."""
-        return cast(Iterator[Cart], self.get_paginated("/V1/carts/search", query=query, limit=limit, **kwargs))
+        return self.get_paginated("/V1/carts/search", query=query, limit=limit, **kwargs)
 
     # Categories
     # ==========
