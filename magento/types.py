@@ -154,6 +154,7 @@ class Category(WithExtensionAttributesDict):
 
 
 class CategoryProduct(TypedDict):
+    """A category-product link."""
     sku: str
     position: int
     category_id: str
@@ -213,6 +214,7 @@ class Address(TypedDict):
 
 
 class OrderItem(WithExtensionAttributesDict):
+    """An order item."""
     # Field based on a sample of 200k real-world order items
 
     item_id: int
@@ -292,6 +294,7 @@ class OrderItem(WithExtensionAttributesDict):
 
 
 class OrderStatusHistory(TypedDict):
+    """An order status history entry."""
     comment: Union[str, None]
     created_at: str
     entity_id: int
@@ -303,6 +306,7 @@ class OrderStatusHistory(TypedDict):
 
 
 class Order(WithExtensionAttributesDict):
+    """An order."""
     # Field based on a sample of 100k real-world orders
 
     billing_address_id: int
@@ -357,7 +361,6 @@ class Order(WithExtensionAttributesDict):
     base_subtotal_canceled: NotRequired[float]
     base_subtotal_incl_tax: NotRequired[float]
     base_subtotal_invoiced: NotRequired[float]
-    base_subtotal_refunded: NotRequired[float]
     base_subtotal_refunded: NotRequired[float]
     base_tax_amount: float
     base_tax_canceled: NotRequired[float]

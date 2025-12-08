@@ -161,9 +161,9 @@ class Magento(APISession):
             base.update(attribute)
             attribute = base
 
-        attribute: Attribute = self.post_json_api("/V1/products/attributes", json={"attribute": attribute},
-                                                  **kwargs)
-        return attribute
+        saved_attribute: Attribute = self.post_json_api("/V1/products/attributes", json={"attribute": attribute},
+                                                        **kwargs)
+        return saved_attribute
 
     def delete_attribute(self, attribute_code: str, **kwargs: Any) -> bool:
         """Delete an attribute."""
@@ -780,13 +780,13 @@ class Magento(APISession):
         # noinspection PyTypeChecker
         """Save base prices.
 
-                Example:
+        Example:
 
-                    >>> self.save_base_prices([{"price": 3.14, "sku": "W1033", "store_id": 0}])
+            >>> self.save_base_prices([{"price": 3.14, "sku": "W1033", "store_id": 0}])
 
-                :param prices: base prices to save.
-                :return: a list of errors (if any)
-                """
+        :param prices: base prices to save.
+        :return: a list of errors (if any)
+        """
         saved_prices: List[PriceUpdateResultDict] = self.post_json_api("/V1/products/base-prices",
                                                                        json={"prices": prices}, **kwargs)
         return saved_prices
