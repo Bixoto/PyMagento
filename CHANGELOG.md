@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## 2.12.0 (unreleased)
+## 2.12.0 (2025/12/08)
 
 * Add more type aliases for `MagentoEntity`: `Attribute`, `AttributeSet`, `Cart`, `StockItem`, `StockStatus`. This does
   not change anything for now, but enable easier transformations into typed dicts in the future.
