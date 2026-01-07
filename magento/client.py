@@ -103,11 +103,11 @@ class Magento(APISession):
         The ``token`` and ``base_url`` **must** be given either as arguments or environment variables.
 
         :param token: API integration token
-        :param base_url: base URL of the Magento instance
+        :param base_url: Base URL of the Magento instance
         :param scope: API scope. Default on ``PYMAGENTO_SCOPE`` if set, or ``"all"``. Note this scope is mostly useless,
             see https://github.com/magento/magento2/issues/15461#issuecomment-1157935732.
-        :param batch_page_size: if set, override the default page size used for batch queries.
-        :param read_only: if True, raise on calls that write data, such as `POST`, `PUT`, `DELETE`.
+        :param batch_page_size: If set, override the default page size used for batch queries.
+        :param read_only: If True, raise on calls that write data, such as `POST`, `PUT`, `DELETE`.
         :param user_agent: User-Agent
         """
         token = token or environ.get("PYMAGENTO_TOKEN")
@@ -135,7 +135,7 @@ class Magento(APISession):
     # =========
 
     def delete_customer_address(self, address_id: int, **kwargs: Any) -> bool:
-        """Delete customer address by ID."""
+        """Delete a customer address by ID."""
         deleted: bool = self.delete_json_api(f"/V1/addresses/{escape_path(address_id)}", **kwargs)
         return deleted
 
@@ -192,7 +192,7 @@ class Magento(APISession):
 
         :param attribute_set_id: ID of the attribute set.
         :param attribute_group_id: ID of the attribute group. It must be in the attribute set.
-        :param attribute_code: code of the attribute to add in that attribute group and so in that attribute set.
+        :param attribute_code: Code of the attribute to add in that attribute group and so in that attribute set.
         :param sort_order:
         :param kwargs:
         :return:
@@ -258,11 +258,11 @@ class Magento(APISession):
             -> Iterator[Category]:
         """Yield all categories.
 
-        :param path_prefix: optional path prefix for the categories.
+        :param path_prefix: Optional path prefix for the categories.
           Example: ``"1/2"`` for all categories whose path is ``"1/2/..."``, including ``"1/2"`` itself.
           Use ``"1/2/"`` to exclude ``"1/2"`` from the returned categories.
-        :param query: optional query. This overrides ``path_prefix``.
-        :param limit: optional limit
+        :param query: Optional query. This overrides ``path_prefix``.
+        :param limit: Optional limit
         """
         if query is None and path_prefix is not None:
             if path_prefix.endswith("/"):
@@ -286,8 +286,8 @@ class Magento(APISession):
     def get_category_by_name(self, name: str, *, assert_one: bool = False, **kwargs: Any) -> Optional[Category]:
         """Return the first category with the given name.
 
-        :param name: exact name of the category
-        :param assert_one: if True, assert that either none or exactly one category matches this name
+        :param name: Exact name of the category
+        :param assert_one: If True, assert that either none or exactly one category matches this name
         :return:
         """
         limit = 2 if assert_one else 1
@@ -340,7 +340,7 @@ class Magento(APISession):
 
         :param category_id: ID of the category to move
         :param parent_id: ID of the new parent of the category
-        :param after_id: optional ID of an existing child category
+        :param after_id: Optional ID of an existing child category
         :return: ``True``
         """
         params = {
@@ -525,7 +525,7 @@ class Magento(APISession):
                      **kwargs: Any) -> Customer:
         """Return a single customer.
 
-        :param customer_id: either a customer ID or the string `"me"`.
+        :param customer_id: Either a customer ID or the string `"me"`.
         :param none_on_404:
         :param none_on_empty:
         """
@@ -544,8 +544,8 @@ class Magento(APISession):
 
         https://adobe-commerce.redoc.ly/2.4.7-admin/tag/customersmeactivate/
 
-        :param confirmation_key: key from the confirmation email.
-        :return: customer
+        :param confirmation_key: Key from the confirmation email.
+        :return: Customer
         """
         customer: Customer = self.put_json_api("/V1/customers/me/activate",
                                                json={"confirmationKey": confirmation_key},
@@ -581,9 +581,9 @@ class Magento(APISession):
           * https://www.rakeshjesadiya.com/create-invoice-using-rest-api-magento-2/
 
         :param order_id: Order id.
-        :param payload: payload to send to the API.
-        :param notify: if True (default), notify the client. This is equivalent to ``payload={"notify": True}``.
-        :return: invoice ID, as a number in a string
+        :param payload: Payload to send to the API.
+        :param notify: If True (default), notify the client. This is equivalent to ``payload={"notify": True}``.
+        :return: Invoice ID, as a number in a string
         """
         if payload is None:
             payload = {}
@@ -631,13 +631,13 @@ class Magento(APISession):
                    **kwargs: Any) -> Iterator[Order]:
         """Return a generator of all orders with this status up to the limit.
 
-        :param status: order status, e.g. "awaiting_shipping". This overrides ``query``.
-        :param status_condition_type: condition type to use for the status. Default is "eq".
+        :param status: Order status, e.g. "awaiting_shipping". This overrides ``query``.
+        :param status_condition_type: Condition type to use for the status. The default is "eq".
           This has no effect if ``status`` is not given.
-        :param limit: maximum number of orders to yield (default: no limit).
-        :param query: optional query.
-        :param retry: max retries count
-        :return: generator of orders
+        :param limit: Maximum number of orders to yield (default: no limit).
+        :param query: Optional query.
+        :param retry: Max retries count
+        :return: Generator of orders
         """
         if status is not None:
             query = make_field_value_query("status", status, condition_type=status_condition_type)
@@ -670,8 +670,8 @@ class Magento(APISession):
             -> Iterator[OrderItem]:
         """Return orders items.
 
-        :param sku: filter orders items on SKU. This is a shortcut for ``query=make_field_value_query("sku", sku)``.
-        :param query: optional query. This take precedence over ``sku``.
+        :param sku: Filter orders items on SKU. This is a shortcut for ``query=make_field_value_query("sku", sku)``.
+        :param query: Optional query. This takes precedence over ``sku``.
         :param limit:
         :return:
         """
@@ -703,7 +703,7 @@ class Magento(APISession):
     def hold_order(self, order_id: Union[str, int], **kwargs: Any) -> bool:
         """Hold an order. This is the opposite of ``unhold_order``.
 
-        :param order_id: order id (not increment id)
+        :param order_id: Order id (not increment id)
         """
         ok: bool = self.post_json_api(f"/V1/orders/{escape_path(order_id)}/hold", **kwargs)
         return ok
@@ -711,7 +711,7 @@ class Magento(APISession):
     def unhold_order(self, order_id: Union[str, int], **kwargs: Any) -> bool:
         """Un-hold an order. This is the opposite of ``hold_order``.
 
-        :param order_id: order id (not increment id)
+        :param order_id: Order id (not increment id)
         """
         ok: bool = self.post_json_api(f"/V1/orders/{escape_path(order_id)}/unhold", **kwargs)
         return ok
@@ -724,14 +724,14 @@ class Magento(APISession):
     def set_order_status(self, order: Union[Order, Dict[str, Any]], status: str, *,
                          external_order_id: Optional[str] = None,
                          **kwargs: Any) -> Order:
-        """Change the status of an order, and optionally set its ``ext_order_id``. This is a convenient wrapper around
+        """Change the status of an order and optionally set its ``ext_order_id``. This is a convenient wrapper around
         ``save_order``.
         Note it does not check if orders are on hold before, and may result in invalid states where an order has a state
         'holded' and a status that's not 'holded'.
 
-        :param order: order payload
-        :param status: new status
-        :param external_order_id: optional external order id
+        :param order: Order payload
+        :param status: New status
+        :param external_order_id: Optional external order id
         :return:
         """
         payload = {
@@ -784,8 +784,8 @@ class Magento(APISession):
 
             >>> self.save_base_prices([{"price": 3.14, "sku": "W1033", "store_id": 0}])
 
-        :param prices: base prices to save.
-        :return: a list of errors (if any)
+        :param prices: Base prices to save.
+        :return: A list of errors (if any)
         """
         saved_prices: List[PriceUpdateResultDict] = self.post_json_api("/V1/products/base-prices",
                                                                        json={"prices": prices}, **kwargs)
@@ -802,7 +802,7 @@ class Magento(APISession):
         :param skus:
         :param store_id: Filter by store ID.
           This is done on the response as Magento doesn’t support this filter in the REST API.
-        :param deduplicate: if True (default), remove duplicated prices.
+        :param deduplicate: If True (default), remove duplicated prices.
         :param kwargs:
         :return:
         """
@@ -842,7 +842,7 @@ class Magento(APISession):
             >>> self.save_special_prices([special_price])
 
         :param special_prices: Special prices to save.
-        :return: a list of errors (if any)
+        :return: A list of errors (if any)
         """
         errors: List[PriceUpdateResultDict] = self.post_json_api("/V1/products/special-price",
                                                                  json={"prices": special_prices},
@@ -914,7 +914,7 @@ class Magento(APISession):
         an exception if it returns more than one, unless ``expect_one`` is set to ``False``.
 
         :param query:
-        :param expect_one: if True (the default), raise an exception if the query returns more than one result.
+        :param expect_one: If True (the default), raise an exception if the query returns more than one result.
         :return:
         """
         if not expect_one:
@@ -965,8 +965,8 @@ class Magento(APISession):
                      **kwargs: Any) -> Product:
         """Save a new product. To update a product, use `update_product`.
 
-        :param product: product to save (can be partial).
-        :param save_options: set the `saveOptions` attribute.
+        :param product: Product to save (can be partial).
+        :param save_options: Set the `saveOptions` attribute.
         :return:
         """
         payload: MagentoEntity = {"product": product}
@@ -993,8 +993,8 @@ class Magento(APISession):
 
         :param sku: SKU of the product to update
         :param product: (partial) product data to update
-        :param save_options: set the `saveOptions` attribute.
-        :return: updated product
+        :param save_options: Set the `saveOptions` attribute.
+        :return: Updated product
         """
         payload: MagentoEntity = {"product": product}
         if save_options is not None:
@@ -1007,10 +1007,10 @@ class Magento(APISession):
         """Delete a product given its SKU.
 
         :param sku:
-        :param skip_missing: if true, don’t raise if the product is missing, and return False.
-        :param throw: throw on error response
-        :param kwargs: keyword arguments passed to all underlying methods.
-        :return: a boolean indicating success.
+        :param skip_missing: If true, don’t raise if the product is missing and return False.
+        :param throw: Throw on error response
+        :param kwargs: Keyword arguments passed to all underlying methods.
+        :return: A boolean indicating success.
         """
         try:
             response = self.delete_api(f"/V1/products/{escape_path(sku)}", throw=throw, **kwargs)
@@ -1032,7 +1032,7 @@ class Magento(APISession):
 
         See https://developer.adobe.com/commerce/webapi/rest/use-rest/bulk-endpoints/
 
-        :param product_updates: sequence of product data dicts. They MUST contain an `sku` key.
+        :param product_updates: Sequence of product data dicts. They MUST contain an `sku` key.
         :return:
         """
         payload = [{"product": product_update} for product_update in product_updates]
@@ -1054,10 +1054,10 @@ class Magento(APISession):
         https://adobe-commerce.redoc.ly/2.4.6-admin/tag/productsproductSkustockItemsitemId/#operation/PutV1ProductsProductSkuStockItemsItemId
 
         :param sku: SKU of the product
-        :param stock_item_id: stock item ID. Note that it’s not clear why this ID is needed; it seems to be ignored by
+        :param stock_item_id: Stock item ID. Note that it’s not clear why this ID is needed; it seems to be ignored by
           Magento and products always have a single stock item anyway.
         :param stock_item:
-        :return: the stock item ID
+        :return: The stock item ID
         """
         id_: int = self.put_json_api(f"/V1/products/{escape_path(sku)}/stockItems/{stock_item_id}", json={
             "stockItem": stock_item,
@@ -1072,8 +1072,8 @@ class Magento(APISession):
         :param sku: SKU of the product
         :param stock_item_id:
         :param quantity:
-        :param is_in_stock: if not set, default to ``quantity > 0``
-        :return: the stock item id
+        :param is_in_stock: If not set, default to ``quantity > 0``
+        :return: The stock item id
         """
         if is_in_stock is None:
             is_in_stock = quantity > 0
@@ -1163,7 +1163,7 @@ class Magento(APISession):
         https://magento.redoc.ly/2.3.6-admin/#operation/catalogProductAttributeOptionManagementV1AddPost
 
         :param attribute_code:
-        :param option: dict with label/value keys (mandatory)
+        :param option: Dict with label/value keys (mandatory)
         :return: new id
         """
         payload = {"option": option}
@@ -1180,7 +1180,7 @@ class Magento(APISession):
 
         :param attribute_code:
         :param option_id:
-        :return: boolean
+        :return: Boolean
         """
         ok: bool = self.delete_json_api(f"/V1/products/attributes/{escape_path(attribute_code)}/options/{option_id}",
                                         **kwargs)
@@ -1214,7 +1214,7 @@ class Magento(APISession):
     def get_shipment_label(self, shipment_id: PathId, **kwargs: Any) -> str:
         """Get a shipment label.
 
-        If the shipment doesn't exist or it doesn't have a label, the returned label is an empty string.
+        If the shipment doesn't exist, or it doesn't have a label, the returned label is an empty string.
         """
         label: str = self.get_json_api(f"/V1/shipment/{escape_path(shipment_id)}/label", **kwargs)
         return label
@@ -1293,14 +1293,14 @@ class Magento(APISession):
                                    **kwargs: Any) -> int:
         """Get the current store group id for the current scope. This is not part of Magento API.
 
-        :param skip_store_groups: if True, assume the current scope is not already a store group.
+        :param skip_store_groups: If True, assume the current scope is not already a store group.
         :param scope: Override the client's scope
         """
         if scope is None:
             scope = self.scope
 
         if not skip_store_groups:
-            # If scope is already a store group
+            # If the scope is already a store group
             for store_group in self.get_store_groups(**kwargs):
                 if store_group["code"] == scope:
                     id_: int = store_group["id"]
@@ -1375,10 +1375,10 @@ class Magento(APISession):
                          **kwargs: Any) -> Iterator[SourceItem]:
         """Return a generator of all source items.
 
-        :param source_code: optional source_code to filter on. This takes precedence over the query parameter.
-        :param sku: optional SKU to filter on. This takes precedence over the query and the skus parameter.
-        :param skus: optional SKUs list to filter on. This takes precedence of the query parameter.
-        :param query: optional query.
+        :param source_code: Optional source_code to filter on. This takes precedence over the query parameter.
+        :param sku: Optional SKU to filter on. This takes precedence over the query and the skus parameter.
+        :param skus: Optional SKUs list to filter on. This takes precedence of the query parameter.
+        :param query: Optional query.
         :param limit: -1 for unlimited.
         :return:
         """
@@ -1402,21 +1402,21 @@ class Magento(APISession):
                     self.get_paginated("/V1/inventory/source-items", query=query, limit=limit, **kwargs))
 
     def save_source_items(self, source_items: Sequence[Union[SourceItem, SourceItemIn]], **kwargs: Any) -> Any:
-        """Save a sequence of source-items. Return None if the sequence is empty."""
+        """Save a sequence of source items. Return None if the sequence is empty."""
         if not source_items:
             return None
         # The docs don't specify the return type
         return self.post_json_api("/V1/inventory/source-items", json={"sourceItems": source_items}, **kwargs)
 
     def delete_source_items(self, source_items: Iterable[Union[SourceItem, SourceItemIn]], **kwargs: Any) -> Any:
-        """Delete a sequence of source-items. Only the SKU and the source_code are used.
+        """Delete a sequence of source items. Only the SKU and the source_code are used.
 
         Note: Magento returns an error if this is called with empty source_items.
 
-        https://adobe-commerce.redoc.ly/2.4.8-admin/tag/inventorysource-items-delete
+        https://adobe-commerce.redoc.ly/2.4.8-admin/tag/inventorysource items-delete
 
         :param source_items:
-        :param kwargs: keyword arguments passed to the underlying POST call.
+        :param kwargs: Keyword arguments passed to the underlying POST call.
         """
         payload = {
             "sourceItems": [{"sku": s["sku"], "source_code": s["source_code"]} for s in source_items],
@@ -1466,7 +1466,7 @@ class Magento(APISession):
                                   **kwargs: Any) -> Iterator[Category]:
         """Like get_categories(), but get only categories under a root id.
 
-        :param root_category_id: optional root category to use.
+        :param root_category_id: Optional root category to use.
           If not provided, defaults to the store’s root category id.
         :param include_root: if True, include the root category in the results (default: False).
         :return:
@@ -1502,8 +1502,10 @@ class Magento(APISession):
     def skus_were_bought(self, skus: List[str]) -> Dict[str, bool]:
         """Equivalent of ``sku_was_bought`` for multiple SKUs. Return a dict of {SKU -> bought?}.
 
-        Note that if some of the SKUs were bought a lot of times
+        Note that if some SKUs were bought a lot of times,
         it’s more efficient to call ``sku_was_bought`` on each SKU.
+
+        This makes a unique query to Magento; you might want to batch queries if you have a lot of SKUs.
         """
         q = make_field_value_query("sku", ",".join(skus), "in")
 
@@ -1555,11 +1557,11 @@ class Magento(APISession):
         :param async_bulk: if True, use the "/async/bulk" prefix.
             https://devdocs.magento.com/guides/v2.3/rest/bulk-endpoints.html
         :param throw: if True, raise an exception if the response is an error
-        :param retry: if non-zero, retry the request that many times if there is an error, sleeping 10s between
+        :param retry: if non-zero, retry the request that many times if there is an error, sleeping for 10s between
             each request.
-        :param scope: overrides the client's scope for this request
-        :param fields: overrides the `params["fields"]`
-        :param kwargs: keyword arguments passed to ``.request()``
+        :param scope: Overrides the client's scope for this request
+        :param fields: Overrides the `params["fields"]`
+        :param kwargs: Keyword arguments passed to ``.request()``
         :return:
         """
         full_path = self.make_full_path(path, async_bulk=async_bulk, scope=scope)
@@ -1594,8 +1596,8 @@ class Magento(APISession):
         :param query:
         :param limit: -1 for no limit
         :param retry:
-        :param page_size: default is `self.PAGE_SIZE`
-        :param fields: fields to retrieve for each item. Don't wrap them in `items[]`
+        :param page_size: The default is `self.PAGE_SIZE`
+        :param fields: Fields to retrieve for each item. Don't wrap them in `items[]`
         :param id_pagination: Enable the experimental ID-based pagination.
           Magento’s queries can be very slow due to some poorly designed use of offsets. This circumvents the issue by
           sorting by items by ID, and then on each query get the items with the IDs higher than the previous ones.
