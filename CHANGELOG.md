@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## 2.13.0 (unreleased)
+## 2.13.0 (2026/03/31)
 
 * Drop support for Python 3.9
 
