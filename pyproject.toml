@@ -23,14 +23,6 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 2",
-    "Programming Language :: Python :: 2.7",
-    "Programming Language :: Python :: 3.4",
-    "Programming Language :: Python :: 3.5",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -87,15 +79,35 @@ line-length = 120
 [tool.ruff.lint]
 select = [
     "D", # docstrings
+    "PERF", # Performance
+    "W",
+    "F",
+    "UP", # deprecated Python
+    # Flake8
+    "A",
+    "ASYNC",
+    "B",
+    "C4",
+    "PIE800",
+    "PT",
+    "SIM",
+    "SLOT",
+    "YTT",
+
+    "PLE",
+    "FURB",
+    "PLC0207",
 ]
 ignore = [
     "D100", # "Missing docstring in public module"
+    "D104", # "Missing docstring in public package"
     "D105", # "Missing docstring in magic method"
     "D107", # "Missing docstring in `__init__`"
     "D204", # "1 blank line required after class docstring"
     "D205", # "1 blank line required between summary line and description",
     "D208", # "Docstring is over-indented" (examples)
     "D400", # "First line should end with a period" (false-positives)
+    "D401", # "First line of docstring should be in imperative mood"
     "D412", # "No blank lines allowed between a section header and its content"
     "D413", # "Missing blank line after last section"
     "D415", # "First line should end with a period, question mark, or exclamation point" (false-positives)
@@ -104,3 +116,7 @@ ignore = [
     "E501", # line too long
     "F401", # "unused" imports
 ]
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = ["D"]
+"conftest.py" = ["D"]
+"docs/conf.py" = ["A001"]

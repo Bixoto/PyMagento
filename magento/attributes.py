@@ -1,13 +1,13 @@
 """Custom attributes utilities."""
 from collections import OrderedDict
-from typing import Callable, Optional, cast, Union, List, Tuple, Iterable, OrderedDict as OrderedDictType, overload, \
-    TypeVar, Any
+from collections.abc import Callable, Iterable
+from typing import cast, overload, TypeVar, Any
 
 from .types import MagentoEntity, CustomAttributeDict, Product, Customer, Category
 
 T = TypeVar('T')
 
-Item = TypeVar('Item', bound=Union[Category, Customer, Product, MagentoEntity])
+Item = TypeVar('Item', bound=Category | Customer | Product | MagentoEntity)
 
 # From Magento
 CATEGORY_ENTITY_TYPE_ID = 3
@@ -16,18 +16,18 @@ CATALOG_PRODUCT_ENTITY_TYPE_ID = 4
 
 @overload
 def get_custom_attribute(item: Item, attribute_code: str,
-                         coerce_as: Callable[[str], T]) -> Union[None, T, List[T]]:  # pragma: nocover
+                         coerce_as: Callable[[str], T]) -> None | T | list[T]:  # pragma: nocover
     ...
 
 
 @overload
 def get_custom_attribute(item: Item, attribute_code: str) \
-        -> Union[None, str, List[str]]:  # pragma: nocover
+        -> None | str | list[str]:  # pragma: nocover
     ...
 
 
 def get_custom_attribute(item: Item, attribute_code: str,
-                         coerce_as: Union[Callable[[str], Any], None] = None) -> Any:
+                         coerce_as: Callable[[str], Any] | None = None) -> Any:
     """Get a custom attribute from an item given its code.
 
     For example:
@@ -48,7 +48,7 @@ def get_custom_attribute(item: Item, attribute_code: str,
         def coerce_as(s: str) -> bool:
             return bool(int(s))
 
-    attributes = cast(List[CustomAttributeDict], item.get("custom_attributes", []))
+    attributes = cast(list[CustomAttributeDict], item.get("custom_attributes", []))
     for attribute in attributes:
         if attribute["attribute_code"] == attribute_code:
             value = attribute["value"]
@@ -62,21 +62,21 @@ def get_custom_attribute(item: Item, attribute_code: str,
     return None
 
 
-def get_boolean_custom_attribute(item: Item, attribute_code: str) -> Optional[bool]:
+def get_boolean_custom_attribute(item: Item, attribute_code: str) -> bool | None:
     """Equivalent of ``get_custom_attribute(item, attribute_code, coerce_as=bool)`` with proper typing."""
-    return cast(Optional[bool], get_custom_attribute(item, attribute_code, coerce_as=bool))
+    return cast(bool | None, get_custom_attribute(item, attribute_code, coerce_as=bool))
 
 
-def get_custom_attributes_dict(item: Item) -> OrderedDictType[str, Union[List[str], str, None]]:
+def get_custom_attributes_dict(item: Item) -> OrderedDict[str, list[str] | str | None]:
     """Get all custom attributes from an item as an ordered dict of code->value."""
     d = OrderedDict()
-    for attribute in cast(List[CustomAttributeDict], item.get("custom_attributes", [])):
+    for attribute in cast(list[CustomAttributeDict], item.get("custom_attributes", [])):
         d[attribute["attribute_code"]] = attribute["value"]
 
     return d
 
 
-def serialize_attribute_value(value: Union[str, int, float, bool, None], force_none: bool = False) -> Optional[str]:
+def serialize_attribute_value(value: str | int | float | bool | None, force_none: bool = False) -> str | None:
     """Serialize a value to be stored in a Magento attribute."""
     if isinstance(value, bool):
         return "1" if value else "0"
@@ -88,7 +88,7 @@ def serialize_attribute_value(value: Union[str, int, float, bool, None], force_n
 
 
 def set_custom_attribute(item: Item, attribute_code: str,
-                         attribute_value: Union[str, int, float, bool, None],
+                         attribute_value: str | int | float | bool | None,
                          *, force_none: bool = False) -> Item:
     """Set a custom attribute in an item dict.
 
@@ -107,7 +107,7 @@ def set_custom_attribute(item: Item, attribute_code: str,
 
 
 def set_custom_attributes(item: Item,
-                          attributes: Iterable[Tuple[str, Union[str, int, float, bool, None]]],
+                          attributes: Iterable[tuple[str, str | int | float | bool | None]],
                           *, force_none: bool = False) -> Item:
     """Set custom attributes in an item dict.
     Like ``set_custom_attribute`` but with an iterable of attributes.
@@ -117,7 +117,7 @@ def set_custom_attributes(item: Item,
     :param force_none: see ``set_custom_attribute`` for usage.
     :return: the modified item dict.
     """
-    item_custom_attributes = cast(List[CustomAttributeDict], item.get("custom_attributes", []))
+    item_custom_attributes = cast(list[CustomAttributeDict], item.get("custom_attributes", []))
 
     attributes_index = {attribute["attribute_code"]: index for index, attribute in enumerate(item_custom_attributes)}
 

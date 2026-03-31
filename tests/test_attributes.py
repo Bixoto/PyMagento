@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from typing import Any, Dict
+from typing import Any
 
 import pytest
 
@@ -115,7 +115,7 @@ def test_set_custom_attribute_empty_item():
 
 
 def test_set_custom_attribute(product3):
-    product4: Dict[str, Any] = {}
+    product4: dict[str, Any] = {}
     for attribute in product3["custom_attributes"]:
         product4 = attributes.set_custom_attribute(product4, attribute["attribute_code"], attribute["value"])
     assert product4 == product3

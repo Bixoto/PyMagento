@@ -1,6 +1,6 @@
 import json
 from collections import ChainMap
-from typing import Dict, Any
+from typing import Any
 from unittest import mock
 
 import pytest
@@ -15,7 +15,7 @@ from magento.client import raise_for_response, Magento
 
 class TemporaryEnv:
     def __enter__(self):
-        temporary_env: Dict[str, str] = {}
+        temporary_env: dict[str, str] = {}
         self._environ = client.environ
         client.environ = ChainMap(temporary_env, client.environ)  # type: ignore[assignment]
         return temporary_env
@@ -135,7 +135,7 @@ def test_id_sort_pagination():
                 assert query[f"searchCriteria[filter_groups][0][filters][{self.expected_filter_index}][value]"] == 42
                 return {"items": [], "total_count": 3}
 
-            assert False
+            raise AssertionError()
 
     client = FakeClient(base_url="http://test", token="secret", scope="toto")
 

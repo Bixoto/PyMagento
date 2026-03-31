@@ -1,7 +1,8 @@
-from typing import List, Callable, Iterable, TypeVar, Generic, Optional, Any, Dict, Iterator
-from typing_extensions import Self
+from collections.abc import Callable, Iterable, Iterator
+from typing import TypeVar, Generic, Any
 
 from api_session import JSONDict
+from typing_extensions import Self
 
 from .client import Magento
 from .queries import make_field_value_query
@@ -17,7 +18,7 @@ class BatchSaver:
         self.client = client
         self.path = api_path
         self.batch_size = batch_size
-        self._batch: List[MagentoEntity] = []
+        self._batch: list[MagentoEntity] = []
         # some stats
         self._sent_batches = 0
         self._sent_items = 0
@@ -30,7 +31,7 @@ class BatchSaver:
         if len(self._batch) >= self.batch_size:
             self.send_batch()
 
-    def send_batch(self) -> Optional[JSONDict]:
+    def send_batch(self) -> JSONDict | None:
         """Send the current pending batch (if any) and return the response from the Magento API."""
         if not self._batch:
             return None
@@ -45,7 +46,7 @@ class BatchSaver:
         res: JSONDict = self.client.put_json_api(self.path, json=self._batch, async_bulk=True)
         return res
 
-    def finalize(self) -> Dict[str, int]:
+    def finalize(self) -> dict[str, int]:
         """Send the last pending batch (if any). This doesn’t need to be called when the object is used as a context
         manager.
 
@@ -93,7 +94,7 @@ class BatchGetter(Generic[T]):
         self.getter = getter
         self.key_field = key_field
         self.keys = keys
-        self._batch: List[str] = []
+        self._batch: list[str] = []
 
     def _get_batch(self) -> Iterable[T]:
         if not self._batch:

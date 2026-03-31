@@ -1,5 +1,5 @@
 import sys
-from typing import Union, TypedDict, Literal, List, Any, Dict
+from typing import TypedDict, Literal, Any
 
 from api_session import JSONDict
 
@@ -42,7 +42,7 @@ __all__ = (
 
 MagentoEntity = JSONDict
 
-PathId = Union[int, str]
+PathId = int | str
 Sku = str
 
 # TODO: proper typing
@@ -55,13 +55,13 @@ StockStatus = MagentoEntity
 
 class WithExtensionAttributesDict(TypedDict):
     """A dict with an extension_attributes key."""
-    extension_attributes: Dict[str, Any]
+    extension_attributes: dict[str, Any]
 
 
 class CustomAttributeDict(TypedDict):
     """A custom attribute dict, as found on products."""
     attribute_code: str
-    value: Union[str, List[str], None]
+    value: str | list[str] | None
     """A string value or a list of strings. This can be ``None`` to delete a custom attribute,
     but it will never be ``None`` in a Magento response.
     """
@@ -79,7 +79,7 @@ class AttributeOption(TypedDict):
     value: str
     sort_order: NotRequired[int]
     is_default: NotRequired[bool]
-    store_labels: NotRequired[List[AttributeStoreLabel]]
+    store_labels: NotRequired[list[AttributeStoreLabel]]
 
 
 # Products
@@ -99,7 +99,7 @@ class MediaGalleryEntry(WithExtensionAttributesDict):
     label: str
     position: int
     disabled: bool
-    types: List[str]
+    types: list[str]
     file: str
     content: MediaGalleryEntryContent
 
@@ -122,12 +122,12 @@ class Product(WithExtensionAttributesDict):
     attribute_set_id: int
     created_at: str
     updated_at: str
-    custom_attributes: List[CustomAttributeDict]
-    media_gallery_entries: List[MediaGalleryEntry]
-    options: List[Any]
+    custom_attributes: list[CustomAttributeDict]
+    media_gallery_entries: list[MediaGalleryEntry]
+    options: list[Any]
     price: float
-    product_links: List[ProductLink]
-    tier_prices: List[Any]
+    product_links: list[ProductLink]
+    tier_prices: list[Any]
     type_id: str
     visibility: int
     weight: NotRequired[float]
@@ -148,9 +148,9 @@ class Category(WithExtensionAttributesDict):
     created_at: str
     updated_at: str
     path: str
-    available_sort_by: List[str]
+    available_sort_by: list[str]
     include_in_menu: bool
-    custom_attributes: List[CustomAttributeDict]
+    custom_attributes: list[CustomAttributeDict]
 
 
 class CategoryProduct(TypedDict):
@@ -185,7 +185,7 @@ class SourceItem(TypedDict):
 
 class BasePrice(TypedDict):
     """Base price dict."""
-    price: Union[int, float]
+    price: int | float
     store_id: int
     sku: Sku
 
@@ -201,7 +201,7 @@ class Address(TypedDict):
     firstname: str
     lastname: str
     email: str
-    street: List[str]
+    street: list[str]
     city: str
     postcode: str
     region: NotRequired[str]
@@ -295,11 +295,11 @@ class OrderItem(WithExtensionAttributesDict):
 
 class OrderStatusHistory(TypedDict):
     """An order status history entry."""
-    comment: Union[str, None]
+    comment: str | None
     created_at: str
     entity_id: int
     entity_name: str
-    is_customer_notified: Union[int, None]
+    is_customer_notified: int | None
     is_visible_on_front: int
     parent_id: int
     status: str
@@ -331,8 +331,8 @@ class Order(WithExtensionAttributesDict):
     state: str
     status: str
 
-    hold_before_status: NotRequired[Union[str, None]]
-    hold_before_state: NotRequired[Union[str, None]]
+    hold_before_status: NotRequired[str | None]
+    hold_before_state: NotRequired[str | None]
 
     adjustment_negative: NotRequired[float]
     adjustment_positive: NotRequired[float]
@@ -470,9 +470,9 @@ class Customer(WithExtensionAttributesDict):
     store_id: NotRequired[int]
     taxvat: NotRequired[str]
     website_id: NotRequired[int]
-    addresses: NotRequired[List[Address]]
+    addresses: NotRequired[list[Address]]
     disable_auto_group_change: NotRequired[int]
-    custom_attributes: List[CustomAttributeDict]
+    custom_attributes: list[CustomAttributeDict]
 
 
 # Other types
@@ -480,14 +480,14 @@ class Customer(WithExtensionAttributesDict):
 
 class DeleteCouponsResponseDict(TypedDict):
     """Response from the `coupons/deleteByIds` endpoint."""
-    failed_items: List[Any]
-    missing_items: List[Any]
+    failed_items: list[Any]
+    missing_items: list[Any]
 
 
 class ErrorDict(TypedDict):
     """Error dict."""
     message: str
-    parameters: List[str]
+    parameters: list[str]
 
 
 class PriceUpdateResultDict(ErrorDict, WithExtensionAttributesDict):

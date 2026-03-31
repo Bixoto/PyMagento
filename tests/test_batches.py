@@ -5,7 +5,7 @@ from magento.batches import ProductBatchSaver, ProductBatchGetter, BatchGetter, 
 from magento.queries import Query
 
 
-@pytest.fixture()
+@pytest.fixture
 def test_client():
     return Magento(token="123", base_url="https://example.com", read_only=True, scope="toto")
 

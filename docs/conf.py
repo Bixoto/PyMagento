@@ -19,7 +19,7 @@ import magento
 
 project = 'PyMagento'
 # noinspection PyShadowingBuiltins
-copyright = '2020-2023, Bixoto'
+copyright = '2020-2026, Bixoto'
 author = 'Bixoto'
 
 # The full version, including alpha/beta/rc tags

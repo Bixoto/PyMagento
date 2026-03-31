@@ -1,17 +1,18 @@
-from typing import Optional, Any, Dict, Sequence, Tuple
+from collections.abc import Sequence
+from typing import Any
 
 __all__ = (
     'Query', 'make_search_query', 'make_field_value_query',
 )
 
-Query = Optional[Dict[str, Any]]
+Query = dict[str, Any] | None
 
 
-def make_search_query(filter_groups: Sequence[Sequence[Tuple[str, Any, Optional[str]]]],
+def make_search_query(filter_groups: Sequence[Sequence[tuple[str, Any, str | None]]],
                       *,
-                      sort_orders: Optional[Sequence[Tuple[str, str]]] = None,
-                      page_size: Optional[int] = None,
-                      current_page: Optional[int] = None) -> Dict[str, Any]:
+                      sort_orders: Sequence[tuple[str, str]] | None = None,
+                      page_size: int | None = None,
+                      current_page: int | None = None) -> dict[str, Any]:
     """Build a search query.
 
     Documentation: https://devdocs.magento.com/guides/v2.4/rest/performing-searches.html
@@ -31,7 +32,7 @@ def make_search_query(filter_groups: Sequence[Sequence[Tuple[str, Any, Optional[
     :param current_page:
     :return:
     """
-    query_params: Dict[str, Any] = {}
+    query_params: dict[str, Any] = {}
     if page_size is not None:
         query_params["searchCriteria[pageSize]"] = page_size
 
@@ -59,11 +60,11 @@ def make_search_query(filter_groups: Sequence[Sequence[Tuple[str, Any, Optional[
 
 
 def make_field_value_query(field: str, value: Any,
-                           condition_type: Optional[str] = None,
-                           page_size: Optional[int] = None,
-                           current_page: Optional[int] = None,
+                           condition_type: str | None = None,
+                           page_size: int | None = None,
+                           current_page: int | None = None,
                            *,
-                           sort_orders: Optional[Sequence[Tuple[str, str]]] = None) -> Dict[str, Any]:
+                           sort_orders: Sequence[tuple[str, str]] | None = None) -> dict[str, Any]:
     """Create a query params dictionary for Magento. This is a simplified version of ``make_search_query``.
 
     :param field:
