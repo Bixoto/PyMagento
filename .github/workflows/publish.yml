@@ -11,8 +11,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Build and publish to pypi
-        uses: JRubics/poetry-publish@v2.1
+      - name: Set up uv and Python 3.10
+        uses: astral-sh/setup-uv@v7
         with:
-          pypi_token: ${{ secrets.PYPI_TOKEN }}
-          poetry_install_options: "--without dev"
+          python-version: '3.10'
+
+      - name: Build
+        run: uv build
+
+      # Check that basic features work and we didn't miss to include crucial files
+      # https://docs.astral.sh/uv/guides/integration/github/#publishing-to-pypi
+      #- name: Smoke test (wheel)
+      #  run: uv run --isolated --no-project --with dist/*.whl tests/smoke_test.py
+      #- name: Smoke test (source distribution)
+      #  run: uv run --isolated --no-project --with dist/*.tar.gz tests/smoke_test.py
+
+      - name: Publish
+        run: uv publish --token ${{ secrets.PYPI_TOKEN }}

@@ -12,25 +12,25 @@ jobs:
     timeout-minutes: 30
     strategy:
       matrix:
-        python-version: [ "3.9", "3.10", "3.11", "3.12", "3.13", "3.14" ]
+        # See https://github.com/actions/python-versions/releases for available versions
+        python-version: [ "3.10", "3.11", "3.12", "3.13", "3.14" ]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Install Poetry
+      - name: Install uv
         run: |
-          pipx install poetry
+          pipx install uv
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v6
+      - name: Set up uv and Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'poetry'
 
       - name: Install dependencies
         run: |
-          poetry install
+          uv sync --frozen
 
       - name: Test
         run: |
@@ -38,4 +38,4 @@ jobs:
 
       - name: Test build
         run: |
-          poetry build
+          uv build

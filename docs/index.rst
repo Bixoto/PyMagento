@@ -10,6 +10,10 @@ With ``pip``::
 
     pip install pymagento
 
+With ``uv``::
+
+    uv add pymagento
+
 With ``poetry``::
 
     poetry add pymagento

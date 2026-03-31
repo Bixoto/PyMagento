@@ -10,6 +10,6 @@ if [ -n "$BRANCHCOV" ]; then
   COV_ARGS="$COV_ARGS --cov-branch"
 fi
 
-poetry run ruff check magento
-poetry run mypy --strict --check-untyped-defs --explicit-package-bases ./*.py magento/*.py
-poetry run pytest --cov=. $COV_ARGS tests/
+uv run ruff check magento
+uv run mypy --strict --check-untyped-defs --explicit-package-bases ./*.py magento/*.py
+uv run pytest --cov=. $COV_ARGS tests/
