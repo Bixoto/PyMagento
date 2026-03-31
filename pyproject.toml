@@ -1,6 +1,6 @@
 [project]
 name = "pymagento"
-version = "2.12.1"
+version = "2.13.0"
 description = "Python client for the Magento 2 API"
 authors = [{ name = "Bixoto", email = "tech@bixoto.com" }]
 requires-python = ">=3.10"

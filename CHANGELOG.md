@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## 2.13.0 (unreleased)
+
+* Drop support for Python 3.9
+
 ## 2.12.1 (2025/12/08)
 
 * Fix the typing of `OrderStatusHistory.is_customer_notified`
