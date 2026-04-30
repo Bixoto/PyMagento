@@ -1,5 +1,9 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* Add `get_total_orders_count`
+
 ## 2.13.0 (2026/03/31)
 
 * Drop support for Python 3.9

@@ -662,6 +662,13 @@ class Magento(APISession):
             for order in self.get_orders(query=query)
         }
 
+    def get_total_orders_count(self) -> int:
+        """Return the total number of orders."""
+        response = self.get_json_api("/V1/orders", params={"searchCriteria[pageSize]": 1})
+        total_count = response["total_count"]
+        assert isinstance(total_count, int)
+        return total_count
+
     def get_order_item(self, order_item_id: int, **kwargs: Any) -> OrderItem:
         """Return a single order item."""
         order_item: OrderItem = self.get_json_api(f"/V1/orders/items/{escape_path(order_item_id)}", **kwargs)
