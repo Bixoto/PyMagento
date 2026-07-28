@@ -148,3 +148,17 @@ def test_id_sort_pagination():
     assert list(client.get_paginated("/path", id_field="foo", id_pagination=True, limit=3,
                                      query=magento.make_field_value_query("bar", 0, condition_type="gt"))) \
            == [{"foo": 1}, {"foo": 42}]
+
+
+def test_save_order_address(mocker: MockerFixture):
+    magento_client = Magento(base_url="http://test", token="secret", scope="es")
+    address = {
+        "entity_id": 408749,
+        "parent_id": 204378,
+        "address_type": "shipping",
+        "postcode": "39740",
+    }
+    put_json_api = mocker.patch.object(magento_client, "put_json_api", return_value=address)
+
+    assert magento_client.save_order_address(address) == address
+    put_json_api.assert_called_once_with("/V1/orders/204378", json={"entity": address})

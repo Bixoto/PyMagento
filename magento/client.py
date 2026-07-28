@@ -14,7 +14,7 @@ from .exceptions import MagentoException, MagentoAssertionError
 from .queries import Query, make_search_query, make_field_value_query
 from .types import Product, SourceItem, Sku, Category, MediaGalleryEntry, MagentoEntity, Order, PathId, Customer, \
     SourceItemIn, BasePrice, DeleteCouponsResponseDict, PriceUpdateResultDict, AttributeOption, StockItem, Cart, \
-    OrderItem, StockStatus, Attribute, AttributeSet, CategoryProduct
+    OrderItem, StockStatus, Attribute, AttributeSet, CategoryProduct, Address
 from .version import __version__
 
 __all__ = (
@@ -728,6 +728,15 @@ class Magento(APISession):
         """Save an order."""
         saved_order: Order = self.post_json_api("/V1/orders", json={"entity": order}, **kwargs)
         return saved_order
+
+    def save_order_address(self, address: Address | dict[str, Any], **kwargs: Any) -> Address:
+        """Save an order address."""
+        saved_address: Address = self.put_json_api(
+            f"/V1/orders/{escape_path(address['parent_id'])}",
+            json={"entity": address},
+            **kwargs,
+        )
+        return saved_address
 
     def set_order_status(self, order: Order | dict[str, Any], status: str, *,
                          external_order_id: str | None = None,
