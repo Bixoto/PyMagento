@@ -1468,9 +1468,10 @@ class Magento(APISession):
     # Modules
     # =======
 
-    def get_modules(self, query: Query = None, limit: int = -1, **kwargs: Any) -> Iterator[MagentoEntity]:
-        """Get all enabled modules (generator)."""
-        return self.get_paginated("/V1/modules", query=query, limit=limit, **kwargs)
+    def get_modules(self, **kwargs: Any) -> list[str]:
+        """Get all enabled module names."""
+        modules: list[str] = self.get_json_api("/V1/modules", **kwargs)
+        return modules
 
     # Helpers
     # =======
