@@ -39,6 +39,8 @@ __all__ = [
     "AttributeSet",
     "AttributeStoreLabel",
     "BasePrice",
+    "CATALOG_PRODUCT_ENTITY_TYPE_ID",
+    "CATEGORY_ENTITY_TYPE_ID",
     "Cart",
     "Category",
     "CategoryProduct",

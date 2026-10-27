@@ -83,6 +83,7 @@ def raise_for_response(response: requests.Response) -> None:
 
 class Magento(APISession):
     """Client for the Magento API."""
+
     PAGE_SIZE = 1000
     """
     Default batch size for paginated requests.

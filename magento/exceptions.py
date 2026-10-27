@@ -50,4 +50,5 @@ class MagentoAssertionError(AssertionError):
 
     This exception doesn’t inherit from ``MagentoException`` because it’s not a Magento error per se.
     """
+
     pass

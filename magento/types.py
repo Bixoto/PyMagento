@@ -55,11 +55,13 @@ StockStatus = MagentoEntity
 
 class WithExtensionAttributesDict(TypedDict):
     """A dict with an extension_attributes key."""
+
     extension_attributes: dict[str, Any]
 
 
 class CustomAttributeDict(TypedDict):
     """A custom attribute dict, as found on products."""
+
     attribute_code: str
     value: str | list[str] | None
     """A string value or a list of strings. This can be ``None`` to delete a custom attribute,
@@ -69,12 +71,14 @@ class CustomAttributeDict(TypedDict):
 
 class AttributeStoreLabel(TypedDict):
     """A store label for a select attribute."""
+
     store_id: int
     label: str
 
 
 class AttributeOption(TypedDict):
     """Option for a select attribute."""
+
     label: str
     value: str
     sort_order: NotRequired[int]
@@ -87,6 +91,7 @@ class AttributeOption(TypedDict):
 
 class MediaGalleryEntryContent(TypedDict):
     """Content of a media gallery entry."""
+
     base64_encoded_data: str
     type: str
     name: str
@@ -94,6 +99,7 @@ class MediaGalleryEntryContent(TypedDict):
 
 class MediaGalleryEntry(WithExtensionAttributesDict):
     """A media gallery entry."""
+
     id: NotRequired[int]
     media_type: str
     label: str
@@ -106,6 +112,7 @@ class MediaGalleryEntry(WithExtensionAttributesDict):
 
 class ProductLink(WithExtensionAttributesDict):
     """A product link."""
+
     sku: str
     link_type: str
     linked_product_sku: str
@@ -115,6 +122,7 @@ class ProductLink(WithExtensionAttributesDict):
 
 class Product(WithExtensionAttributesDict):
     """A product."""
+
     id: int
     sku: str
     name: str
@@ -138,6 +146,7 @@ class Product(WithExtensionAttributesDict):
 
 class Category(WithExtensionAttributesDict):
     """A category."""
+
     id: int
     parent_id: int
     name: str
@@ -155,6 +164,7 @@ class Category(WithExtensionAttributesDict):
 
 class CategoryProduct(TypedDict):
     """A category-product link."""
+
     sku: str
     position: int
     category_id: str
@@ -166,6 +176,7 @@ class CategoryProduct(TypedDict):
 
 class SourceItemIn(TypedDict):
     """Input source item."""
+
     sku: Sku
     source_code: str
     quantity: NotRequired[int]
@@ -174,6 +185,7 @@ class SourceItemIn(TypedDict):
 
 class SourceItem(TypedDict):
     """Source item as returned by Magento."""
+
     sku: Sku
     source_code: str
     quantity: int
@@ -185,6 +197,7 @@ class SourceItem(TypedDict):
 
 class BasePrice(TypedDict):
     """Base price dict."""
+
     price: int | float
     store_id: int
     sku: Sku
@@ -195,6 +208,7 @@ class BasePrice(TypedDict):
 
 class Address(TypedDict):
     """Billing and/or shipping address dict."""
+
     address_type: Literal["billing", "shipping"]
     entity_id: int
     parent_id: int
@@ -215,6 +229,7 @@ class Address(TypedDict):
 
 class OrderItem(WithExtensionAttributesDict):
     """An order item."""
+
     # Field based on a sample of 200k real-world order items
 
     item_id: int
@@ -295,6 +310,7 @@ class OrderItem(WithExtensionAttributesDict):
 
 class OrderStatusHistory(TypedDict):
     """An order status history entry."""
+
     comment: str | None
     created_at: str
     entity_id: int
@@ -307,6 +323,7 @@ class OrderStatusHistory(TypedDict):
 
 class Order(WithExtensionAttributesDict):
     """An order."""
+
     # Field based on a sample of 100k real-world orders
 
     billing_address_id: int
@@ -450,6 +467,7 @@ class Order(WithExtensionAttributesDict):
 
 class Customer(WithExtensionAttributesDict):
     """A customer."""
+
     # Unclear what's really always present here
     id: NotRequired[int]
     group_id: NotRequired[int]
@@ -480,16 +498,19 @@ class Customer(WithExtensionAttributesDict):
 
 class DeleteCouponsResponseDict(TypedDict):
     """Response from the `coupons/deleteByIds` endpoint."""
+
     failed_items: list[Any]
     missing_items: list[Any]
 
 
 class ErrorDict(TypedDict):
     """Error dict."""
+
     message: str
     parameters: list[str]
 
 
 class PriceUpdateResultDict(ErrorDict, WithExtensionAttributesDict):
     """Response from the `products/base-prices` endpoint."""
+
     pass
