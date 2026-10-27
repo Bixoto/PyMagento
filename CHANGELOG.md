@@ -1,5 +1,11 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* Add `get_tier_prices`
+* Add `save_tier_prices`
+* Add `delete_tier_prices`
+
 ## 2.15.0 (2026/10/07)
 
 * Fix the routes used by `get_products_types` and `delete_coupons_by_codes`

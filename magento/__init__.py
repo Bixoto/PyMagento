@@ -29,6 +29,7 @@ from magento.types import (
     SourceItem,
     WithExtensionAttributesDict, Attribute, AttributeSet, AttributeStoreLabel, Cart, CategoryProduct,
     MediaGalleryEntryContent, OrderItem, OrderStatusHistory, PathId, SourceItemIn, StockItem, StockStatus,
+    TierPrice,
 )
 from magento.version import __version__
 
@@ -71,6 +72,7 @@ __all__ = [
     "SourceItemIn",
     "StockItem",
     "StockStatus",
+    "TierPrice",
     "VISIBILITY_IN_CATALOG",
     "VISIBILITY_IN_CATALOG_AND_SEARCH",
     "VISIBILITY_IN_SEARCH",

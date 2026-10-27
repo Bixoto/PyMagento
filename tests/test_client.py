@@ -162,3 +162,56 @@ def test_save_order_address(mocker: MockerFixture):
 
     assert magento_client.save_order_address(address) == address
     put_json_api.assert_called_once_with("/V1/orders/204378", json={"entity": address})
+
+
+TIER_PRICES = [
+    {"price": 2.99, "price_type": "fixed", "website_id": 0, "sku": "W1033",
+     "customer_group": "ALL GROUPS", "quantity": 10},
+    {"price": 5, "price_type": "discount", "website_id": 1, "sku": "W1033",
+     "customer_group": "NOT LOGGED IN", "quantity": 50},
+    {"price": 1.5, "price_type": "fixed", "website_id": 0, "sku": "W1034",
+     "customer_group": "Wholesale", "quantity": 2.5},
+]
+
+PRICE_ERRORS = [
+    {"message": "Invalid attribute %fieldName = %fieldValue.", "parameters": ["SKU", "W1035"],
+     "extension_attributes": {}},
+]
+
+
+def test_get_tier_prices(mocker: MockerFixture):
+    magento_client = Magento(base_url="http://test", token="secret", scope="es")
+    post_json_api = mocker.patch.object(magento_client, "post_json_api", return_value=TIER_PRICES)
+
+    assert magento_client.get_tier_prices(["W1033", "W1034"], scope="all") == TIER_PRICES
+    post_json_api.assert_called_once_with("/V1/products/tier-prices-information",
+                                          json={"skus": ["W1033", "W1034"]}, bypass_read_only=True, scope="all")
+
+
+@pytest.mark.parametrize(("method_name", "path"), [
+    ("save_tier_prices", "/V1/products/tier-prices"),
+    ("delete_tier_prices", "/V1/products/tier-prices-delete"),
+])
+@pytest.mark.parametrize("errors", [[], PRICE_ERRORS])
+def test_save_delete_tier_prices(mocker: MockerFixture, method_name: str, path: str, errors: list[Any]):
+    magento_client = Magento(base_url="http://test", token="secret", scope="es")
+    post_json_api = mocker.patch.object(magento_client, "post_json_api", return_value=errors)
+
+    assert getattr(magento_client, method_name)(TIER_PRICES, retry=2) == errors
+    post_json_api.assert_called_once_with(path, json={"prices": TIER_PRICES}, retry=2)
+
+
+def test_tier_prices_read_only(mocker: MockerFixture):
+    magento_client = Magento(base_url="http://test", token="secret", scope="es", read_only=True)
+    session_request = mocker.patch.object(requests.Session, "request", return_value=fake_response(200, "[]"))
+
+    assert magento_client.get_tier_prices(["W1033"]) == []
+    session_request.assert_called_once()
+    assert session_request.call_args.args[:2] == ("post", "http://test/rest/es/V1/products/tier-prices-information")
+    session_request.reset_mock()
+
+    with pytest.raises(AssertionError, match="read-only"):
+        magento_client.save_tier_prices(TIER_PRICES)
+    with pytest.raises(AssertionError, match="read-only"):
+        magento_client.delete_tier_prices(TIER_PRICES)
+    session_request.assert_not_called()

@@ -14,7 +14,7 @@ from .exceptions import MagentoException, MagentoAssertionError
 from .queries import Query, make_search_query, make_field_value_query
 from .types import Product, SourceItem, Sku, Category, MediaGalleryEntry, MagentoEntity, Order, PathId, Customer, \
     SourceItemIn, BasePrice, DeleteCouponsResponseDict, PriceUpdateResultDict, AttributeOption, StockItem, Cart, \
-    OrderItem, StockStatus, Attribute, AttributeSet, CategoryProduct, Address
+    OrderItem, StockStatus, Attribute, AttributeSet, CategoryProduct, Address, TierPrice
 from .version import __version__
 
 __all__ = (
@@ -880,6 +880,56 @@ class Magento(APISession):
         """Equivalent of ``delete_special_prices(get_special_prices(skus))``."""
         special_prices = self.get_special_prices(skus, store_id=store_id, **kwargs)
         return self.delete_special_prices(special_prices, **kwargs)
+
+    # Tier Prices
+    # -----------
+
+    def get_tier_prices(self, skus: Sequence[Sku], **kwargs: Any) -> list[TierPrice]:
+        """Get tier prices for a sequence of SKUs.
+
+        Example:
+
+            >>> self.get_tier_prices(["W1033", "W1034"])
+
+        :param skus:
+        :param kwargs:
+        :return:
+        """
+        prices: list[TierPrice] = self.post_json_api("/V1/products/tier-prices-information",
+                                                     json={"skus": skus}, bypass_read_only=True, **kwargs)
+        return prices
+
+    def save_tier_prices(self, prices: Sequence[TierPrice], **kwargs: Any) -> list[PriceUpdateResultDict]:
+        # noinspection PyTypeChecker
+        """Add or update tier prices. Existing tier prices that are not in ``prices`` are left untouched.
+
+        Example:
+
+            >>> self.save_tier_prices([{"price": 2.99, "price_type": "fixed", "website_id": 0, "sku": "W1033", \
+                                        "customer_group": "ALL GROUPS", "quantity": 10}])
+
+        :param prices: Tier prices to save.
+        :return: A list of errors (if any)
+        """
+        errors: list[PriceUpdateResultDict] = self.post_json_api("/V1/products/tier-prices",
+                                                                 json={"prices": prices}, **kwargs)
+        return errors
+
+    def delete_tier_prices(self, prices: Sequence[TierPrice], **kwargs: Any) -> list[PriceUpdateResultDict]:
+        # noinspection PyTypeChecker
+        """Delete tier prices.
+
+        Example:
+
+            >>> self.delete_tier_prices([{"price": 2.99, "price_type": "fixed", "website_id": 0, "sku": "W1033", \
+                                          "customer_group": "ALL GROUPS", "quantity": 10}])
+
+        :param prices: Tier prices to delete.
+        :return: A list of errors (if any)
+        """
+        errors: list[PriceUpdateResultDict] = self.post_json_api("/V1/products/tier-prices-delete",
+                                                                 json={"prices": prices}, **kwargs)
+        return errors
 
     # Products
     # ========
