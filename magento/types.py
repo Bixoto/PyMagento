@@ -32,6 +32,7 @@ __all__ = (
     'PriceUpdateResultDict',
     'Product',
     'Address',
+    'ShipmentTrack',
     'Sku',
     'SourceItem',
     'SourceItemIn',
@@ -460,6 +461,27 @@ class Order(WithExtensionAttributesDict):
     items: list[OrderItem]
     payment: MagentoEntity
     status_histories: list[OrderStatusHistory]
+
+
+# Shipments
+# =========
+
+class ShipmentTrack(TypedDict):
+    """A shipment track."""
+
+    entity_id: NotRequired[int]
+    order_id: int
+    parent_id: int
+    """Shipment ID."""
+    track_number: str
+    carrier_code: str
+    title: str
+    weight: NotRequired[float | None]
+    qty: NotRequired[float | None]
+    description: NotRequired[str | None]
+    created_at: NotRequired[str]
+    updated_at: NotRequired[str]
+    extension_attributes: NotRequired[dict[str, Any]]
 
 
 # Customers

@@ -1,5 +1,12 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* Add `save_shipment_track`
+* Add `delete_shipment_track`
+* Add `notify_shipment`
+* Add the `ShipmentTrack` typed dict
+
 ## 2.15.0 (2026/10/07)
 
 * Fix the routes used by `get_products_types` and `delete_coupons_by_codes`
