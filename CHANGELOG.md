@@ -1,11 +1,14 @@
 # PyMagento Changelog
 
-## 2.14.0 (unreleased)
+## 2.15.0 (2026/10/07)
+
+* Fix the routes used by `get_products_types` and `delete_coupons_by_codes`
+* Fix `get_modules` to return a flat list of module names; remove unsupported `query` and `limit` parameters
+
+## 2.14.0 (2026/07/08)
 
 * Add `get_total_orders_count`
 * Add `save_order_address`
-* Fix the routes used by `get_products_types` and `delete_coupons_by_codes`
-* Fix `get_modules` to return a flat list of module names; remove unsupported `query` and `limit` parameters
 
 ## 2.13.0 (2026/03/31)
 

@@ -1,6 +1,6 @@
 [project]
 name = "pymagento"
-version = "2.14.0"
+version = "2.15.0"
 description = "Python client for the Magento 2 API"
 authors = [{ name = "Bixoto", email = "tech@bixoto.com" }]
 requires-python = ">=3.10"
@@ -20,7 +20,6 @@ keywords = [
     "magento2-rest-api",
 ]
 classifiers = [
-    "License :: OSI Approved :: MIT License",
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
@@ -48,9 +47,9 @@ dev = [
     "mypy>=1,<2",
     "coverage>=7.6,<8",
     "types-requests",
-    "pytest>=8,<9",
+    "pytest>=9,<10",
     "pytest-mock>=3.11,<4",
-    "pytest-cov>=6.0,<7",
+    "pytest-cov>=7.0,<8",
     "ruff>=0,<1",
 ]
 
@@ -63,7 +62,7 @@ module-root = ""
 source-include = ["magento/py.typed"]
 
 [build-system]
-requires = ["uv_build>=0.10.0,<0.11.0"]
+requires = ["uv_build>=0.10.0,<0.14.0"]
 build-backend = "uv_build"
 
 [tool.coverage.report]
