@@ -507,7 +507,7 @@ class Magento(APISession):
     def delete_coupons_by_codes(self, coupon_codes: Iterable[str], *, ignore_invalid_coupons: bool = True,
                                 **kwargs: Any) -> Any:
         """Delete multiple coupons by code."""
-        return self.post_json_api("/V1/coupons/deleteByIds", json={
+        return self.post_json_api("/V1/coupons/deleteByCodes", json={
             "codes": list(coupon_codes),
             "ignoreInvalidCoupons": ignore_invalid_coupons,
         }, **kwargs)

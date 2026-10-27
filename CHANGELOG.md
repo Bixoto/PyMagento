@@ -4,7 +4,7 @@
 
 * Add `get_total_orders_count`
 * Add `save_order_address`
-* Fix the route called by `get_products_types`
+* Fix the routes used by `get_products_types` and `delete_coupons_by_codes`
 * Fix `get_modules` to return a flat list of module names; remove unsupported `query` and `limit` parameters
 
 ## 2.13.0 (2026/03/31)
