@@ -4,6 +4,7 @@
 
 * Add `get_total_orders_count`
 * Add `save_order_address`
+* Fix the route called by `get_products_types`
 * Fix `get_modules` to return a flat list of module names; remove unsupported `query` and `limit` parameters
 
 ## 2.13.0 (2026/03/31)

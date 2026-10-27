@@ -897,7 +897,7 @@ class Magento(APISession):
 
     def get_products_types(self, **kwargs: Any) -> Sequence[MagentoEntity]:
         """Get available product types."""
-        ret: Sequence[MagentoEntity] = self.get_json_api("/V1/product/types", **kwargs)
+        ret: Sequence[MagentoEntity] = self.get_json_api("/V1/products/types", **kwargs)
         return ret
 
     def get_product(self, sku: Sku, *,
