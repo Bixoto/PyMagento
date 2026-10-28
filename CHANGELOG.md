@@ -5,6 +5,13 @@
 * Add `get_tier_prices`
 * Add `save_tier_prices`
 * Add `delete_tier_prices`
+* Add `save_shipment_track`
+* Add `delete_shipment_track`
+* Add `notify_shipment`
+* Add the `ShipmentTrack` typed dict
+* Add `get_product_salable_quantity`
+* Add `are_products_salable` and the `ProductSalability` typed dict
+* Add `get_stock_by_sales_channel`
 
 ## 2.15.0 (2026/10/07)
 

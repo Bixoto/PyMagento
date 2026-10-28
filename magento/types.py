@@ -31,7 +31,9 @@ __all__ = (
     'ErrorDict',
     'PriceUpdateResultDict',
     'Product',
+    'ProductSalability',
     'Address',
+    'ShipmentTrack',
     'Sku',
     'SourceItem',
     'SourceItemIn',
@@ -191,6 +193,17 @@ class SourceItem(TypedDict):
     source_code: str
     quantity: int
     status: int
+
+
+# Stock
+# =====
+
+class ProductSalability(TypedDict):
+    """Salability of a product in a stock, as returned by the `inventory/are-products-salable` endpoint."""
+
+    sku: Sku
+    stock_id: int
+    salable: bool
 
 
 # Prices
@@ -475,6 +488,27 @@ class Order(WithExtensionAttributesDict):
     items: list[OrderItem]
     payment: MagentoEntity
     status_histories: list[OrderStatusHistory]
+
+
+# Shipments
+# =========
+
+class ShipmentTrack(TypedDict):
+    """A shipment track."""
+
+    entity_id: NotRequired[int]
+    order_id: int
+    parent_id: int
+    """Shipment ID."""
+    track_number: str
+    carrier_code: str
+    title: str
+    weight: NotRequired[float | None]
+    qty: NotRequired[float | None]
+    description: NotRequired[str | None]
+    created_at: NotRequired[str]
+    updated_at: NotRequired[str]
+    extension_attributes: NotRequired[dict[str, Any]]
 
 
 # Customers

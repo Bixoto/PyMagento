@@ -14,7 +14,7 @@ from .exceptions import MagentoException, MagentoAssertionError
 from .queries import Query, make_search_query, make_field_value_query
 from .types import Product, SourceItem, Sku, Category, MediaGalleryEntry, MagentoEntity, Order, PathId, Customer, \
     SourceItemIn, BasePrice, DeleteCouponsResponseDict, PriceUpdateResultDict, AttributeOption, StockItem, Cart, \
-    OrderItem, StockStatus, Attribute, AttributeSet, CategoryProduct, Address, TierPrice
+    OrderItem, StockStatus, Attribute, AttributeSet, CategoryProduct, Address, ShipmentTrack, ProductSalability, TierPrice
 from .version import __version__
 
 __all__ = (
@@ -1322,12 +1322,93 @@ class Magento(APISession):
         """Get shipments for the given order id."""
         return self.get_shipments(query=make_field_value_query("order_id", order_id), **kwargs)
 
+    def save_shipment_track(self, track: ShipmentTrack | MagentoEntity, **kwargs: Any) -> ShipmentTrack:
+        """Save a shipment track.
+
+        Both ``parent_id`` (the shipment ID) and ``order_id`` are required, and Magento checks the shipment belongs to
+        that order. If the track has an existing ``entity_id``, that track is updated.
+        Tracks given when creating a shipment still go through ``ship_order``.
+        Note the customer is not notified: call ``notify_shipment`` to send the shipment email.
+
+        :param track: Track to save
+        :return: Saved track, including its ``entity_id``
+        """
+        saved_track: ShipmentTrack = self.post_json_api("/V1/shipment/track", json={"entity": track}, **kwargs)
+        return saved_track
+
+    def delete_shipment_track(self, track_id: PathId, **kwargs: Any) -> bool:
+        """Delete a shipment track.
+
+        Note Magento returns ``True`` even if there is no track with this ID.
+        """
+        ok: bool = self.delete_json_api(f"/V1/shipment/track/{escape_path(track_id)}", **kwargs)
+        return ok
+
+    def notify_shipment(self, shipment_id: PathId, **kwargs: Any) -> bool:
+        """Send the shipment email to the customer."""
+        ok: bool = self.post_json_api(f"/V1/shipment/{escape_path(shipment_id)}/emails", **kwargs)
+        return ok
+
     # Stock
     # =====
 
     def get_stock_source_links(self, query: Query = None, limit: int = -1, **kwargs: Any) -> Iterator[MagentoEntity]:
         """Get stock source links."""
         return self.get_paginated("/V1/inventory/stock-source-links", query=query, limit=limit, **kwargs)
+
+    def get_product_salable_quantity(self, sku: Sku, stock_id: int, **kwargs: Any) -> float:
+        """Get the salable quantity of a product in a stock.
+
+        This is the quantity Magento will sell after reservations (e.g. pending orders) are deducted, so it differs
+        from the quantities of the source items.
+
+        :param sku: SKU of the product
+        :param stock_id: ID of the stock
+        """
+        quantity: float = self.get_json_api(
+            f"/V1/inventory/get-product-salable-quantity/{escape_path(sku)}/{escape_path(stock_id)}",
+            none_on_404=False,
+            **kwargs,
+        )
+        return quantity
+
+    def are_products_salable(self, skus: Sequence[Sku], stock_id: int, **kwargs: Any) -> list[ProductSalability]:
+        """Check if products are salable in a stock. Return an empty list if ``skus`` is empty.
+
+        Example:
+            >>> Magento().are_products_salable(["JP05-A4"], 1)
+            [{"sku": "JP05-A4", "stock_id": 1, "salable": True}]
+
+        :param skus: SKUs of the products
+        :param stock_id: ID of the stock
+        """
+        if not skus:
+            return []
+
+        salabilities: list[ProductSalability] = self.get_json_api(
+            "/V1/inventory/are-products-salable",
+            params={"skus[]": list(skus), "stockId": stock_id},
+            none_on_404=False,
+            **kwargs,
+        )
+        return salabilities
+
+    def get_stock_by_sales_channel(self, sales_channel_type: str, sales_channel_code: str,
+                                   **kwargs: Any) -> MagentoEntity:
+        """Get the stock linked to a sales channel.
+
+        Example:
+            >>> Magento().get_stock_by_sales_channel("website", "base")
+
+        :param sales_channel_type: Type of the sales channel, usually ``"website"``
+        :param sales_channel_code: Code of the sales channel, e.g. a website code
+        """
+        stock: MagentoEntity = self.get_json_api(
+            f"/V1/inventory/stock-resolver/{escape_path(sales_channel_type)}/{escape_path(sales_channel_code)}",
+            none_on_404=False,
+            **kwargs,
+        )
+        return stock
 
     # Stores
     # ======
