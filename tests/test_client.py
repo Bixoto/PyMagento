@@ -164,6 +164,87 @@ def test_save_order_address(mocker: MockerFixture):
     put_json_api.assert_called_once_with("/V1/orders/204378", json={"entity": address})
 
 
+def test_save_shipment_track(mocker: MockerFixture):
+    magento_client = Magento(base_url="http://test", token="secret", scope="es")
+    track = {
+        "order_id": 204378,
+        "parent_id": 102345,
+        "track_number": "6A12345678901",
+        "carrier_code": "custom",
+        "title": "Colissimo",
+        "extension_attributes": {"foo": "bar"},
+    }
+    saved_track = {**track, "entity_id": 56789}
+    post_json_api = mocker.patch.object(magento_client, "post_json_api", return_value=saved_track)
+
+    assert magento_client.save_shipment_track(track, scope="all") == saved_track
+    post_json_api.assert_called_once_with("/V1/shipment/track", json={"entity": track}, scope="all")
+    # The payload is sent untouched
+    assert post_json_api.call_args.kwargs["json"]["entity"] is track
+    assert "entity_id" not in track
+
+
+def test_save_shipment_track_existing(mocker: MockerFixture):
+    magento_client = Magento(base_url="http://test", token="secret", scope="es")
+    track = {
+        "entity_id": 56789,
+        "order_id": 204378,
+        "parent_id": 102345,
+        "track_number": "6A12345678902",
+        "carrier_code": "custom",
+        "title": "Colissimo",
+    }
+    post_json_api = mocker.patch.object(magento_client, "post_json_api", return_value=track)
+
+    assert magento_client.save_shipment_track(track) == track
+    post_json_api.assert_called_once_with("/V1/shipment/track", json={"entity": track})
+
+
+@pytest.mark.parametrize("ok", (True, False))
+def test_delete_shipment_track(mocker: MockerFixture, ok: bool):
+    magento_client = Magento(base_url="http://test", token="secret", scope="es")
+    delete_json_api = mocker.patch.object(magento_client, "delete_json_api", return_value=ok)
+
+    assert magento_client.delete_shipment_track(56789, scope="all") is ok
+    delete_json_api.assert_called_once_with("/V1/shipment/track/56789", scope="all")
+
+    delete_json_api.reset_mock()
+    magento_client.delete_shipment_track("12/3 4")
+    delete_json_api.assert_called_once_with("/V1/shipment/track/12%2F3%204")
+
+
+@pytest.mark.parametrize("ok", (True, False))
+def test_notify_shipment(mocker: MockerFixture, ok: bool):
+    magento_client = Magento(base_url="http://test", token="secret", scope="es")
+    post_json_api = mocker.patch.object(magento_client, "post_json_api", return_value=ok)
+
+    assert magento_client.notify_shipment(102345, scope="all") is ok
+    post_json_api.assert_called_once_with("/V1/shipment/102345/emails", scope="all")
+
+    post_json_api.reset_mock()
+    magento_client.notify_shipment("12/3 4")
+    post_json_api.assert_called_once_with("/V1/shipment/12%2F3%204/emails")
+
+
+def test_shipment_tracks_read_only(mocker: MockerFixture):
+    magento_client = Magento(base_url="http://test", token="secret", scope="es", read_only=True)
+    request = mocker.patch.object(requests.Session, "request")
+    track = {
+        "order_id": 204378,
+        "parent_id": 102345,
+        "track_number": "6A12345678901",
+        "carrier_code": "custom",
+        "title": "Colissimo",
+    }
+
+    with pytest.raises(AssertionError, match="read-only"):
+        magento_client.save_shipment_track(track)
+    with pytest.raises(AssertionError, match="read-only"):
+        magento_client.delete_shipment_track(56789)
+    with pytest.raises(AssertionError, match="read-only"):
+        magento_client.notify_shipment(102345)
+
+    request.assert_not_called()
 def make_response(status_code: int, body: str) -> requests.Response:
     response = requests.Response()
     response.status_code = status_code
