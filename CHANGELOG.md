@@ -1,5 +1,11 @@
 # PyMagento Changelog
 
+## Unreleased
+
+* Add `get_product_salable_quantity`
+* Add `are_products_salable` and the `ProductSalability` typed dict
+* Add `get_stock_by_sales_channel`
+
 ## 2.15.0 (2026/10/07)
 
 * Fix the routes used by `get_products_types` and `delete_coupons_by_codes`
