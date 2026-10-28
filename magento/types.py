@@ -39,6 +39,7 @@ __all__ = (
     'SourceItemIn',
     'StockItem',
     'StockStatus',
+    'TierPrice',
     'WithExtensionAttributesDict',
 )
 
@@ -214,6 +215,20 @@ class BasePrice(TypedDict):
     price: int | float
     store_id: int
     sku: Sku
+
+
+class TierPrice(TypedDict):
+    """Tier price dict."""
+
+    price: int | float
+    price_type: Literal["fixed", "discount"]
+    """``"fixed"`` for a fixed price, ``"discount"`` for a percentage discount."""
+    website_id: int
+    sku: Sku
+    customer_group: str
+    """Customer group name, e.g. ``"ALL GROUPS"`` or ``"NOT LOGGED IN"``."""
+    quantity: int | float
+    extension_attributes: NotRequired[dict[str, Any]]
 
 
 # Orders
