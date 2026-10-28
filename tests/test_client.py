@@ -245,3 +245,81 @@ def test_shipment_tracks_read_only(mocker: MockerFixture):
         magento_client.notify_shipment(102345)
 
     request.assert_not_called()
+def make_response(status_code: int, body: str) -> requests.Response:
+    response = requests.Response()
+    response.status_code = status_code
+    response._content = body.encode()
+    return response
+
+
+def test_get_product_salable_quantity(mocker: MockerFixture):
+    magento_client = Magento(base_url="http://test", token="secret", scope="es")
+    send = mocker.patch.object(magento_client, "send", return_value=make_response(200, "12.5"))
+
+    assert magento_client.get_product_salable_quantity("AB/12 C", 2) == 12.5
+    assert send.call_args.args[0].method == "GET"
+    assert send.call_args.args[0].url == "http://test/rest/es/V1/inventory/get-product-salable-quantity/AB%2F12%20C/2"
+
+    get_json_api = mocker.patch.object(magento_client, "get_json_api", return_value=99996367)
+    assert magento_client.get_product_salable_quantity("JP05-A4", 1, scope="default") == 99996367
+    get_json_api.assert_called_once_with("/V1/inventory/get-product-salable-quantity/JP05-A4/1",
+                                         none_on_404=False, scope="default")
+
+
+def test_are_products_salable(mocker: MockerFixture):
+    magento_client = Magento(base_url="http://test", token="secret", scope="es")
+    salabilities = [
+        {"sku": "JP05-A4", "stock_id": 1, "salable": True},
+        {"sku": "AB/12 C", "stock_id": 1, "salable": False},
+    ]
+    send = mocker.patch.object(magento_client, "send", return_value=make_response(200, json.dumps(salabilities)))
+
+    assert magento_client.are_products_salable(["JP05-A4", "AB/12 C"], 1) == salabilities
+    assert send.call_args.args[0].method == "GET"
+    assert send.call_args.args[0].url == \
+           "http://test/rest/es/V1/inventory/are-products-salable?skus%5B%5D=JP05-A4&skus%5B%5D=AB%2F12+C&stockId=1"
+
+    get_json_api = mocker.patch.object(magento_client, "get_json_api", return_value=salabilities[:1])
+    assert magento_client.are_products_salable(("JP05-A4",), 1, scope="default") == salabilities[:1]
+    get_json_api.assert_called_once_with("/V1/inventory/are-products-salable",
+                                         params={"skus[]": ["JP05-A4"], "stockId": 1},
+                                         none_on_404=False, scope="default")
+
+
+def test_are_products_salable_empty(mocker: MockerFixture):
+    magento_client = Magento(base_url="http://test", token="secret", scope="es")
+    send = mocker.patch.object(magento_client, "send")
+
+    assert magento_client.are_products_salable([], 1) == []
+    send.assert_not_called()
+
+
+def test_get_stock_by_sales_channel(mocker: MockerFixture):
+    magento_client = Magento(base_url="http://test", token="secret", scope="es")
+    stock = {"stock_id": 2, "name": "EU stock", "extension_attributes": {}}
+    send = mocker.patch.object(magento_client, "send", return_value=make_response(200, json.dumps(stock)))
+
+    assert magento_client.get_stock_by_sales_channel("website", "eu/fr site") == stock
+    assert send.call_args.args[0].method == "GET"
+    assert send.call_args.args[0].url == "http://test/rest/es/V1/inventory/stock-resolver/website/eu%2Ffr%20site"
+
+    get_json_api = mocker.patch.object(magento_client, "get_json_api", return_value=stock)
+    assert magento_client.get_stock_by_sales_channel("website", "base", scope="default") == stock
+    get_json_api.assert_called_once_with("/V1/inventory/stock-resolver/website/base",
+                                         none_on_404=False, scope="default")
+
+
+@pytest.mark.parametrize("call", [
+    lambda m: m.get_product_salable_quantity("UNKNOWN", 1),
+    lambda m: m.are_products_salable(["JP05-A4"], 42),
+    lambda m: m.get_stock_by_sales_channel("website", "unknown"),
+])
+def test_salability_404_raises(mocker: MockerFixture, call):
+    magento_client = Magento(base_url="http://test", token="secret", scope="es")
+    # The client returns None on 404s by default; these methods must raise instead
+    assert magento_client.none_on_404
+    mocker.patch.object(magento_client, "send",
+                        return_value=make_response(404, '{"message": "No such entity.", "parameters": []}'))
+
+    with pytest.raises(magento.MagentoException, match="No such entity"):
+        call(magento_client)

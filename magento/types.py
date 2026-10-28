@@ -31,6 +31,7 @@ __all__ = (
     'ErrorDict',
     'PriceUpdateResultDict',
     'Product',
+    'ProductSalability',
     'Address',
     'ShipmentTrack',
     'Sku',
@@ -191,6 +192,17 @@ class SourceItem(TypedDict):
     source_code: str
     quantity: int
     status: int
+
+
+# Stock
+# =====
+
+class ProductSalability(TypedDict):
+    """Salability of a product in a stock, as returned by the `inventory/are-products-salable` endpoint."""
+
+    sku: Sku
+    stock_id: int
+    salable: bool
 
 
 # Prices
