@@ -1,6 +1,6 @@
 # PyMagento Changelog
 
-## Unreleased
+## 2.16.0 (2026/11/02)
 
 * Add `get_tier_prices`
 * Add `save_tier_prices`
