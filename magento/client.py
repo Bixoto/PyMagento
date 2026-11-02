@@ -900,7 +900,6 @@ class Magento(APISession):
         return prices
 
     def save_tier_prices(self, prices: Sequence[TierPrice], **kwargs: Any) -> list[PriceUpdateResultDict]:
-        # noinspection PyTypeChecker
         """Add or update tier prices. Existing tier prices that are not in ``prices`` are left untouched.
 
         Example:
@@ -916,7 +915,6 @@ class Magento(APISession):
         return errors
 
     def delete_tier_prices(self, prices: Sequence[TierPrice], **kwargs: Any) -> list[PriceUpdateResultDict]:
-        # noinspection PyTypeChecker
         """Delete tier prices.
 
         Example:
