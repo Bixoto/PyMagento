@@ -914,6 +914,22 @@ class Magento(APISession):
                                                                  json={"prices": prices}, **kwargs)
         return errors
 
+    def replace_tier_prices(self, prices: Sequence[TierPrice], **kwargs: Any) -> list[PriceUpdateResultDict]:
+        """Replace all tier prices of the products in ``prices``. Their existing tier prices that are not in
+        ``prices`` are deleted. Products that are not in ``prices`` are left untouched.
+
+        Example:
+
+            >>> self.replace_tier_prices([{"price": 2.99, "price_type": "fixed", "website_id": 0, "sku": "W1033", \
+                                           "customer_group": "ALL GROUPS", "quantity": 10}])
+
+        :param prices: Tier prices to set.
+        :return: A list of errors (if any)
+        """
+        errors: list[PriceUpdateResultDict] = self.put_json_api("/V1/products/tier-prices",
+                                                                json={"prices": prices}, **kwargs)
+        return errors
+
     def delete_tier_prices(self, prices: Sequence[TierPrice], **kwargs: Any) -> list[PriceUpdateResultDict]:
         """Delete tier prices.
 

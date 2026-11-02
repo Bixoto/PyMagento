@@ -201,6 +201,15 @@ def test_save_delete_tier_prices(mocker: MockerFixture, method_name: str, path: 
     post_json_api.assert_called_once_with(path, json={"prices": TIER_PRICES}, retry=2)
 
 
+@pytest.mark.parametrize("errors", [[], PRICE_ERRORS])
+def test_replace_tier_prices(mocker: MockerFixture, errors: list[Any]):
+    magento_client = Magento(base_url="http://test", token="secret", scope="es")
+    put_json_api = mocker.patch.object(magento_client, "put_json_api", return_value=errors)
+
+    assert magento_client.replace_tier_prices(TIER_PRICES, retry=2) == errors
+    put_json_api.assert_called_once_with("/V1/products/tier-prices", json={"prices": TIER_PRICES}, retry=2)
+
+
 def test_tier_prices_read_only(mocker: MockerFixture):
     magento_client = Magento(base_url="http://test", token="secret", scope="es", read_only=True)
     session_request = mocker.patch.object(requests.Session, "request", return_value=fake_response(200, "[]"))
@@ -212,6 +221,8 @@ def test_tier_prices_read_only(mocker: MockerFixture):
 
     with pytest.raises(AssertionError, match="read-only"):
         magento_client.save_tier_prices(TIER_PRICES)
+    with pytest.raises(AssertionError, match="read-only"):
+        magento_client.replace_tier_prices(TIER_PRICES)
     with pytest.raises(AssertionError, match="read-only"):
         magento_client.delete_tier_prices(TIER_PRICES)
     session_request.assert_not_called()

@@ -4,6 +4,7 @@
 
 * Add `get_tier_prices`
 * Add `save_tier_prices`
+* Add `replace_tier_prices`
 * Add `delete_tier_prices`
 * Add `save_shipment_track`
 * Add `delete_shipment_track`
